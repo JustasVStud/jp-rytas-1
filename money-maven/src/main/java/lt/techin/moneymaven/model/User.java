@@ -1,6 +1,5 @@
 package lt.techin.moneymaven.model;
 
-
 import java.util.Objects;
 
 import jakarta.persistence.Column;
@@ -9,7 +8,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-
 
 @Entity
 @Table(name = "users")
@@ -91,7 +89,4 @@ public class User {
 		return "User [userId=" + userId + ", username=" + username + ", password=" + password + ", isAdmin=" + isAdmin
 				+ "]";
 	}
-	
-	
-	
 }
