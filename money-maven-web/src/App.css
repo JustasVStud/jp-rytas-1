@@ -1,0 +1,17 @@
+@import 'bootstrap/dist/css/bootstrap.min.css';
+
+body {
+    background-color: steelblue;
+    color: #fff;
+}
+
+a {
+    display: block;
+    color: #000;
+    border: 3px violet solid;
+    padding: 1em;
+    background-color: aqua;
+    font-weight: 700;
+    font-size: 2rem;
+    text-align: center;
+}
