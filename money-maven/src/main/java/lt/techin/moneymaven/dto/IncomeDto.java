@@ -4,21 +4,13 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-import lt.techin.moneymaven.model.User;
 
 public class IncomeDto {
 	
-	private User user;
 	private BigDecimal incomeAmount;
 	private String incomeDescription;
 	private LocalDateTime incomeDatetime;
 	
-	public User getUser() {
-		return user;
-	}
-	public void setUser(User user) {
-		this.user = user;
-	}
 	public BigDecimal getIncomeAmount() {
 		return incomeAmount;
 	}
@@ -40,7 +32,7 @@ public class IncomeDto {
 	
 	@Override
 	public int hashCode() {
-		return Objects.hash(incomeAmount, incomeDatetime, incomeDescription, user);
+		return Objects.hash(incomeAmount, incomeDatetime, incomeDescription);
 	}
 	
 	@Override
@@ -53,12 +45,12 @@ public class IncomeDto {
 			return false;
 		IncomeDto other = (IncomeDto) obj;
 		return Objects.equals(incomeAmount, other.incomeAmount) && Objects.equals(incomeDatetime, other.incomeDatetime)
-				&& Objects.equals(incomeDescription, other.incomeDescription) && Objects.equals(user, other.user);
+				&& Objects.equals(incomeDescription, other.incomeDescription);
 	}
 	
 	@Override
 	public String toString() {
-		return "IncomeDto [user=" + user + ", incomeAmount=" + incomeAmount + ", incomeDescription=" + incomeDescription
+		return "IncomeDto [incomeAmount=" + incomeAmount + ", incomeDescription=" + incomeDescription
 				+ ", incomeDatetime=" + incomeDatetime + "]";
 	}
 }

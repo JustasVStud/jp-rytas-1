@@ -41,13 +41,6 @@ public class IncomeService {
 		modelMapper.map(incomeDto, existingIncome);
 		
 		
-		 TypeMap<IncomeDto, Income> typeMap = modelMapper.getTypeMap(IncomeDto.class, Income.class);
-		    if (typeMap == null) {
-		        typeMap = modelMapper.createTypeMap(IncomeDto.class, Income.class);
-		    }
-		    typeMap.addMappings(mapper -> mapper.map(src -> src.getUser().getUserId(), Income::setUser));
-		
-		
 		Income savedIncome = incomeRepository.save(existingIncome);
 		return modelMapper.map(savedIncome, IncomeDto.class);
 	}
