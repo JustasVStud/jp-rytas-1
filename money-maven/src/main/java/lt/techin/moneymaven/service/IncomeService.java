@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -43,5 +42,11 @@ public class IncomeService {
 		
 		Income savedIncome = incomeRepository.save(existingIncome);
 		return modelMapper.map(savedIncome, IncomeDto.class);
+	}
+	
+	public void deleteIncome(Integer id) {
+		Income income = incomeRepository.findById(id)
+		.orElseThrow(() -> new IncomeNotFoundException("Income_id", id));
+		incomeRepository.delete(income);
 	}
 }
