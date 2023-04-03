@@ -1,11 +1,20 @@
 package lt.techin.moneymaven.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import lt.techin.moneymaven.repository.IncomeRepository;
+import lt.techin.moneymaven.dto.IncomeDto;
+import lt.techin.moneymaven.service.IncomeService;
 
 @CrossOrigin("*")
 @RestController
@@ -13,7 +22,31 @@ import lt.techin.moneymaven.repository.IncomeRepository;
 public class IncomeController {
 	
 	@Autowired	
-	IncomeRepository incomeRepository;
+	private IncomeService incomeService;
 	
+	@GetMapping("/all")
+	public ResponseEntity<List<IncomeDto>> getAllIncomes(){
+		try {
+			List<IncomeDto> incomes = incomeService.getAllIncomes();
+			
+			if(incomes.isEmpty()) {
+				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+			}
+			
+			return new ResponseEntity<>(incomes, HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@GetMapping("/{id}")
+	public ResponseEntity<IncomeDto> getIncomeById(@PathVariable Integer id){
+		return new ResponseEntity<>(incomeService.getIncomeById(id), HttpStatus.OK);
+	}
+	
+	@PatchMapping("/{id}")
+	public ResponseEntity<IncomeDto> updateIncome(@PathVariable Integer id, @RequestBody IncomeDto incomeDto){
+		return new ResponseEntity<>(incomeService.updateIncome(id, incomeDto), HttpStatus.OK);
+	}
 	
 }

@@ -23,7 +23,7 @@ public class Income {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer incomeId;
 	@JoinColumn (name = "user_id", nullable=false)
-	@ManyToOne(optional = false, fetch = FetchType.LAZY)
+	@ManyToOne(optional = false, fetch = FetchType.EAGER)
 	private User user;
 	@Column(name = "income_amount", nullable=false)
 	private BigDecimal incomeAmount = BigDecimal.ZERO;
