@@ -83,10 +83,6 @@ function IncomeEditForm() {
                 </Row>
             </Form>
         )}
-
-
-
-
         </Formik>
      );
 }
