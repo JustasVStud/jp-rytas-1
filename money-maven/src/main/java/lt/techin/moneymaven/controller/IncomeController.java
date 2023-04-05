@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -43,6 +44,11 @@ public class IncomeController {
 	@GetMapping("/{id}")
 	public ResponseEntity<IncomeDto> getIncomeById(@PathVariable Integer id){
 		return new ResponseEntity<>(incomeService.getIncomeById(id), HttpStatus.OK);
+	}
+	
+	@PostMapping
+	public ResponseEntity<IncomeDto> createIncome(@RequestBody IncomeDto incomeDto){
+		return new ResponseEntity<>(incomeService.createIncome(incomeDto), HttpStatus.OK);
 	}
 	
 	@PatchMapping("/{id}")

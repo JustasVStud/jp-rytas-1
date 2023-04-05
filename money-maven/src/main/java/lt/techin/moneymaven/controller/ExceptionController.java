@@ -12,6 +12,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import lt.techin.moneymaven.exception.IncomeNotFoundException;
+import lt.techin.moneymaven.exception.UserNotFoundException;
 
 @ControllerAdvice
 public class ExceptionController extends ResponseEntityExceptionHandler {
@@ -23,6 +24,17 @@ public class ExceptionController extends ResponseEntityExceptionHandler {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", LocalDateTime.now());
         body.put("message", "Income not found");
+
+        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+    }
+    
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<Object> handleUserNotFoundException(
+    		UserNotFoundException ex, WebRequest request) {
+
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("message", "User not found");
 
         return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
     }
