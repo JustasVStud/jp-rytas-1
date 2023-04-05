@@ -37,7 +37,7 @@ function IncomeEditForm() {
                 onSubmit={(values, {resetForm}) => {
                     axios.patch(baseUrl + id, values)
                     .then((response) => console.log(response.data))
-                    navigate("/")
+                    navigate("/income")
                 }}
                 enableReinitialize
                 >
