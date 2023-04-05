@@ -6,11 +6,18 @@ import java.util.Objects;
 
 
 public class IncomeDto {
-	
+	private Integer incomeId;
 	private BigDecimal incomeAmount;
 	private String incomeDescription;
 	private LocalDateTime incomeDatetime;
 	
+	
+	public Integer getIncomeId() {
+		return incomeId;
+	}
+	public void setIncomeId(Integer incomeId) {
+		this.incomeId = incomeId;
+	}
 	public BigDecimal getIncomeAmount() {
 		return incomeAmount;
 	}
@@ -29,12 +36,10 @@ public class IncomeDto {
 	public void setIncomeDatetime(LocalDateTime incomeDatetime) {
 		this.incomeDatetime = incomeDatetime;
 	}
-	
 	@Override
 	public int hashCode() {
-		return Objects.hash(incomeAmount, incomeDatetime, incomeDescription);
+		return Objects.hash(incomeAmount, incomeDatetime, incomeDescription, incomeId);
 	}
-	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -45,12 +50,14 @@ public class IncomeDto {
 			return false;
 		IncomeDto other = (IncomeDto) obj;
 		return Objects.equals(incomeAmount, other.incomeAmount) && Objects.equals(incomeDatetime, other.incomeDatetime)
-				&& Objects.equals(incomeDescription, other.incomeDescription);
+				&& Objects.equals(incomeDescription, other.incomeDescription)
+				&& Objects.equals(incomeId, other.incomeId);
 	}
-	
 	@Override
 	public String toString() {
-		return "IncomeDto [incomeAmount=" + incomeAmount + ", incomeDescription=" + incomeDescription
-				+ ", incomeDatetime=" + incomeDatetime + "]";
+		return "IncomeDto [incomeId=" + incomeId + ", incomeAmount=" + incomeAmount + ", incomeDescription="
+				+ incomeDescription + ", incomeDatetime=" + incomeDatetime + "]";
 	}
+	
+	
 }
