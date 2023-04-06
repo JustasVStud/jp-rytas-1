@@ -5,8 +5,9 @@ import { Row } from "react-bootstrap";
 import { Col } from "react-bootstrap";
 import { Container } from "react-bootstrap";
 import axios from "axios";
-import { useNavigate, useParams } from "react-router-dom";
-import {useEffect, useState} from "react";
+import { useNavigate } from "react-router-dom";
+//import { useNavigate, useParams } from "react-router-dom";
+//import {useEffect, useState} from "react";
 
 
 const baseUrl = "http://localhost:8080/api/incomes/";
@@ -14,18 +15,18 @@ const baseUrl = "http://localhost:8080/api/incomes/";
 
 function IncomeForm() {
 
-  let { id } = useParams();
-  let [existingIncome, setExistingIncome] = useState({
-    incomeAmount: 0.0,
-    incomeDescription: "",
-    incomeDatetime: "",
-  });
+  // let { id } = useParams();
+  // let [existingIncome, setExistingIncome] = useState({
+  //   incomeAmount: 0.0,
+  //   incomeDescription: "",
+  //   incomeDatetime: "",
+  // });
 
-  useEffect(() => {
-    axios.get(baseUrl + id)
-      .then((response) => setExistingIncome(response.data))
-      .catch((err) => console.log(err));
-  }, [id]);
+  // useEffect(() => {
+  //   axios.get(baseUrl + id)
+  //     .then((response) => setExistingIncome(response.data))
+  //     .catch((err) => console.log(err));
+  // }, [id]);
 
   const navigate = useNavigate();
 
@@ -36,10 +37,14 @@ function IncomeForm() {
             </Row>
             <Row>
     <Formik
-      initialValues={existingIncome}
+      initialValues={{
+        incomeAmount: 0,
+        incomeDescription: "",
+        incomeDatetime: ""
+      }}
       onSubmit={(values, { resetForm }) => {
         console.log(values)
-        axios.patch(baseUrl + id, values)
+        axios.post(baseUrl, values)
           .then((response) => {console.log(response.data)
             resetForm()
             navigate("/income");
