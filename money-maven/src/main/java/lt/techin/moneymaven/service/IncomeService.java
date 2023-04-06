@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import lt.techin.moneymaven.dto.IncomeDto;
 import lt.techin.moneymaven.exception.IncomeNotFoundException;
+import lt.techin.moneymaven.exception.NoEntriesFoundException;
 import lt.techin.moneymaven.exception.UserNotFoundException;
 import lt.techin.moneymaven.model.Income;
 import lt.techin.moneymaven.model.User;
@@ -28,40 +29,64 @@ public class IncomeService {
 	private ModelMapper modelMapper;
 	
 	public List<IncomeDto >getAllIncomes() {
-		List<Income> incomes = incomeRepository.findAll();
-		return incomes.stream()
-				.map(income -> modelMapper.map(income, IncomeDto.class))
-				.collect(Collectors.toList());
+		try {
+			List<Income> incomes = incomeRepository.findAll();
+			if (incomes.isEmpty()) {
+				throw new NoEntriesFoundException("incomes");
+			}
+			return incomes.stream()
+					.map(income -> modelMapper.map(income, IncomeDto.class))
+					.collect(Collectors.toList());
+		} catch (Exception e) {
+			throw new RuntimeException("Error while getting incomes", e);
+		}
+		
 	}
 	
 	public IncomeDto getIncomeById(Integer id) {
-		Income income = incomeRepository.findById(id)
-				.orElseThrow(() -> new IncomeNotFoundException("Income Id", id));
-		return modelMapper.map(income,  IncomeDto.class);
+		try {			
+			Income income = incomeRepository.findById(id)
+					.orElseThrow(() -> new IncomeNotFoundException("Income Id", id));
+			return modelMapper.map(income,  IncomeDto.class);
+		} catch (Exception e) {
+			throw new RuntimeException("Error while getting income", e);
+		}
 	}
 	
 	public IncomeDto createIncome(IncomeDto incomeDto) {
-		Income income = modelMapper.map(incomeDto, Income.class);
-		User user = userRepository.findById(1)
-				.orElseThrow(() -> new UserNotFoundException("User Id", 1));
-		income.setUser(user);
-		Income savedIncome = incomeRepository.save(income);
-		return modelMapper.map(savedIncome, IncomeDto.class);
+		try {			
+			Income income = modelMapper.map(incomeDto, Income.class);
+			User user = userRepository.findById(1)
+					.orElseThrow(() -> new UserNotFoundException("User Id", 1));
+			income.setUser(user);
+			Income savedIncome = incomeRepository.save(income);
+			return modelMapper.map(savedIncome, IncomeDto.class);
+		} catch (Exception e) {
+			throw new RuntimeException("Error while creating income", e);
+		}
 	}
 	
 	public IncomeDto updateIncome(Integer id, IncomeDto incomeDto) {
-		Income existingIncome = incomeRepository.findById(id)
-				.orElseThrow(() -> new IncomeNotFoundException("Income Id", id));
-		modelMapper.map(incomeDto, existingIncome);
-		
-		
-		Income savedIncome = incomeRepository.save(existingIncome);
-		return modelMapper.map(savedIncome, IncomeDto.class);
+		try {
+			Income existingIncome = incomeRepository.findById(id)
+					.orElseThrow(() -> new IncomeNotFoundException("Income Id", id));
+			modelMapper.map(incomeDto, existingIncome);
+			
+			
+			Income savedIncome = incomeRepository.save(existingIncome);
+			return modelMapper.map(savedIncome, IncomeDto.class);
+		} catch (Exception e) {
+			throw new RuntimeException("Error while updating income", e);
+		}
 	}
 	
 	public void deleteIncome(Integer id) {
-		Income income = incomeRepository.findById(id)
-		.orElseThrow(() -> new IncomeNotFoundException("Income_id", id));
-		incomeRepository.delete(income);
+		try {
+			Income income = incomeRepository.findById(id)
+			.orElseThrow(() -> new IncomeNotFoundException("Income_id", id));
+			incomeRepository.delete(income);
+		} catch (Exception e) {
+			throw new RuntimeException("Error while deleting income", e);
+		}
 	}
 }

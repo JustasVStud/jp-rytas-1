@@ -28,17 +28,8 @@ public class IncomeController {
 	
 	@GetMapping
 	public ResponseEntity<List<IncomeDto>> getAllIncomes(){
-		try {
-			List<IncomeDto> incomes = incomeService.getAllIncomes();
-			
-			if(incomes.isEmpty()) {
-				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-			}
-			
-			return new ResponseEntity<>(incomes, HttpStatus.OK);
-		} catch (Exception e) {
-			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		List<IncomeDto> incomes = incomeService.getAllIncomes();
+		return new ResponseEntity<>(incomes, HttpStatus.OK);
 	}
 	
 	@GetMapping("/{id}")
