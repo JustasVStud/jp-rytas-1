@@ -44,7 +44,8 @@ function IncomeForm() {
       }}
       onSubmit={(values, { resetForm }) => {
         console.log(values)
-        axios.post(baseUrl, values)
+        axios.post
+        (baseUrl, values)
           .then((response) => {console.log(response.data)
             resetForm()
             navigate("/income");
