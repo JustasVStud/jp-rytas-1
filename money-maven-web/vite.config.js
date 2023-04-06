@@ -6,5 +6,6 @@ export default defineConfig({
   plugins: [react(), eslint()],
   server: {
     port: 3000,
+    formik: 'formik/dist/formik.umd.production.min.js'
   }
 })
