@@ -6,6 +6,7 @@ import './index.css';
 import './assets/react-confirm-alert.scss';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+
 const root = document.getElementById("root");
 render(
     <BrowserRouter>
