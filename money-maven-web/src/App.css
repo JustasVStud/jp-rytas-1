@@ -1,17 +1,14 @@
-@import 'bootstrap/dist/css/bootstrap.min.css';
 
 body {
-    background-color: steelblue;
+    background-color: #AEDAF9;
     color: #fff;
 }
 
 a {
-    display: block;
-    color: #000;
-    border: 3px violet solid;
-    padding: 1em;
-    background-color: aqua;
-    font-weight: 700;
-    font-size: 2rem;
-    text-align: center;
+   color: black;
+   text-decoration: none;
+}
+.form {
+    margin: 1rem auto;
+    max-width: 50%;
 }
