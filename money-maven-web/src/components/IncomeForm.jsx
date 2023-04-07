@@ -6,28 +6,12 @@ import { Col } from "react-bootstrap";
 import { Container } from "react-bootstrap";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-//import { useNavigate, useParams } from "react-router-dom";
-//import {useEffect, useState} from "react";
 
 
-const baseUrl = "http://localhost:8080/api/incomes/";
+const baseUrl = "http://localhost:8080/api/incomes";
 
 
 function IncomeForm() {
-
-  // let { id } = useParams();
-  // let [existingIncome, setExistingIncome] = useState({
-  //   incomeAmount: 0.0,
-  //   incomeDescription: "",
-  //   incomeDatetime: "",
-  // });
-
-  // useEffect(() => {
-  //   axios.get(baseUrl + id)
-  //     .then((response) => setExistingIncome(response.data))
-  //     .catch((err) => console.log(err));
-  // }, [id]);
-
   const navigate = useNavigate();
 
   return (
@@ -55,7 +39,7 @@ function IncomeForm() {
       enableReinitialize
     >
       {({ values, handleChange, handleBlur, handleSubmit, dirty }) => (
-        <Form onSubmit={handleSubmit} style={{ margin: "100px" }}>
+        <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-3">
             <Form.Label>Amount</Form.Label>
             <Form.Control
@@ -96,9 +80,8 @@ function IncomeForm() {
           <Row>
             <Col>
               <Button
-                variant="secondary"
+                variant="primary"
                 type="submit"
-                style={{ marginTop: "10px" }}
               >
                 Submit
               </Button>
