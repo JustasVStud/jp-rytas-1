@@ -5,7 +5,6 @@ import { BrowserRouter } from 'react-router-dom';
 import './index.css';
 import './assets/react-confirm-alert.scss';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import App from './App';
 
 
 const root = document.getElementById("root");

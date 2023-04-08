@@ -1,3 +1,5 @@
+@import './assets/forms.css';
+
 :root {
     --main-background: #AEDAF9;
     --font-color: #000000;
@@ -16,38 +18,8 @@ body {
 }
 
 
-.form-buttons {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 38px;
-    margin-top: 3.1875em;
-}
-
-.main-button {
-    border: none;
-    background-color: var(--button-color);
-    padding: 0.657em 0em;
-    font-weight: 700;
-    cursor: pointer;
-}
-
-.form-style input{
-    background-color: var(--form-input);
-    border-radius: 20px;
-    margin: 0.75em 0;
-    min-width: 120px;
-}
-
-.form-style label, 
-::placeholder {
-    font-size: 0.875rem;
-}
-
-h2 {
+h3 {
     font-size: 1.1875rem;
     font-weight: 700 ;
 }
 
-::placeholder {
-   opacity: 25%; 
-}

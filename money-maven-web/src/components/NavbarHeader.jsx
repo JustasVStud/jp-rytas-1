@@ -1,25 +1,39 @@
-import React from 'react'
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
-import '../assets/Navbar.css'
+import Offcanvas from 'react-bootstrap/Offcanvas';
 
 function NavbarHeader() {
-    return (
-        <Navbar expand="lg" className='navbar-style'>
-          <Container>
-            <Navbar.Brand href="#home"></Navbar.Brand>
-            <Navbar.Toggle aria-controls="basic-navbar-nav" />
-            <Navbar.Collapse id="basic-navbar-nav">
-              <Nav className="me-auto">
-                <Nav.Link href="/login">Login</Nav.Link>
-                <Nav.Link href="/income">Income</Nav.Link>
-                <Nav.Link href="/income/edit/:id">Edit income</Nav.Link>
-              </Nav>
-            </Navbar.Collapse>
+  return (
+    <>
+      {['md'].map((expand) => (
+        <Navbar key={expand} bg="light" expand={false} className="mb-3">
+          <Container fluid>
+            <Navbar.Brand href="#">MONEY MAVEN</Navbar.Brand>
+            <Navbar.Toggle aria-controls={`offcanvasNavbar-expand-${expand}`} />
+            <Navbar.Offcanvas
+              id={`offcanvasNavbar-expand-${expand}`}
+              aria-labelledby={`offcanvasNavbarLabel-expand-${expand}`}
+              placement="end"
+            >
+              <Offcanvas.Header closeButton>
+                <Offcanvas.Title id={`offcanvasNavbarLabel-expand-${expand}`}>
+                MONEY MAVEN
+                </Offcanvas.Title>
+              </Offcanvas.Header>
+              <Offcanvas.Body>
+                <Nav className="justify-content-end flex-grow-1 pe-3">
+                  <Nav.Link href="/login">Login</Nav.Link>
+                  <Nav.Link href="/income">Income</Nav.Link>
+                  <Nav.Link href="/income/edit/:id">Edit Income</Nav.Link>
+                </Nav>
+              </Offcanvas.Body>
+            </Navbar.Offcanvas>
           </Container>
         </Navbar>
-      );
+      ))}
+    </>
+  );
 }
 
-export default NavbarHeader
+export default NavbarHeader;
