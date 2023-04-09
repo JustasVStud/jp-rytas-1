@@ -1,9 +1,8 @@
 import {useState, useEffect} from 'react'; 
 import axios from "axios";
 import { Table } from "react-bootstrap";
-import { FaTrashAlt } from "react-icons/fa";
-import { FaEdit } from "react-icons/fa";
 import Income from './Income';
+import NoElementsTableRow from './NoElementsTableRow';
 
 function IncomeTable() {
 
@@ -17,21 +16,17 @@ function IncomeTable() {
         .catch((err) => console.log(err))
     }, [deleteIncome]);
     
-    let incomesjsx = incomes.map((income) => {
-        return (<Income income = {income} setDeleteIncome = {setDeleteIncome} key={income.incomeId}/>)
-    });
+    let incomesjsx;
+    if(incomes.length > 0){
+        incomesjsx = incomes.map((income) => {
+            return (<Income income = {income} setDeleteIncome = {setDeleteIncome} key={income.incomeId}/>)
+        });
+    } else {
+        incomesjsx = <NoElementsTableRow elementType={"Incomes"}/>
+    }
     return ( 
     <>
         <Table>
-            <thead>
-                <tr>
-                    <th>Amount</th>
-                    <th>Description</th>
-                    <th>Date</th>
-                    <th>Edit <FaEdit/></th>
-                    <th>Delete <FaTrashAlt/></th>
-                </tr>
-            </thead>
             <tbody>
                 {incomesjsx}
             </tbody>

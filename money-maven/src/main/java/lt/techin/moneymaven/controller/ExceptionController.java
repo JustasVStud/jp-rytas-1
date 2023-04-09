@@ -25,6 +25,7 @@ public class ExceptionController extends ResponseEntityExceptionHandler {
 		Map<String, Object> body = new LinkedHashMap<>();
 		body.put("timestamp", LocalDateTime.now());
 		body.put("message", ex.getMessage());
+		body.put("cause", ex.getCause());
 		
 		return new ResponseEntity<>(body, HttpStatus.NO_CONTENT);
 	}
@@ -36,6 +37,7 @@ public class ExceptionController extends ResponseEntityExceptionHandler {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", LocalDateTime.now());
         body.put("message", ex.getMessage());
+        body.put("cause", ex.getCause());
 
         return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
     }
@@ -47,6 +49,7 @@ public class ExceptionController extends ResponseEntityExceptionHandler {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", LocalDateTime.now());
         body.put("message", ex.getMessage());
+        body.put("cause", ex.getCause());
 
         return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
     }
@@ -56,6 +59,7 @@ public class ExceptionController extends ResponseEntityExceptionHandler {
     	Map<String, Object> body = new LinkedHashMap<>();
     	body.put("timestamp", LocalDateTime.now());
     	body.put("message", ex.getMessage());
+    	body.put("cause", ex.getCause());
     	
     	return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
     }
