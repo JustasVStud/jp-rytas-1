@@ -35,7 +35,7 @@ function IncomeForm() {
   const navigate = useNavigate();
 
   return (
-    <Container>
+    <Container className="form-style">
       <Row>
                 <h3 className="">Income</h3>
             </Row>
@@ -125,7 +125,7 @@ function IncomeForm() {
                 )}
           </Form.Group>
 
-          <Row>
+          <Row className="form-buttons-container">
             <Col>
               <Button
                 variant="primary"

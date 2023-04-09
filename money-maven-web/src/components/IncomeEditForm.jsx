@@ -51,7 +51,7 @@ function IncomeEditForm() {
 
         const navigate = useNavigate();
     return ( 
-        <Container>
+        <Container className="form-style">
             <Row>
                 <h3 className="">Edit Income</h3>
             </Row>
@@ -137,7 +137,7 @@ function IncomeEditForm() {
                                 </Form.Control.Feedback>
                             )}
                         </Form.Group>
-                        <Row>
+                        <Row className="form-buttons-container">
                             <Col>
                                 <Button variant="primary" type="submit" disabled={!dirty}>Update</Button>
                             </Col>
