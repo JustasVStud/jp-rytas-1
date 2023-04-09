@@ -5,8 +5,10 @@ import IncomeTable from '../components/IncomeTable'
 function IncomePage() {
   return (
     <>
+
     <Form />
     <IncomeTable/>
+    
     </>
   )
 }
