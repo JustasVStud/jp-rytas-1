@@ -1,14 +1,25 @@
+@import './assets/forms.css';
+
+:root {
+    --main-background: #AEDAF9;
+    --font-color: #000000;
+    --link-color: #001AFF;
+    --form-input: #FEFEFF9E;
+    --button-color: #7699B3;
+    --main-font: 'Lato', sans-serif;
+}
+
 
 body {
-    background-color: #AEDAF9;
-    color: #fff;
+    background-color: var(--main-background);
+    color: var(--font-color);
+    font-weight: 700;
+    font-family: var(--main-font);
 }
 
-a {
-   color: black;
-   text-decoration: none;
+
+h3 {
+    font-size: 1.1875rem;
+    font-weight: 700 ;
 }
-.form {
-    margin: 1rem auto;
-    max-width: 50%;
-}
+
