@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 
+
 public class IncomeDto {
 	private Integer incomeId;
 	private BigDecimal incomeAmount;

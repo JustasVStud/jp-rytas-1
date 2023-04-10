@@ -28,7 +28,7 @@ public class IncomeService {
 	@Autowired
 	private ModelMapper modelMapper;
 	
-	public List<IncomeDto >getAllIncomes() {
+	public List<IncomeDto >getAllIncomes(){
 		try {
 			List<Income> incomes = incomeRepository.findAll();
 			if (incomes.isEmpty()) {
@@ -37,8 +37,10 @@ public class IncomeService {
 			return incomes.stream()
 					.map(income -> modelMapper.map(income, IncomeDto.class))
 					.collect(Collectors.toList());
+		} catch (NoEntriesFoundException e) {
+			throw e;
 		} catch (Exception e) {
-			throw new RuntimeException("Error while getting incomes", e);
+			throw new RuntimeException("Unexpected Error while getting incomes", e);
 		}
 		
 	}
@@ -48,19 +50,23 @@ public class IncomeService {
 			Income income = incomeRepository.findById(id)
 					.orElseThrow(() -> new IncomeNotFoundException("Income Id", id));
 			return modelMapper.map(income,  IncomeDto.class);
+		} catch (IncomeNotFoundException e) {
+			throw e;
 		} catch (Exception e) {
 			throw new RuntimeException("Error while getting income", e);
 		}
 	}
 	
 	public IncomeDto createIncome(IncomeDto incomeDto) {
-		try {			
+		try {
 			Income income = modelMapper.map(incomeDto, Income.class);
 			User user = userRepository.findById(1)
 					.orElseThrow(() -> new UserNotFoundException("User Id", 1));
 			income.setUser(user);
 			Income savedIncome = incomeRepository.save(income);
 			return modelMapper.map(savedIncome, IncomeDto.class);
+		} catch (UserNotFoundException e) {
+			throw e;
 		} catch (Exception e) {
 			throw new RuntimeException("Error while creating income", e);
 		}
@@ -72,9 +78,10 @@ public class IncomeService {
 					.orElseThrow(() -> new IncomeNotFoundException("Income Id", id));
 			modelMapper.map(incomeDto, existingIncome);
 			
-			
 			Income savedIncome = incomeRepository.save(existingIncome);
 			return modelMapper.map(savedIncome, IncomeDto.class);
+		} catch (IncomeNotFoundException e) {
+			throw e;
 		} catch (Exception e) {
 			throw new RuntimeException("Error while updating income", e);
 		}
@@ -85,6 +92,8 @@ public class IncomeService {
 			Income income = incomeRepository.findById(id)
 			.orElseThrow(() -> new IncomeNotFoundException("Income_id", id));
 			incomeRepository.delete(income);
+		} catch (IncomeNotFoundException e) {
+			throw e;
 		} catch (Exception e) {
 			throw new RuntimeException("Error while deleting income", e);
 		}

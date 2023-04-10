@@ -1,0 +1,61 @@
+.form-style {
+    padding: 0 1em;
+}
+
+.form-style{
+    &  .form-control {
+        background-color: var(--form-input);
+        border-radius: 20px;
+        margin: 0.75em 0;
+        min-width: 120px;
+        padding: 0.5em 0.7em;
+        &.is-invalid{
+            padding-right: 30px;
+        }
+    }
+}
+
+.form-style h3 {
+    text-align: center;
+}
+
+
+.form-style .btn {
+    border: none;
+    background-color: var(--button-color);
+    font-weight: 700;
+    cursor: pointer;
+    border-radius: 5px;
+    padding: 0.725em 0;
+    min-width: 118px;
+    font-family: inherit;
+    color: var(--font-color);
+}
+
+
+.form-style .form-label, 
+::placeholder,
+.form-style .btn {
+    font-size: 0.875rem;
+}
+
+.form-buttons-container .col {
+    display: flex;
+    justify-content: space-between;
+    margin: 2em 0;
+}
+
+.react-datetime-picker__wrapper {
+    border: none;
+}
+.react-datetime-picker__button {
+    padding: 0 6px;
+}
+.react-datetime-picker__inputGroup {
+    font-size: 0.875rem;
+    font-family: inherit;
+}
+.react-datetime-picker__inputGroup__input:invalid {
+    background: none;
+    outline: none;
+}

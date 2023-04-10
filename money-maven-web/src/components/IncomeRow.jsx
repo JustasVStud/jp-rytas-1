@@ -3,7 +3,7 @@ import { deleteHandler } from '../services/deleteHandler';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 
-function Income({income, setDeleteIncome}) {
+function IncomeRow({income, setDeleteIncome}) {
     function deleteIncome(incomeId) {
         axios
         .delete('http://localhost:8080/api/incomes/' + incomeId)
@@ -16,19 +16,22 @@ function Income({income, setDeleteIncome}) {
     let deleteParams = {id: income.incomeId, type: "Income entry", value: income.incomeAmount + " " + income.incomeDescription};
     return ( 
         <tr>
-            <td className="amount amount--income">{income.incomeAmount}</td>
+            <td>{income.incomeAmount}</td>
             <td>{income.incomeDescription}</td>
-            <td>{new Date(income.incomeDatetime).toLocaleDateString('lt-LT', {year: 'numeric', month: '2-digit', day: '2-digit'})}</td>
+            <td>{income.incomeDatetime}</td>
             <td>
                 <Link to={"edit/" + income.incomeId}>
                     <FaEdit/>
                 </Link>
             </td>
             <td>
-                <FaTrashAlt onClick={() => deleteHandler(deleteParams, deleteIncome)}/>
+                <span>
+                    <FaTrashAlt onClick={() => deleteHandler(deleteParams, deleteIncome)}/>
+                </span>
+                
             </td>
         </tr>
      );
 }
 
-export default Income;
+export default IncomeRow;

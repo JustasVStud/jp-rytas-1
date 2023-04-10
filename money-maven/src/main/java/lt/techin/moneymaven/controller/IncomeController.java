@@ -28,8 +28,7 @@ public class IncomeController {
 	
 	@GetMapping
 	public ResponseEntity<List<IncomeDto>> getAllIncomes(){
-		List<IncomeDto> incomes = incomeService.getAllIncomes();
-		return new ResponseEntity<>(incomes, HttpStatus.OK);
+		return new ResponseEntity<>(incomeService.getAllIncomes(), HttpStatus.OK);
 	}
 	
 	@GetMapping("/{id}")
