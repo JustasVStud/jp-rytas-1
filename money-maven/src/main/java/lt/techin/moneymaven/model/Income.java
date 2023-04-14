@@ -29,7 +29,7 @@ public class Income {
 	private BigDecimal incomeAmount = BigDecimal.ZERO;
 	@Column(name = "income_description")
 	private String incomeDescription;
-	@Column(name = "income_datetime")
+	@Column(name = "income_datetime", nullable=false)
 	private LocalDateTime incomeDatetime;
 	
 	public Income() {

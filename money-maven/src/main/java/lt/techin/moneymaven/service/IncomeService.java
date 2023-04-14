@@ -77,7 +77,6 @@ public class IncomeService {
 			Income existingIncome = incomeRepository.findById(id)
 					.orElseThrow(() -> new IncomeNotFoundException("Income Id", id));
 			modelMapper.map(incomeDto, existingIncome);
-			
 			Income savedIncome = incomeRepository.save(existingIncome);
 			return modelMapper.map(savedIncome, IncomeDto.class);
 		} catch (IncomeNotFoundException e) {
