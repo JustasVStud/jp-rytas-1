@@ -3,12 +3,12 @@ import { deleteHandler } from '../services/deleteHandler';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 
-function Income({income, setDeleteIncome}) {
+function Income({income, onDelete}) {
     function deleteIncome(incomeId) {
         axios
         .delete('http://localhost:8080/api/incomes/' + incomeId)
         .then(response => {
-            setDeleteIncome(response.data)
+            onDelete(response.data)
         })
         .catch((err) => console.log(err));
     }
