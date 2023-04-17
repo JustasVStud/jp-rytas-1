@@ -5,7 +5,7 @@ import { Row } from "react-bootstrap";
 import { Col } from "react-bootstrap";
 import { Container } from "react-bootstrap";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import {Link, useNavigate } from "react-router-dom";
 import DateTimePicker from "react-datetime-picker";
 import {FaCalendarAlt} from "react-icons/fa";
 import moment from "moment";
@@ -127,13 +127,12 @@ function IncomeForm() {
 
           <Row className="form-buttons-container">
             <Col>
-              <Button
-                variant="primary"
-                type="submit"
-                disabled={!dirty}
-              >
-                Submit
-              </Button>
+              <Button variant="primary" type="submit" disabled={!dirty}>Submit</Button>
+            </Col>
+            <Col>
+                <Link to={"/income"}>
+                    <Button variant="primary">Cancel</Button>
+                </Link>
             </Col>
           </Row>
         </Form>
