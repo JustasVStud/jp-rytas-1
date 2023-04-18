@@ -1,4 +1,5 @@
 @import './assets/forms.scss';
+@import './assets/tables.scss';
 
 :root {
     --main-background: #AEDAF9;
@@ -7,6 +8,8 @@
     --form-input: #FEFEFF9E;
     --button-color: #7699B3;
     --main-font: 'Lato', sans-serif;
+    font-size: 12px;
+    line-height: 12px;
 }
 
 
@@ -22,4 +25,16 @@ h3 {
     font-size: 1.1875rem;
     font-weight: 700 ;
 }
+.container {
+    padding: 0 1.5rem 0 1.5rem;
+}
 
+@media screen and (min-width: 1024px) {
+    :root {
+        font-size: 14px;
+        line-height: 14px;
+    }
+    .container {
+        padding: 0 2rem 0 3rem;
+    }
+}
