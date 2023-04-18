@@ -17,7 +17,7 @@ function Income({income, onDelete}) {
     return ( 
         <>
         <tr className='table-row'>
-            <td className="amount amount--income table-cell"><FaEuroSign/> {income.incomeAmount}</td>
+            <td className="table-cell"><FaEuroSign/> {income.incomeAmount}</td>
             <td className='table-cell'><FaCalendarAlt/> {new Date(income.incomeDatetime).toLocaleDateString('lt-LT', {year: 'numeric', month: '2-digit', day: '2-digit'})}</td>
             <td className='table-cell'> <FaCommentAlt/> {income.incomeDescription}</td>
             <td className='table-cell table-button'>
