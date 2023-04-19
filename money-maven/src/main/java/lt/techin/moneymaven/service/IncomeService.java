@@ -1,10 +1,9 @@
 package lt.techin.moneymaven.service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import lt.techin.moneymaven.dto.IncomeDto;
@@ -28,15 +27,13 @@ public class IncomeService {
 	@Autowired
 	private ModelMapper modelMapper;
 	
-	public List<IncomeDto >getAllIncomes(){
+	public Page<IncomeDto >getAllIncomes(Pageable pageable){
 		try {
-			List<Income> incomes = incomeRepository.findAll();
+			Page<Income> incomes = incomeRepository.findAll(pageable);
 			if (incomes.isEmpty()) {
 				throw new NoEntriesFoundException("incomes");
 			}
-			return incomes.stream()
-					.map(income -> modelMapper.map(income, IncomeDto.class))
-					.collect(Collectors.toList());
+			return incomes.map(income -> modelMapper.map(income, IncomeDto.class));
 		} catch (NoEntriesFoundException e) {
 			throw e;
 		} catch (Exception e) {

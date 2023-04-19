@@ -27,9 +27,14 @@
     cursor: pointer;
     border-radius: 5px;
     padding: 0.725em;
-    min-width: 118px;
     font-family: inherit;
     color: var(--font-color);
+    white-space: nowrap;
+    &:active{
+        background-color: var(--button-color);
+        opacity: 75%;
+        color: var(--font-color);
+    }
 }
 
 
