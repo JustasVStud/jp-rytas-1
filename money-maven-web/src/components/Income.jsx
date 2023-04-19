@@ -1,4 +1,4 @@
-import {FaEdit, FaTrashAlt} from 'react-icons/fa';
+import {FaCalendarAlt, FaCommentAlt, FaEuroSign, FaPencilAlt, FaTrashAlt} from 'react-icons/fa';
 import { deleteHandler } from '../services/deleteHandler';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
@@ -15,19 +15,24 @@ function Income({income, onDelete}) {
     // duomenys reikalingi istrynimo popup
     let deleteParams = {id: income.incomeId, type: "Income entry", value: income.incomeAmount + " " + income.incomeDescription};
     return ( 
-        <tr>
-            <td className="amount amount--income">{income.incomeAmount}</td>
-            <td>{income.incomeDescription}</td>
-            <td>{new Date(income.incomeDatetime).toLocaleDateString('lt-LT', {year: 'numeric', month: '2-digit', day: '2-digit'})}</td>
-            <td>
-                <Link to={"edit/" + income.incomeId}>
-                    <FaEdit/>
+        <>
+        <tr className='table-row'>
+            <td className="table-cell"><FaEuroSign/> {income.incomeAmount}</td>
+            <td className='table-cell'><FaCalendarAlt/> {new Date(income.incomeDatetime).toLocaleDateString('lt-LT', {year: 'numeric', month: '2-digit', day: '2-digit'})}</td>
+            <td className='table-cell'> <FaCommentAlt/> {income.incomeDescription}</td>
+            <td className='table-cell table-button'>
+                <Link to={"edit/" + income.incomeId} className='table-button'>
+                    <FaPencilAlt/>
                 </Link>
             </td>
-            <td>
-                <FaTrashAlt onClick={() => deleteHandler(deleteParams, deleteIncome)}/>
+            <td className='table-cell table-button'>
+                <FaTrashAlt onClick={() => deleteHandler(deleteParams, deleteIncome)} className='table-button'/>
             </td>
         </tr>
+        <tr>
+
+        </tr>
+        </>
      );
 }
 

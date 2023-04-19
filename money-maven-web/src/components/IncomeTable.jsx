@@ -1,6 +1,6 @@
 import {useState, useEffect} from 'react'; 
 import axios from "axios";
-import { Button, Table } from "react-bootstrap";
+import { Button, Container, Table } from "react-bootstrap";
 import Income from './Income';
 import NoElementsTableRow from './NoElementsTableRow';
 import { Link } from 'react-router-dom';
@@ -28,14 +28,25 @@ function IncomeTable() {
     }
     return ( 
     <>  
+    <Container>
         <Link to={"/income/create"} className='form-style'>
             <Button variant='primary'>Create new</Button>
         </Link>
         <Table>
+            <thead>
+                <tr>
+                    <th>Amount</th>
+                    <th>Date</th>
+                    <th>Description</th>
+                    <th>Edit</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
             <tbody>
                 {incomesjsx}
             </tbody>
         </Table>
+    </Container>
     </> );
 }
 
