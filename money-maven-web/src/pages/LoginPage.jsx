@@ -8,6 +8,8 @@ function LoginPage() {
     <div className="p-5">  
       <LoginForm />
     <Link to='/income'>Income</Link>
+    <div></div>
+    
     </div>
     
   )
