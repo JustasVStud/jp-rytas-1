@@ -4,6 +4,8 @@ import LoginPage from './pages/LoginPage';
 import IncomePage from './pages/IncomePage';
 import ExpensePage from './pages/ExpensePage';
 import AddEditCategory from './components/AddEditCategory';
+import IncomeTable from './components/IncomeTable';
+import IncomeForm from './components/IncomeForm';
 import IncomeEditForm from './components/IncomeEditForm';
 import NavbarHeader from './components/NavbarHeader';
 import CategoryTable from './components/CategoryTable';
@@ -26,6 +28,9 @@ function App() {
         <Route path="/category" element={<CategoryTable />} />
         <Route path="/category/add/" element={<AddEditCategory />} />
         <Route path="/category/add/:id" element={<AddEditCategory />} />
+        <Route path="/login" element={<LoginPage/>} />
+        <Route path="/income" element={<IncomeTable/>} />
+        <Route path="/income/create" element={<IncomeForm/>}/>
         <Route path="/income/edit/:id" element={<IncomeEditForm />}/>
        
       </Routes>
