@@ -1,15 +1,18 @@
 import { FaEdit, FaTrashAlt } from 'react-icons/fa';
 import { deleteHandler } from '../services/deleteHandler';
 import axios from 'axios';
+
 import { Link } from 'react-router-dom';
 
-const categories = [
+const typeName = [
   { value: 1, name: 'Food' },
   { value: 2, name: 'Clothes' },
   { value: 3, name: 'Medicine' },
   { value: 4, name: 'Entertainment' },
   { value: 5, name: 'Other' }
 ];
+// const [expenseTypes, setExpenseTypes] = useState([]);
+// const [selectedCategory, setSelectedCategory] = useState(null);
 
 function Expense({ expense, setDeleteExpense }) {
   function deleteExpense(expenseId) {
@@ -30,10 +33,11 @@ function Expense({ expense, setDeleteExpense }) {
 
   return (
     <tr>
-      <td className="amount amount--expense">{expense.expenseAmount}</td>
-      <td>{expense.expenseDescription}</td>
+      <td className="amount expense">{expense.expenseAmount}</td>
+      
       <td>{new Date(expense.expenseDatetime).toLocaleDateString('lt-LT', { year: 'numeric', month: '2-digit', day: '2-digit' })}</td>
-      <td>{categories.find(cat => cat.value === expense.expenseCategory)?.name}</td>
+      <td>{expense.expenseDescription}</td>
+      <td>{typeName.find(cat => cat.value === expense.expensetypeName)?.name}</td>
       <td>
         <Link to={`edit/${expense.expenseId}`}>
           <FaEdit />

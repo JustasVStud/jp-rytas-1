@@ -7,14 +7,12 @@ import { Container } from "react-bootstrap";
 import axios from "axios";
 import DateTimePicker from "react-datetime-picker";
 import {FaCalendarAlt} from "react-icons/fa";
-// import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import * as Yup from "yup";
-
+import {useState, useEffect} from 'react'; 
 
 const baseUrl = "http://localhost:8080/api/expenses";
-
  
 const ExpenseValidationSchema = Yup.object().shape({
   expenseAmount: Yup.number()
@@ -34,9 +32,17 @@ const ExpenseValidationSchema = Yup.object().shape({
               .required('Date is required')
 });
 
-function ExpenseForm(props) {
-  // const { categories } = props;
+function ExpenseForm() {
   const navigate = useNavigate();
+  const [expenseTypes, setExpenseTypes] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+
+  useEffect(() => {
+    axios
+      .get('http://localhost:8080/api/expenseTypes')
+      .then(response => setExpenseTypes(response.data))
+      .catch((err) => console.log(err))
+  }, []);
   
   return (
     <Container className="form-style">
@@ -44,13 +50,14 @@ function ExpenseForm(props) {
       <Row>
         <Formik
           initialValues={{
+            expenseTypeName: "",
             expenseAmount: "",
             expenseDescription: "",
-            expenseTypeName: "",
             expenseDatetime: ""
           }}
           validationSchema={ExpenseValidationSchema}
       onSubmit={(values, { resetForm }) => {
+        // console.log(values);
         values.expenseDatetime = moment(values.expenseDatetime).format('YYYY-MM-DDTHH:mm:ss');
         axios.post(baseUrl, values)
           .then((response) => {
@@ -73,6 +80,39 @@ function ExpenseForm(props) {
             dirty
           }) => (
             <Form onSubmit={handleSubmit}>
+             {/* <Form.Group className="mb-3">
+                <Form.Label>Expense Name</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Source of Type"
+                  name="expenseTypeName"
+                  size="sm"
+                  value={values.expenseTypeName}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  isInvalid={touched.expenseTypeName && errors.expenseTypeName}
+                />
+                <Form.Control.Feedback type="invalid">
+                  {errors.expenseTypeName}
+                </Form.Control.Feedback>
+              </Form.Group> */}
+               <Form.Group>
+            <Form.Label>Expense Type</Form.Label>
+            <Form.Control
+              as="select"
+              name="expenseTypeName"
+              size="sm"
+              value={values.expenseTypeName}
+              onChange={handleChange}
+            >
+              <option value="">Select category</option>
+              {expenseTypes.map((expenseType) => (
+                <option key={expenseType.typeId} value={expenseType.typeName}>
+                  {expenseType.typeName}
+                </option>
+              ))}
+            </Form.Control>
+          </Form.Group>
               <Form.Group className="mb-3">
                 <Form.Label>Amount</Form.Label>
                 <Form.Control
@@ -89,7 +129,6 @@ function ExpenseForm(props) {
                   {errors.expenseAmount}
                 </Form.Control.Feedback>
               </Form.Group>
-
               <Form.Group className="mb-3">
                 <Form.Label>Decription</Form.Label>
                 <Form.Control
@@ -106,24 +145,6 @@ function ExpenseForm(props) {
                   {errors.expenseDescription}
                 </Form.Control.Feedback>
               </Form.Group>
-              <Form.Group className="mb-3">
-                <Form.Label>Type Name</Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="Source of Type"
-                  name="eexpenseTypeName"
-                  size="sm"
-                  value={values.eexpenseTypeName}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  isInvalid={touched.expenseTypeName && errors.expenseTypeName}
-                />
-                <Form.Control.Feedback type="invalid">
-                  {errors.eexpenseTypeName}
-                </Form.Control.Feedback>
-              </Form.Group>
-            
-            
             <Form.Group className="mb-3">
             <Form.Label>Date and Time</Form.Label>
             <DateTimePicker

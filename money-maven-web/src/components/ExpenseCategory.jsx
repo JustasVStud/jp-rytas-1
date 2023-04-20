@@ -1,21 +1,27 @@
-import { useState } from "react";
+import { useState, useEffect  } from "react";
 import ExpenseForm from './ExpenseForm';
-// import ExpenseTable from './ExpenseTable';
 import Form from "react-bootstrap/Form";
 import { Row, Col, Container } from "react-bootstrap";
+import axios from "axios";
 
-const categories = [
-  { value: 1, name: 'Food' },
-  { value: 2, name: 'Clothes' },
-  { value: 3, name: 'Medicine' },
-  { value: 4, name: 'Entertainment' },
-  { value: 5, name: 'Other' }
+const expenseTypes = [
+  { value: 1, typeName: 'Food' },
+  { value: 2, typeName: 'Clothes' },
+
 ];
 
 function CategorySelector() {
   const [otherCategory, setOtherCategory] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(null);
+  
+  const [expenseTypes, setExpenseTypes] = useState([]);
 
+  useEffect(() => {
+    axios
+      .get('http://localhost:8080/api/expenseTypes')
+      .then(response => setExpenseTypes(response.data))
+      .catch((err) => console.log(err))
+  }, []);
   const handleCategoryChange = (event) => {
     const selectedValue = parseInt(event.target.value);
     if (selectedValue === 5) {
@@ -39,7 +45,7 @@ function CategorySelector() {
       <Row>
         <Col>
           <Form.Group>
-            <Form.Label>Category</Form.Label>
+            <Form.Label>Expense Type</Form.Label>
             <Form.Control
               as="select"
               name="expenseCategory"
@@ -48,9 +54,9 @@ function CategorySelector() {
               onChange={handleCategoryChange}
             >
               <option value="">Select category</option>
-              {categories.map((category) => (
-                <option key={category.value} value={category.value}>
-                  {category.name}
+              {expenseTypes.map((expenseType) => (
+                <option key={expenseType.value} value={expenseType.value}>
+                  {expenseType.typeId}
                 </option>
               ))}
             </Form.Control>
