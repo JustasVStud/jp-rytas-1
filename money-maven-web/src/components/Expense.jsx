@@ -1,4 +1,4 @@
-import { FaEdit, FaTrashAlt } from 'react-icons/fa';
+import { FaEdit, FaTrashAlt, FaEuroSign, FaPencilAlt } from 'react-icons/fa';
 import { deleteHandler } from '../services/deleteHandler';
 import axios from 'axios';
 
@@ -25,28 +25,27 @@ function Expense({ expense, setDeleteExpense }) {
   }
 
  
-  let deleteParams = {
-    id: expense.expenseId,
-    type: 'Expense entry',
-    value: `${expense.expenseAmount} ${expense.expenseDescription}`,
+  let deleteParams = {id: expense.expenseId, type: 'Expense entry', value: `${expense.expenseAmount} ${expense.expenseDescription} ${expense.expenseTypeName}`,
   };
 
   return (
-    <tr>
-      <td className="amount expense">{expense.expenseAmount}</td>
-      
-      <td>{new Date(expense.expenseDatetime).toLocaleDateString('lt-LT', { year: 'numeric', month: '2-digit', day: '2-digit' })}</td>
-      <td>{expense.expenseDescription}</td>
-      <td>{typeName.find(cat => cat.value === expense.expensetypeName)?.name}</td>
-      <td>
-        <Link to={`edit/${expense.expenseId}`}>
-          <FaEdit />
+    <>
+    <tr className='table-row'>
+      <td className="table-cell"><FaEuroSign/>{expense.expenseAmount}</td>
+      <td className="table-cell">{new Date(expense.expenseDatetime).toLocaleDateString('lt-LT', { year: 'numeric', month: '2-digit', day: '2-digit' })}</td>
+      <td className="table-cell">{expense.expenseDescription}</td>
+      <td className="table-cell">{expense.expenseTypeName}</td>
+      <td className="table-cell">{typeName.find(cat => cat.value === expense.expensetypeName)?.name}</td>
+      <td className='table-cell table-button'>
+        <Link to={`edit/${expense.expenseId}`} className='table-button'>
+        <FaPencilAlt/>
         </Link>
       </td>
-      <td>
-        <FaTrashAlt onClick={() => deleteHandler(deleteParams, deleteExpense)} />
+      <td className='table-cell table-button'>
+        <FaTrashAlt onClick={() => deleteHandler(deleteParams, deleteExpense)}className='table-button'/>
       </td>
     </tr>
+    </>
   );
 }
 
