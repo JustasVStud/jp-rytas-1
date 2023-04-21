@@ -26,7 +26,6 @@ function NavbarHeader() {
                   <Nav.Link href="/login">Login</Nav.Link>
                   <Nav.Link href="/income">Income</Nav.Link>
                   <Nav.Link href="/expense">Expense</Nav.Link>
-                  {/* <Nav.Link href="/category/add">Add Category</Nav.Link> */}
                   <Nav.Link href="/category/">Category</Nav.Link>
                   <Nav.Link href="/income/edit/:id">Edit Income</Nav.Link>
                   

@@ -1,23 +1,22 @@
-import { Col } from "react-bootstrap";
 import { Formik } from "formik";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { Row } from "react-bootstrap";
-
+import { Col } from "react-bootstrap";
 import { Container } from "react-bootstrap";
 import axios from "axios";
-import DateTimePicker from "react-datetime-picker";
-import { FaCalendarAlt } from "react-icons/fa";
-import {Link, useNavigate } from "react-router-dom";
-import moment from "moment";
 import * as Yup from "yup";
-import { useState, useEffect } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import DateTimePicker from "react-datetime-picker";
+import moment from "moment";
+import { FaCalendarAlt } from "react-icons/fa";
 
 const baseUrl = "http://localhost:8080/api/expenses";
 
-const ExpenseValidationSchema = Yup.object().shape({
+const ExpenseEditValidationSchema = Yup.object().shape({
   expenseAmount: Yup.number()
-    .positive("Income amount cannot be negative")
+    .positive("Expense amount cannot be negative")
     .moreThan(0, "Ammount cannot be zero")
     .test("decimal-places", "Invalid value", (value) =>
       /^\d+(?:\.\d{1,2})?$/.test(value.toString())
@@ -31,36 +30,41 @@ const ExpenseValidationSchema = Yup.object().shape({
     .required("Date is required"),
 });
 
-function ExpenseForm() {
-  const navigate = useNavigate();
-  const [expenseTypes, setExpenseTypes] = useState([]);
-  
+function ExpenseEditForm() {
+  const [expenseTypes] = useState([]);
+
+  let { id } = useParams();
+  let [existingExpense, setExistingExpense] = useState({
+    expenseAmount: "",
+    expenseDescription: "",
+    expenseDatetime: "",
+    expenseTypeName: "",
+  });
 
   useEffect(() => {
     axios
-      .get("http://localhost:8080/api/expenseTypes")
-      .then((response) => setExpenseTypes(response.data))
+      .get(baseUrl + id)
+      .then((response) => setExistingExpense(response.data))
       .catch((err) => console.log(err));
-  }, []);
+  }, [id]);
 
+  const navigate = useNavigate();
   return (
     <Container className="form-style">
       <Row>
+        <h3 className="">Edit Expense</h3>
+      </Row>
+      <Row>
         <Formik
-          initialValues={{
-            expenseTypeName: "",
-            expenseAmount: "",
-            expenseDescription: "",
-            expenseDatetime: "",
-          }}
-          validationSchema={ExpenseValidationSchema}
+          initialValues={existingExpense}
+          validationSchema={ExpenseEditValidationSchema}
           onSubmit={(values, { resetForm }) => {
-            // console.log(values);
+            console.log(values);
             values.expenseDatetime = moment(values.expenseDatetime).format(
               "YYYY-MM-DDTHH:mm:ss"
             );
             axios
-              .post(baseUrl, values)
+              .patch(baseUrl + id, values)
               .then((response) => {
                 console.log(response.data);
                 resetForm();
@@ -91,7 +95,6 @@ function ExpenseForm() {
                   onChange={handleChange}
                 >
                   <option value="">Select category</option>
-
                   {expenseTypes.map((expenseType) => (
                     <option
                       key={expenseType.typeId}
@@ -129,7 +132,7 @@ function ExpenseForm() {
                   onChange={handleChange}
                   onBlur={handleBlur}
                   isInvalid={
-                    touched.expenseDesciption && errors.expenseDescription
+                    touched.expenseDescription && errors.expenseDescription
                   }
                 />
                 <Form.Control.Feedback type="invalid">
@@ -162,18 +165,17 @@ function ExpenseForm() {
                   </Form.Control.Feedback>
                 )}
               </Form.Group>
-
               <Row className="form-buttons-container">
                 <Col>
                   <Button variant="primary" type="submit" disabled={!dirty}>
-                    Submit
+                    Update
                   </Button>
                 </Col>
                 <Col>
-                <Link to={"/expense"}>
+                  <Link to={"/expense"}>
                     <Button variant="primary">Cancel</Button>
-                </Link>
-            </Col>
+                  </Link>
+                </Col>
               </Row>
             </Form>
           )}
@@ -183,4 +185,4 @@ function ExpenseForm() {
   );
 }
 
-export default ExpenseForm;
+export default ExpenseEditForm;

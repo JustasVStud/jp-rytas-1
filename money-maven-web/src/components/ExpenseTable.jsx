@@ -3,7 +3,8 @@ import axios from "axios";
 import { Table, Container, Button } from "react-bootstrap";
 import Expense from './Expense';
 import NoElementsTableRow from './NoElementsTableRow';
-// import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+
 
 function ExpenseTable() {
     const [expenses, setExpenses] = useState([]);
@@ -20,21 +21,23 @@ function ExpenseTable() {
     let expensesjsx;
     if(expenses.length > 0){
         expensesjsx = expenses.map((expense) => {
-            return (<Expense expense = {expense} setDeleteExpense = {setDeleteExpense} key={expense.expenseId}/>)
+            return (<Expense expense = {expense} onDelete={() => setDeleteExpense(Date.now())} key={expense.expenseId}/>)
         });
     } else {
         expensesjsx = <NoElementsTableRow elementType={"Expense"}/>
     }
     return ( 
-        <>  
-        <Container>
-            {/* <Link to={"/expense/create"} className='form-style'>
-                <Button variant='primary'>Create new</Button>
-            </Link> */}
+        <> 
+        <Container className="form-style">
+        <Link to={"/expense/create"} className='form-style'>
+            <Button variant='primary'>Create new</Button>
+        </Link> 
+        
+
             <Table>
                 <thead>
                     <tr>
-                        <th>Amount</th>
+                        <th>Amount   </th>
                         <th>Date</th>
                         <th>Description</th>
                         <th>Expense type</th>
@@ -46,7 +49,7 @@ function ExpenseTable() {
                     {expensesjsx}
                 </tbody>
             </Table>
-        </Container>
+       </Container> 
         </> );
 }
 

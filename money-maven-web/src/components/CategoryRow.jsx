@@ -1,4 +1,4 @@
-import { FaEdit, FaTrashAlt } from 'react-icons/fa';
+import { FaTrashAlt, FaPencilAlt } from 'react-icons/fa';
 import { deleteHandler } from '../services/deleteHandler';
 import { Link } from 'react-router-dom';
 
@@ -10,14 +10,16 @@ function CategoryRow({ expenseType, deleteExpenseType }) {
   const deleteParams = { id: expenseType.typeId, type: "Category name", value: expenseType.typeName };
   
  return (
-    <tr>
-      <td className="expense type">{expenseType.typeName}</td>
-      <td>
+    <tr className='table-row'>
+      <td className="table-cell">{expenseType.typeName}</td>
+
+      <td className='table-cell table-button'>
       <Link to={"add/" + expenseType.typeId}>
-          <FaEdit className="icon" />
+          <FaPencilAlt className="icon" />
+          
         </Link>
       </td>
-      <td>
+      <td className='table-cell table-button'>
         <FaTrashAlt className="icon" onClick={() => deleteHandler(deleteParams, deleteExpenseType )} />
       </td>
     </tr>

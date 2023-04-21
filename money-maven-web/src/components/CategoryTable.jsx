@@ -52,6 +52,13 @@ function CategoryTable() {
      </Row>
       
       <Table>
+      <thead>
+        <tr>
+        <th>Expense Type</th>
+        <th>Edit</th>
+        <th>Delete</th>
+        </tr>
+      </thead>
         <tbody>
           {categoryRowJSX}
         </tbody>
