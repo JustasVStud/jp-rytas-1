@@ -25,10 +25,9 @@ function NavbarHeader() {
                 <Nav className="justify-content-end flex-grow-1 pe-3">
                   <Nav.Link href="/login">Login</Nav.Link>
                   <Nav.Link href="/income">Income</Nav.Link>
+                  <Nav.Link href="/income/edit/:id">Edit Income</Nav.Link>
                   <Nav.Link href="/expense">Expense</Nav.Link>
                   <Nav.Link href="/category/">Category</Nav.Link>
-                  <Nav.Link href="/income/edit/:id">Edit Income</Nav.Link>
-                  
                 </Nav>
               </Offcanvas.Body>
             </Navbar.Offcanvas>

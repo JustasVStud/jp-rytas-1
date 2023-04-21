@@ -1,4 +1,4 @@
-import { FaTrashAlt, FaPencilAlt } from 'react-icons/fa';
+import { FaTrashAlt, FaPencilAlt, } from 'react-icons/fa';
 import { deleteHandler } from '../services/deleteHandler';
 import { Link } from 'react-router-dom';
 
@@ -15,12 +15,12 @@ function CategoryRow({ expenseType, deleteExpenseType }) {
 
       <td className='table-cell table-button'>
       <Link to={"add/" + expenseType.typeId}>
-          <FaPencilAlt className="icon" />
+          <FaPencilAlt/>
           
         </Link>
       </td>
       <td className='table-cell table-button'>
-        <FaTrashAlt className="icon" onClick={() => deleteHandler(deleteParams, deleteExpenseType )} />
+        <FaTrashAlt onClick={() => deleteHandler(deleteParams, deleteExpenseType )} />
       </td>
     </tr>
   );

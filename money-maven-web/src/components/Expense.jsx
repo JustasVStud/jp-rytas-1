@@ -26,12 +26,12 @@ function Expense({ expense, onDelete }) {
    <>
     <tr className="table-row">
   
-        <td className="table-cell"><FaEuroSign /> {expense.expenseAmount}</td>
+        <td className="table-cell"> <FaEuroSign /> {expense.expenseAmount}</td>
       
-        <td className="table-cell"><FaCalendarAlt/> {new Date(expense.expenseDatetime).toLocaleDateString("lt-LT", { year: "numeric",month: "2-digit",day: "2-digit",})}</td>
-        <td className="table-cell"><FaCommentAlt/> {expense.expenseDescription}</td>
-        <td className="table-cell"> {expense.expenseTypeName}</td>
-        <td className="table-cell"> {typeName.find((cat) => cat.value === expense.expensetypeName)?.name}
+        <td className="table-cell"> < FaCalendarAlt/> {new Date(expense.expenseDatetime).toLocaleDateString("lt-LT", { year: "numeric",month: "2-digit",day: "2-digit",})}   </td>
+        <td className="table-cell" > < FaCommentAlt/>{expense.expenseDescription}</td>
+        <td className="table-cell">{expense.expenseTypeName}</td>
+        <td className="table-cell">{typeName.find((cat) => cat.value === expense.expensetypeName)?.name}
         </td>
         <td className="table-cell table-button">
           <Link

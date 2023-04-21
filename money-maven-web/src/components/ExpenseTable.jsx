@@ -38,7 +38,7 @@ function ExpenseTable() {
                 <thead>
                     <tr>
                         <th>Amount   </th>
-                        <th>Date</th>
+                        <th>Date     </th>
                         <th>Description</th>
                         <th>Expense type</th>
                         <th>Edit</th>
