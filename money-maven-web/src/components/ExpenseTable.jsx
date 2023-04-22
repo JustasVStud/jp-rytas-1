@@ -1,6 +1,7 @@
 import {useState, useEffect} from 'react';
 import axios from "axios";
 import { Table, Container, Button } from "react-bootstrap";
+
 import Expense from './Expense';
 import NoElementsTableRow from './NoElementsTableRow';
 import { Link } from 'react-router-dom';
@@ -27,21 +28,20 @@ function ExpenseTable() {
         expensesjsx = <NoElementsTableRow elementType={"Expense"}/>
     }
     return ( 
-        <> 
-        <Container className="form-style">
+        <>
+        <Container>
         <Link to={"/expense/create"} className='form-style'>
             <Button variant='primary'>Create new</Button>
-        </Link> 
-        
-
-            <Table>
-                <thead>
-                    <tr>
-                        <th>Amount   </th>
-                        <th>Date     </th>
+         </Link> 
+         <Table>
+         <thead >
+                    <tr >
+                        <th >Amount</th>
+                        <th>Date </th>
                         <th>Description</th>
                         <th>Expense type</th>
                         <th>Edit</th>
+                        <th></th>
                         <th>Delete</th>
                     </tr>
                 </thead>
