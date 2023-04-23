@@ -23,8 +23,7 @@ const ExpenseEditValidationSchema = Yup.object().shape({
     )
     .required("Amount is required and must be a number"),
   expenseDescription: Yup.string()
-    .max(255, "Description is too long")
-    .required("Description is required"),
+    .max(255, "Description is too long"),
   expenseDatetime: Yup.date()
     .typeError("Field is required")
     .required("Date is required"),

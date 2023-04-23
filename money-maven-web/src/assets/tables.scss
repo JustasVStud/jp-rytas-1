@@ -24,6 +24,12 @@
                     padding-right: 1rem;
                     padding-left: 1rem;
                 }
+                &.table-cell__ellipsis {
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    max-width: 100px;
+                }
             }
             & > .table-button{
                 font-size: 1.5rem;

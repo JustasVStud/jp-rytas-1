@@ -17,15 +17,15 @@ const IncomeValidationSchema = Yup.object().shape({
     incomeAmount: Yup.number()
                 .positive('Income amount cannot be negative')
                 .moreThan(0, 'Ammount cannot be zero')
+                .max(9999999999.99, "Amount exeeds maximum allowed value")
                 .test(
                     'decimal-places',
                     'Invalid value',
-                    (value) => /^\d+(?:\.\d{1,2})?$/.test(value.toString())
+                    (value) => /^\d{1,10}(?:\.\d{1,2})?$/.test(value.toString())
                 )
                 .required('Amount is required and must be a number'),
     incomeDescription: Yup.string()
-                .max(255, 'Description is too long')
-                .required('Description is required'),
+                .max(255, 'Description is too long'),
     incomeDatetime: Yup.date()
                 .typeError('Field is required')
                 .required('Date is required')

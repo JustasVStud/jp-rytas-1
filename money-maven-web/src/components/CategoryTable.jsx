@@ -8,9 +8,9 @@ import { Link } from 'react-router-dom';
 function CategoryTable() {
   const [expenseTypes, setExpenseTypes] = useState([]);
   const [deleteExpenseTypes, setDeleteExpenseTypes] = useState([]);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   useEffect(() => {
-    console.log('trigger');
     axios
       .get('http://localhost:8080/api/expenseTypes')
       .then((response) => setExpenseTypes(response.data))
@@ -25,6 +25,7 @@ function CategoryTable() {
           expenseType={expenseType}
           onDelete={() => setDeleteExpenseTypes(Date.now())}
           key={expenseType.typeId}
+          onError={setErrorMessage}
         />
       );
     });
@@ -34,12 +35,16 @@ function CategoryTable() {
 
   return (
     <Container className="form-style">
+      {errorMessage ? (
+        <Row>
+          <div className="alert alert-danger">{errorMessage}</div>
+        </Row>
+      ) : null}
       <Row className="form-buttons-container">
         <Link to={'/category/add/'}>
           <Button variant="primary">Create</Button>
         </Link>
       </Row>
-
       <Table>
         <thead>
           <tr>

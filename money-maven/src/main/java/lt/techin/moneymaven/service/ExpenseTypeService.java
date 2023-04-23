@@ -5,10 +5,12 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import lt.techin.moneymaven.dto.ExpenseTypeDto;
 import lt.techin.moneymaven.exception.DuplicateExpenseTypeException;
+import lt.techin.moneymaven.exception.ExpenseTypeDeletionException;
 import lt.techin.moneymaven.exception.ExpenseTypeNotFoundException;
 import lt.techin.moneymaven.exception.NoEntriesFoundException;
 import lt.techin.moneymaven.model.ExpenseType;
@@ -108,6 +110,8 @@ public class ExpenseTypeService {
 			expenseTypeRepository.delete(expenseType);
 		} catch (ExpenseTypeNotFoundException e) {
 			throw e;
+		} catch (DataIntegrityViolationException e) {
+			throw new ExpenseTypeDeletionException("Expense type Id", id);
 		} catch (Exception e) {
 			throw new RuntimeException("Error while deleting expense type", e);
 		}

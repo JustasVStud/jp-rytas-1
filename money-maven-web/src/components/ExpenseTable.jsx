@@ -12,7 +12,6 @@ function ExpenseTable() {
   const [selectedCategory, setSelectedCategory] = useState("");
 
   useEffect(() => {
-    console.log("trigger");
     axios
       .get("http://localhost:8080/api/expenses")
       .then((response) => setExpenses(response.data))
@@ -105,7 +104,6 @@ function ExpenseTable() {
               <th>Description</th>
               <th>Expense type</th>
               <th>Edit</th>
-              <th></th>
               <th>Delete</th>
             </tr>
           </thead>

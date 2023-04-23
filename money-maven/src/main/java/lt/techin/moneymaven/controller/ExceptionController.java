@@ -13,6 +13,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import lt.techin.moneymaven.exception.DuplicateExpenseTypeException;
 import lt.techin.moneymaven.exception.ExpenseNotFoundException;
+import lt.techin.moneymaven.exception.ExpenseTypeDeletionException;
 import lt.techin.moneymaven.exception.ExpenseTypeNotFoundException;
 import lt.techin.moneymaven.exception.IncomeNotFoundException;
 import lt.techin.moneymaven.exception.NoEntriesFoundException;
@@ -98,5 +99,16 @@ public class ExceptionController extends ResponseEntityExceptionHandler {
     	body.put("cause", ex.getCause());
     
     	return new ResponseEntity<>(body, HttpStatus.FORBIDDEN);
+    }
+    
+    @ExceptionHandler(ExpenseTypeDeletionException.class)
+    public ResponseEntity<Object> handleExpenseTypeDeletionException(
+    		ExpenseTypeDeletionException ex, WebRequest request) {
+    	Map<String, Object> body = new LinkedHashMap<>();
+    	body.put("timestamp", LocalDateTime.now());
+    	body.put("message", ex.getMessage());
+    	body.put("cause", ex.getCause());
+    
+    	return new ResponseEntity<>(body, HttpStatus.CONFLICT);
     }
 }
