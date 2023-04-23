@@ -1,18 +1,26 @@
 import { FaTrashAlt, FaPencilAlt } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import axios from "axios";
-import { deleteHandler } from "../services/deleteHandler";
+import { deleteHandler } from '../services/deleteHandler';
 
-function Category({ expenseType, onDelete }) {
+function Category({ expenseType, onDelete, onError}) {
+
   function deleteExpenseType(typeId) {
     axios
       .delete('http://localhost:8080/api/expenseTypes/' + typeId)
-      .then(response => {
+      .then(() => {
         onDelete(expenseType.typeId);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        onDelete(expenseType.typeId);
+        if(err.response?.status === 409){
+          onError(`${expenseType.typeName} cannot be deleted due to existing Expenses that are using it`);
+        } else {
+          onError(`There was an internal server error while deleting the ${expenseType.typeName} expense type`);
+        }
+      });
   }
-  let deleteParams = {id: expenseType.typeId, type: "Income entry", value: expenseType.typeNamet };
+  let deleteParams = {id: expenseType.typeId, type: "Expense type", value: expenseType.typeName };
 
   return (
     <tr className='table-row'>

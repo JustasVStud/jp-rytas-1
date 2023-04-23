@@ -113,8 +113,6 @@ public class ExpenseService {
 			expenseRepository.delete(expense);
 		} catch (ExpenseNotFoundException e) {
 			throw e;
-		} catch (DataIntegrityViolationException e) {
-			throw new ExpenseTypeDeletionException("Expense Id", id);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException("Error while deleting expense", e);
