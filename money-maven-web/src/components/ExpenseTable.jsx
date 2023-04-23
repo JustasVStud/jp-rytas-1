@@ -104,7 +104,6 @@ function ExpenseTable() {
               <th>Description</th>
               <th>Expense type</th>
               <th>Edit</th>
-              <th></th>
               <th>Delete</th>
             </tr>
           </thead>
