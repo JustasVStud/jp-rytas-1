@@ -31,7 +31,8 @@ const ExpenseEditValidationSchema = Yup.object().shape({
 });
 
 function ExpenseEditForm() {
-  const [expenseTypes] = useState([]);
+  const navigate = useNavigate();
+  const [expenseTypes, setExpenseTypes] = useState([]); // added state for expense types
 
   let { id } = useParams();
   let [existingExpense, setExistingExpense] = useState({
@@ -43,12 +44,16 @@ function ExpenseEditForm() {
 
   useEffect(() => {
     axios
-      .get(baseUrl + id)
+      .get(`${baseUrl}/${id}`)
       .then((response) => setExistingExpense(response.data))
+      .catch((err) => console.log(err));
+
+    axios // added axios call to get expense types
+      .get("http://localhost:8080/api/expenseTypes")
+      .then((response) => setExpenseTypes(response.data))
       .catch((err) => console.log(err));
   }, [id]);
 
-  const navigate = useNavigate();
   return (
     <Container className="form-style">
       <Row>
@@ -64,7 +69,7 @@ function ExpenseEditForm() {
               "YYYY-MM-DDTHH:mm:ss"
             );
             axios
-              .patch(baseUrl + id, values)
+              .patch(`${baseUrl}/${id}`, values) // changed URL to include id
               .then((response) => {
                 console.log(response.data);
                 resetForm();

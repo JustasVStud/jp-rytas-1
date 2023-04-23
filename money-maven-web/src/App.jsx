@@ -8,10 +8,7 @@ import ExpenseTable from './components/ExpenseTable'
 import ExpenseForm from './components/ExpenseForm';
 import ExpenseEditForm from './components/ExpenseEditForm';
 import CategoryTable from './components/CategoryTable';
-
-
 import AddEditCategory from './components/AddEditCategory';
-
 import NavbarHeader from './components/NavbarHeader';
 
 
