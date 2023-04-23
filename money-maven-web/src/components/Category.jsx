@@ -24,7 +24,6 @@ function Category({ expenseType, onDelete }) {
       </td>
       <td className='table-cell table-button'>
         <FaTrashAlt onClick={() => deleteHandler (deleteParams, deleteExpenseType)}className="table-button" />
-        {/* <FaTrashAlt className="icon" onClick={() => deleteExpenseType(expenseType.typeId)} /> */}
       </td>
     </tr>
   );

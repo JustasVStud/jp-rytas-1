@@ -19,13 +19,13 @@ const ExpenseValidationSchema = Yup.object().shape({
   expenseAmount: Yup.number()
     .positive("Income amount cannot be negative")
     .moreThan(0, "Ammount cannot be zero")
+    .max(9999999999.99, "Amount exeeds maximum allowed value")
     .test("decimal-places", "Invalid value", (value) =>
-      /^\d+(?:\.\d{1,2})?$/.test(value.toString())
+      /^\d{1,10}(?:\.\d{1,2})?$/.test(value.toString())
     )
     .required("Amount is required and must be a number"),
   expenseDescription: Yup.string()
-    .max(255, "Description is too long")
-    .required("Description is required"),
+    .max(255, "Description is too long"),
   expenseDatetime: Yup.date()
     .typeError("Field is required")
     .required("Date is required"),
@@ -55,7 +55,6 @@ function ExpenseForm() {
           }}
           validationSchema={ExpenseValidationSchema}
           onSubmit={(values, { resetForm }) => {
-            // console.log(values);
             values.expenseDatetime = moment(values.expenseDatetime).format(
               "YYYY-MM-DDTHH:mm:ss"
             );
