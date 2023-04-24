@@ -15,20 +15,20 @@ const baseUrl = "http://localhost:8080/api/incomes";
 
 const IncomeValidationSchema = Yup.object().shape({
     incomeAmount: Yup.number()
-                .positive('Income amount cannot be negative')
-                .moreThan(0, 'Ammount cannot be zero')
-                .max(9999999999.99, "Amount exeeds maximum allowed value")
-                .test(
-                    'decimal-places',
-                    'Invalid value',
-                    (value) => /^\d{1,10}(?:\.\d{1,2})?$/.test(value.toString())
-                )
-                .required('Amount is required and must be a number'),
+      .positive('Income amount cannot be negative')
+      .moreThan(0, 'Ammount cannot be zero')
+      .max(9999999999.99, 'Amount exeeds maximum allowed value')
+      .test(
+        'decimal-places',
+        'Invalid value',
+        (value) => /^\d{1,10}(?:\.\d{1,2})?$/.test(value.toString())
+      )
+      .required('Amount is required and must be a number'),
     incomeDescription: Yup.string()
-                .max(255, 'Description is too long'),
+      .max(255, 'Description is too long'),
     incomeDatetime: Yup.date()
-                .typeError('Field is required')
-                .required('Date is required')
+      .typeError('Field is required')
+      .required('Date is required')
 });
 
 function IncomeForm() {
@@ -96,7 +96,7 @@ function IncomeForm() {
               value={values.incomeDescription}
               onChange={handleChange}
               onBlur={handleBlur}
-              isInvalid={touched.incomeDesciption && errors.incomeDescription}
+              isInvalid={touched.incomeDescription && errors.incomeDescription}
             />
             <Form.Control.Feedback type="invalid">
               {errors.incomeDescription}
