@@ -3,7 +3,6 @@ import { deleteHandler } from "../services/deleteHandler";
 import axios from "axios";
 import { Link } from "react-router-dom";
 
-const typeName = [{ value: " ", name: " " }];
 
 
 function Expense({ expense, onDelete }) {
