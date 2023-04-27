@@ -1,16 +1,13 @@
 package lt.techin.moneymaven.service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import lt.techin.moneymaven.dto.ExpenseDto;
 import lt.techin.moneymaven.exception.ExpenseNotFoundException;
-import lt.techin.moneymaven.exception.ExpenseTypeDeletionException;
 import lt.techin.moneymaven.exception.NoEntriesFoundException;
 import lt.techin.moneymaven.exception.UserNotFoundException;
 import lt.techin.moneymaven.model.Expense;
@@ -34,19 +31,31 @@ public class ExpenseService {
 	@Autowired
 	private ModelMapper modelMapper;
 	
-	public List<ExpenseDto> getAllExpenses() {
+	public Page<ExpenseDto> getExpenses(Pageable pageable) {
 		try {
-			List<Expense> expenses = expenseRepository.findAll();
+			Page<Expense> expenses = expenseRepository.findAll(pageable);
 			if(expenses.isEmpty()) {
 				throw new NoEntriesFoundException("expenses");
 			}
-			return expenses.stream()
-					.map(expense -> modelMapper.map(expense, ExpenseDto.class))
-					.collect(Collectors.toList());
+			return expenses.map(expense -> modelMapper.map(expense, ExpenseDto.class));
 		} catch (NoEntriesFoundException e){
 			throw e;
 		} catch (Exception e) {
 			throw new RuntimeException("Error while getting expenses", e);
+		}
+	}
+	
+	public Page<ExpenseDto> getExpensesByExpenseTypeName(Pageable pageable, String expenseTypeName){
+		try {
+			Page<Expense> expenses = expenseRepository.findByExpenseTypeName(expenseTypeName, pageable);
+			if(expenses.isEmpty()) {
+				throw new NoEntriesFoundException("expenses");
+			}
+			return expenses.map(expense -> modelMapper.map(expense, ExpenseDto.class));
+		} catch (NoEntriesFoundException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new RuntimeException("Error while getting expenses" , e);
 		}
 	}
 	

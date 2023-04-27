@@ -1,10 +1,9 @@
 import {useState, useEffect} from 'react'; 
-import axios from "axios";
-import { Button, Container, Pagination, Table, Form, Row, Col } from "react-bootstrap";
+import axios from 'axios';
+import { Button, Container, Pagination, Table, Form, Row, Col } from 'react-bootstrap';
 import Income from './Income';
 import NoElementsTableRow from './NoElementsTableRow';
 import { Link } from 'react-router-dom';
-import { FaRegFileWord } from 'react-icons/fa';
 
 function IncomeTable() {
 
@@ -46,7 +45,7 @@ function IncomeTable() {
             return (<Income income = {income} onDelete={() => setDeleteIncome(Date.now())} key={income.incomeId}/>)
         });
     } else {
-        incomesjsx = <NoElementsTableRow elementType={"Incomes"}/>
+        incomesjsx = <NoElementsTableRow elementType={"Incomes"}/>;
     }
 
 
