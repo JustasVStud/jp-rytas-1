@@ -4,7 +4,7 @@ import { Button, Container, Pagination, Table, Form, Row, Col } from "react-boot
 import Income from './Income';
 import NoElementsTableRow from './NoElementsTableRow';
 import { Link } from 'react-router-dom';
-import { FaRegFileWord } from 'react-icons/fa';
+// import { FaRegFileWord } from 'react-icons/fa';
 
 function IncomeTable() {
 

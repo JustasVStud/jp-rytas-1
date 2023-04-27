@@ -28,6 +28,7 @@ function NavbarHeader() {
                   <Nav.Link href="/income/edit/:id">Edit Income</Nav.Link>
                   <Nav.Link href="/expense">Expense</Nav.Link>
                   <Nav.Link href="/category/">Category</Nav.Link>
+                  <Nav.Link href="/charts">Charts</Nav.Link>
                 </Nav>
               </Offcanvas.Body>
             </Navbar.Offcanvas>
