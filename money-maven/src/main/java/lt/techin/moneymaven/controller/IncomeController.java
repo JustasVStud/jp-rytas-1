@@ -32,7 +32,7 @@ public class IncomeController {
 	
 	
 	@GetMapping
-	public ResponseEntity<Page<IncomeDto>> getAllIncomes(
+	public ResponseEntity<Page<IncomeDto>> getIncomes(
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int pageSize,
 			@RequestParam(defaultValue = "DESC") Sort.Direction direction
@@ -40,7 +40,7 @@ public class IncomeController {
 		
 		Pageable pageable = PageRequest.of(page, pageSize, Sort.by(direction, "incomeDatetime"));
 		
-		return new ResponseEntity<>(incomeService.getAllIncomes(pageable), HttpStatus.OK);
+		return new ResponseEntity<>(incomeService.getIncomes(pageable), HttpStatus.OK);
 	}
 	
 	@GetMapping("/{id}")
