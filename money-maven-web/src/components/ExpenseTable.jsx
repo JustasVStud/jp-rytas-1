@@ -68,21 +68,22 @@ function ExpenseTable() {
   return (
     <>
       <Container>
+        
         <Link to={"/expense/create"} className="form-style">
           <Button variant="primary">Create new</Button>
         </Link>
-        <th></th>
-        <Table>
-          <div className="form-style">
+        
+        <Row className='table-filter'>
+          <Col className='table-filter--size'>
             <Row className="form-buttons-container">
-            <Col className='table-filter--sort'>
+            
               <Button
                 variant={selectedCategory ? "secondary" : "primary"}
                 onClick={selectedCategory ? handleClearFilter : handleFilter}
               >
                 {selectedCategory ? "Clear filter" : "Filter"}
               </Button>
-
+            
               <Form.Select value={selectedCategory} onChange={handleCategoryChange}>
                 <option value="">Select category</option>
                 {categories.map((category) => (
@@ -91,10 +92,10 @@ function ExpenseTable() {
                   </option>
                 ))}
               </Form.Select>
-              </Col>
+              
             </Row>
-          </div>
-        </Table>
+          </Col>
+        </Row>
         <Table>
           <thead>
             <tr>
@@ -109,7 +110,7 @@ function ExpenseTable() {
           <tbody>{expensesjsx}</tbody>
         </Table>
         <Container>
-          <th></th>
+          
         </Container>
         <div>
           {/* <ExpenseCharts /> */}
@@ -127,7 +128,7 @@ function ExpenseTable() {
             justifyContent: "center",
           }}
         >
-          <th>Chart Line </th>
+          
           
         </Table>
         </div>
