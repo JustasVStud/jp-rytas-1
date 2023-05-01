@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Button, Container, Pagination, Table, Form, Row, Col } from 'react-bootstrap';
-
 import Expense from './Expense';
 import NoElementsTableRow from './NoElementsTableRow';
 import { Link } from 'react-router-dom';
+import { FaCalendarAlt } from 'react-icons/fa';
+import DateTimePicker from "react-datetime-picker";
+import moment from 'moment';
 
 function ExpenseTable() {
   const [expenses, setExpenses] = useState([]);
@@ -15,16 +17,20 @@ function ExpenseTable() {
   const [pageSize, setPageSize] = useState(10);
   const [sortDirection, setSortDirection] = useState('DESC');
   const [selectedExpenseType, setSelectedExpenseType] = useState('');
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
   
 
   useEffect(() => {
     axios
       .get(`http://localhost:8080/api/expenses`, {
         params: {
-          page:currentPage,
+          page: currentPage,
           pageSize: pageSize,
           direction: sortDirection,
-          expenseTypeName: selectedExpenseType || null
+          expenseTypeName: selectedExpenseType || null,
+          startDate: startDate || null,
+          endDate: endDate|| null
         }
       })
       .then((response) => {
@@ -45,7 +51,7 @@ function ExpenseTable() {
       .then((response) => setExpenseTypes(response.data))
       .catch((err) => console.log(err));
 
-  }, [currentPage, pageSize, sortDirection, deleteExpense, selectedExpenseType]);
+  }, [currentPage, pageSize, sortDirection, deleteExpense, selectedExpenseType, startDate, endDate]);
 
   const handlePageSizeChange = (e) => {
     setPageSize(e.target.value);
@@ -57,8 +63,24 @@ function ExpenseTable() {
 
   const handleSelectedExpenseTypeChange = (e) => {
     setSelectedExpenseType(e.target.value);
-    console.log(e.target.value);
   }
+
+  const handleStartDateChange = (e) => {
+    if(e != null){
+      setStartDate(moment(e).format('YYYY-MM-DDTHH:mm:ss'));
+    } else {
+      setStartDate(e);
+    }
+  }
+  
+  const handleEndDateChange = (e) => {
+    if(e != null){
+      setEndDate(moment(e).format('YYYY-MM-DDTHH:mm:ss'));
+    } else {
+      setEndDate(e);
+    }
+  }
+
 
   let expenseTypeJsx;
 
@@ -118,6 +140,40 @@ function ExpenseTable() {
                         {sortDirection === 'ASC' ? <>oldest to newest</> : <>newest to oldest</>}
                     </Button>
                 </Form.Group>
+            </Col>
+        </Row>
+        <Row>
+          <Col>
+          <DateTimePicker
+                  value={startDate}
+                  name="startDate"
+                  format="yyyy-MM-dd HH:mm"
+                  calendarIcon={<FaCalendarAlt />}
+                  className='table-filter--date'
+                  disableClock={true}
+                  yearPlaceholder="YYYY"
+                  monthPlaceholder="MM"
+                  dayPlaceholder="DD"
+                  hourPlaceholder="hh"
+                  minutePlaceholder="mm"
+                  onChange={handleStartDateChange}
+                />
+          </Col>
+          <Col>
+            <DateTimePicker
+                  value={endDate}
+                  name="dateFilterUntil"
+                  format="yyyy-MM-dd HH:mm"
+                  calendarIcon={<FaCalendarAlt />}
+                  className='table-filter--date'
+                  disableClock={true}
+                  yearPlaceholder="YYYY"
+                  monthPlaceholder="MM"
+                  dayPlaceholder="DD"
+                  hourPlaceholder="hh"
+                  minutePlaceholder="mm"
+                  onChange={handleEndDateChange}
+                />
             </Col>
         </Row>
         <Table>

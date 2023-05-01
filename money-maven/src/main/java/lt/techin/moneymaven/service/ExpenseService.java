@@ -1,5 +1,7 @@
 package lt.techin.moneymaven.service;
 
+import java.time.LocalDateTime;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -31,31 +33,37 @@ public class ExpenseService {
 	@Autowired
 	private ModelMapper modelMapper;
 	
-	public Page<ExpenseDto> getExpenses(Pageable pageable) {
+	public Page<ExpenseDto> getExpensesPage(Pageable pageable, String expenseTypeName, LocalDateTime startDate, LocalDateTime endDate) {
 		try {
-			Page<Expense> expenses = expenseRepository.findAll(pageable);
-			if(expenses.isEmpty()) {
+			Page<Expense> expenses;
+			
+			if (expenseTypeName != null && startDate != null && endDate != null) {
+				expenses = expenseRepository.findByExpenseTypeNameAndExpenseDatetimeBetween(expenseTypeName, startDate, endDate, pageable);
+			} else if (expenseTypeName != null && startDate != null) {
+				expenses = expenseRepository.findByExpenseTypeNameAndExpenseDatetimeAfter(expenseTypeName, startDate, pageable);
+			} else if (expenseTypeName != null && endDate != null) {
+				expenses = expenseRepository.findByExpenseTypeNameAndExpenseDatetimeBefore(expenseTypeName, endDate, pageable);
+			} else if (startDate != null && endDate != null) {
+				expenses = expenseRepository.findByExpenseDatetimeBetween(startDate, endDate, pageable);
+			} else if (expenseTypeName != null) {
+				expenses = expenseRepository.findByExpenseTypeName(expenseTypeName, pageable);
+			} else if (startDate != null) {
+				expenses = expenseRepository.findByExpenseDatetimeAfter(startDate, pageable);
+			} else if (endDate != null) {
+				expenses = expenseRepository.findByExpenseDatetimeBefore(endDate, pageable);
+			} else {
+				expenses = expenseRepository.findAll(pageable);
+			}
+			
+			if (expenses.isEmpty()) {
 				throw new NoEntriesFoundException("expenses");
 			}
-			return expenses.map(expense -> modelMapper.map(expense, ExpenseDto.class));
-		} catch (NoEntriesFoundException e){
-			throw e;
-		} catch (Exception e) {
-			throw new RuntimeException("Error while getting expenses", e);
-		}
-	}
-	
-	public Page<ExpenseDto> getExpensesByExpenseTypeName(Pageable pageable, String expenseTypeName){
-		try {
-			Page<Expense> expenses = expenseRepository.findByExpenseTypeName(expenseTypeName, pageable);
-			if(expenses.isEmpty()) {
-				throw new NoEntriesFoundException("expenses");
-			}
+			
 			return expenses.map(expense -> modelMapper.map(expense, ExpenseDto.class));
 		} catch (NoEntriesFoundException e) {
 			throw e;
 		} catch (Exception e) {
-			throw new RuntimeException("Error while getting expenses" , e);
+			throw new RuntimeException("Error while getting expenses", e);
 		}
 	}
 	
