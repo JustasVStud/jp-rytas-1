@@ -1,5 +1,7 @@
 package lt.techin.moneymaven.controller;
 
+import java.time.LocalDateTime;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -30,21 +32,17 @@ public class ExpenseController {
 	private ExpenseService expenseService;
 	
 	@GetMapping
-	public ResponseEntity<Page<ExpenseDto>> getExpenses(
+	public ResponseEntity<Page<ExpenseDto>> getExpensesPage(
 			@RequestParam(defaultValue="0") int page,
 			@RequestParam(defaultValue = "10") int pageSize,
 			@RequestParam(defaultValue = "DESC") Sort.Direction direction,
-			@RequestParam(required = false) String expenseTypeName
+			@RequestParam(required = false) String expenseTypeName,
+			@RequestParam(required = false) LocalDateTime startDate,
+			@RequestParam(required = false) LocalDateTime endDate
 			){
 		
 		Pageable pageable = PageRequest.of(page, pageSize, Sort.by(direction, "expenseDatetime"));
-		System.out.println(expenseTypeName);
-		System.out.println(pageable);
-		if(expenseTypeName != null) {
-			return new ResponseEntity<>(expenseService.getExpensesByExpenseTypeName(pageable, expenseTypeName), HttpStatus.OK);
-		}else {			
-			return new ResponseEntity<>(expenseService.getExpenses(pageable), HttpStatus.OK);
-		}
+			return new ResponseEntity<>(expenseService.getExpensesPage(pageable, expenseTypeName, startDate, endDate), HttpStatus.OK);		
 	}
 	
 	@GetMapping("/{id}")
