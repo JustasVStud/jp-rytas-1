@@ -73,17 +73,46 @@
         padding-right: 0;
         .col {
             padding-right: 0;
+            padding-left: 0;
+            &.form-label {
+                padding: 0;
+            }
         }
     }
     .table-filter--sort {
         padding-right: 0;
     }
-    .size--select {
+    .size--select,
+    .expense-type--select{
         width: min-content;
         background-color: var(--form-input);
         border-radius: 20px;
         & > option {
             background-color: var(--form-input);
+        }
+    }
+    .table-filter--date {
+        background-color: var(--form-input);
+        padding: .357rem 1rem;
+        border-radius: 20px;
+        line-height: 1.5rem;
+        &  .react-datetime-picker__button {
+            padding: 0 0.5rem;
+        }
+    }
+}
+.pagination {
+    & > .page-item {
+        background-color: var(--form-input);
+        & >.page-link {
+            background-color: var(--form-input);
+            z-index: inherit;
+            border-color: var(--button-color);
+            color: var(--font-color);
+        }
+        &.active > .page-link {
+            background-color: var(--button-color);
+            border-color: var(--button-color);
         }
     }
 }
