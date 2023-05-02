@@ -29,7 +29,7 @@ ChartJs.register(
 
 function DoughnutChart() {
   const [expenses, setExpenses] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedCategory] = useState("");
   const [selectedMonthFrom, setSelectedMonthFrom] = useState("");
   const [selectedMonthTo, setSelectedMonthTo] = useState("");
   const [deleteExpense] = useState([]);
@@ -63,13 +63,13 @@ function DoughnutChart() {
   };
 
   const handleFilter = () => {
+    
     let url = "http://localhost:8080/api/expenses";
     if (selectedCategory) {
       url += `?expenseTypeName=${selectedCategory}`;
     }
     if (selectedMonthFrom && selectedMonthTo) {
-      url += `${
-        selectedCategory ? "&" : "?"
+      url += `${selectedCategory ? "&" : "?"
       }monthFrom=${selectedMonthFrom}&monthTo=${selectedMonthTo}`;
     }
     axios
@@ -116,7 +116,8 @@ function DoughnutChart() {
   }, {});
 
   const dataDoughnut = {
-    labels:  Object.keys(expensesByCategoryAndMonth),
+    labels:  categories,
+    datapoints: "1,2,3",
     datasets: [
       {
         label: "Expenses by category",
@@ -179,16 +180,18 @@ function DoughnutChart() {
 
   return (
 <Container>
-<Row className="justify-content-center">
-<Col xs={12} md={6}>
+<Row className='table-filter'>
+<Col className='table-filter--size'>
 <Form.Label>Doughnut Chart</Form.Label>
+<Row className="form-buttons-container">
 <Form.Group>
 <Form.Label>Date from</Form.Label>
 <DateTimePicker
-onChange={handleMonthFromChange}
 value={selectedMonthFrom ? new Date(2023, selectedMonthFrom) : null}
-className="form-control"
+name="selectedMonthFrom"
 format="MM/yyyy"
+className="form-control"
+onChange= {handleMonthFromChange}
 disableClock={true}
 calendarIcon={<FaCalendarAlt />}
 />
@@ -196,30 +199,35 @@ calendarIcon={<FaCalendarAlt />}
 <Form.Group>
 <Form.Label>Date to</Form.Label>
 <DateTimePicker
-onChange={handleMonthToChange}
 value={selectedMonthTo ? new Date(2023, selectedMonthTo) : null}
-className="form-control"
+name="selectedMonthTo"
 format="MM/yyyy"
+className="form-control"
+onChange={handleMonthToChange}
 disableClock={true}
 calendarIcon={<FaCalendarAlt />}
 />
+
 </Form.Group>
+<Col className='table-filter--size'>
 <Row className="form-buttons-container">
-<Col className="table-filter--sort">
-<Button className="mr-2" onClick={handleClearMonthFilter}>
+<Button onClick={handleClearMonthFilter}>
 Clear date filter
 </Button>
-</Col>
+
 </Row>
 </Col>
 </Row>
-<Row className="justify-content-center mt-5">
-<Col xs={12} md={6}>
 </Col>
 </Row>
-<Doughnut data={dataDoughnut} />
+
+<Doughnut data={dataDoughnut} />  
+<Row className='table-filter'>
+<Col className='table-filter--size'>
+</Col>
+</Row>
+
 </Container>
   );
 }
-
 export default DoughnutChart;
