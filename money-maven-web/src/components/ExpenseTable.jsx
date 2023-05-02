@@ -67,7 +67,7 @@ function ExpenseTable() {
 
   const handleStartDateChange = (e) => {
     if(e != null){
-      setStartDate(moment(e).format('YYYY-MM-DDTHH:mm:ss'));
+      setStartDate(moment(e).format('YYYY-MM-DDT00:00:00'));
     } else {
       setStartDate(e);
     }
@@ -75,7 +75,7 @@ function ExpenseTable() {
   
   const handleEndDateChange = (e) => {
     if(e != null){
-      setEndDate(moment(e).format('YYYY-MM-DDTHH:mm:ss'));
+      setEndDate(moment(e).format('YYYY-MM-DDT23:59:59'));
     } else {
       setEndDate(e);
     }
@@ -102,15 +102,13 @@ function ExpenseTable() {
   return (
     <>
       <Container>
-        <Link to={"/expense/create"} className="form-style">
-          <Button variant="primary">Create new</Button>
-        </Link>
         <Row className='table-filter'>
             <Col>
               <Form.Group>
                 <Form.Select
                   id="expenseTypeSelect"
                   value={selectedExpenseType}
+                  className='expense-type--select'
                   onChange={handleSelectedExpenseTypeChange}
                 >
                   <option value=''>Filter by</option>
@@ -142,36 +140,34 @@ function ExpenseTable() {
                 </Form.Group>
             </Col>
         </Row>
-        <Row>
+        <Row className='table-filter'>
           <Col>
+          <Form.Label>Date from:</Form.Label>
           <DateTimePicker
                   value={startDate}
                   name="startDate"
-                  format="yyyy-MM-dd HH:mm"
+                  format="yyyy-MM-dd"
                   calendarIcon={<FaCalendarAlt />}
                   className='table-filter--date'
                   disableClock={true}
                   yearPlaceholder="YYYY"
                   monthPlaceholder="MM"
                   dayPlaceholder="DD"
-                  hourPlaceholder="hh"
-                  minutePlaceholder="mm"
                   onChange={handleStartDateChange}
                 />
           </Col>
           <Col>
+          <Form.Label>Date until:</Form.Label>
             <DateTimePicker
                   value={endDate}
                   name="dateFilterUntil"
-                  format="yyyy-MM-dd HH:mm"
+                  format="yyyy-MM-dd"
                   calendarIcon={<FaCalendarAlt />}
                   className='table-filter--date'
                   disableClock={true}
                   yearPlaceholder="YYYY"
                   monthPlaceholder="MM"
                   dayPlaceholder="DD"
-                  hourPlaceholder="hh"
-                  minutePlaceholder="mm"
                   onChange={handleEndDateChange}
                 />
             </Col>
@@ -200,6 +196,9 @@ function ExpenseTable() {
             <Pagination.Next onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages - 1} />
             <Pagination.Last onClick={() => setCurrentPage(totalPages - 1)} />
         </Pagination>
+        <Link to={"/expense/create"} className="form-style">
+          <Button variant="primary">Create new</Button>
+        </Link>
       </Container>
     </>
   );

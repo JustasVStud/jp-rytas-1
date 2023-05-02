@@ -52,9 +52,6 @@ function IncomeTable() {
     return ( 
     <>  
     <Container>
-        <Link to={"/income/create"} className='form-style'>
-            <Button variant='primary'>Create new</Button>
-        </Link>
         <Row className='table-filter'>
             <Col className='table-filter--size'>
                 <Form.Group as={Row}>
@@ -65,7 +62,7 @@ function IncomeTable() {
                         value={pageSize} 
                         onChange={handlePageSizeChange}
                         className='size--select'>
-                            <option value = "10" selected="selected">10</option>
+                            <option value = "10">10</option>
                             <option value = "15">15</option>
                             <option value = "20">20</option>
                         </Form.Select>
@@ -105,6 +102,9 @@ function IncomeTable() {
             <Pagination.Next onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages - 1} />
             <Pagination.Last onClick={() => setCurrentPage(totalPages - 1)} />
         </Pagination>
+        <Link to={"/income/create"} className='form-style'>
+            <Button variant='primary'>Create new</Button>
+        </Link>
     </Container>
     </> );
 }
