@@ -10,6 +10,8 @@ import {
   Legend,
   ArcElement,
 } from "chart.js";
+import DateTimePicker from "react-datetime-picker";
+import { FaCalendarAlt } from "react-icons/fa";
 import { Container, Button, Row, Form, Col } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
@@ -28,7 +30,8 @@ ChartJs.register(
 function ExpenseCharts() {
   const [expenses, setExpenses] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [selectedMonth, setSelectedMonth] = useState("");
+  const [selectedMonthFrom, setSelectedMonthFrom] = useState("");
+  const [selectedMonthTo, setSelectedMonthTo] = useState("");
   const [deleteExpense] = useState([]);
   const [deleteIncome] = useState([]);
 
@@ -45,6 +48,7 @@ function ExpenseCharts() {
     "October",
     "November",
     "December",
+    "All",
   ];
 
   useEffect(() => {
@@ -52,22 +56,13 @@ function ExpenseCharts() {
       .get("http://localhost:8080/api/expenses")
       .then((response) => setExpenses(response.data))
       .catch((err) => console.log(err));
-  }, [deleteExpense, deleteIncome, selectedMonth, selectedCategory]);
-
-  function expensesByMonth(expenses) {
-    const expensesByMonth = {};
-
-    expenses.forEach((expense) => {
-      const month = new Date(expense.expenseDatetime).getMonth();
-      if (expensesByMonth[month]) {
-        expensesByMonth[month] += expense.expenseAmount;
-      } else {
-        expensesByMonth[month] = expense.expenseAmount;
-      }
-    });
-
-    return expensesByMonth;
-  }
+  }, [
+    deleteExpense,
+    deleteIncome,
+    selectedMonthFrom,
+    selectedMonthTo,
+    selectedCategory,
+  ]);
 
   const categories = Array.from(
     new Set(expenses.map((expense) => expense.expenseTypeName))
@@ -77,17 +72,20 @@ function ExpenseCharts() {
     setSelectedCategory(e.target.value);
   };
 
-  const handleMonthChange = (e) => {
-    setSelectedMonth(e.target.value);
+  const dateChange = (e) => {
+    setSelectedMonthFrom(e.target.value);
+    setSelectedMonthTo(e.target.value);
   };
 
   const handleFilter = () => {
     let url = "http://localhost:8080/api/expenses";
     if (selectedCategory) {
-      url += `?expenseType=${selectedCategory}`;
+      url += `?expenseTypeName=${selectedCategory}`;
     }
-    if (selectedMonth) {
-      url += `${selectedCategory ? "&" : "?"}month=${selectedMonth}`;
+    if (selectedMonthFrom) {
+      const monthIndexFrom = months.indexOf(selectedMonthFrom);
+
+      url += `${selectedCategory ? "&" : "?"}month=${monthIndexFrom}`;
     }
     axios
       .get(url)
@@ -97,7 +95,8 @@ function ExpenseCharts() {
 
   const handleClearFilter = () => {
     setSelectedCategory("");
-    setSelectedMonth("");
+    setSelectedMonthFrom("");
+    setSelectedMonthTo("");
     axios
       .get("http://localhost:8080/api/expenses")
       .then((response) => setExpenses(response.data))
@@ -105,134 +104,257 @@ function ExpenseCharts() {
   };
 
   const handleClearMonthFilter = () => {
-    setSelectedMonth("");
+    setSelectedMonthFrom("");
+    setSelectedMonthTo("");
     handleFilter();
   };
 
-  const [chartType, setChartType] = useState("Line");
-
   const expensesByCategoryAndMonth = expenses.reduce((acc, expense) => {
     const month = new Date(expense.expenseDatetime).getMonth();
-    if (selectedMonth && month !== parseInt(selectedMonth)) {
+    const category = expense.expenseTypeName;
+
+    if (selectedMonthFrom && month !== parseInt(selectedMonthFrom)) {
       return acc;
     }
 
-const key = `${expense.expenseTypeName}-${month}`;
-if (!acc[key]) {
-  acc[key] = {
-    category: expense.expenseTypeName,
-    month: expense.month,
-    total: 0,
-  };
-}
-acc[key].total += expense.expenseAmount;
-return acc;
+    if (selectedCategory && category !== selectedCategory) {
+      return acc;
+    }
+
+    const key = selectedCategory ? `${category}-${month}` : `${month}`;
+
+    if (!acc[key]) {
+      acc[key] = {
+        category: selectedCategory ? category : null,
+        monthFrom: selectedMonthFrom ? parseInt(selectedMonthFrom) : month,
+        monthTo: selectedMonthTo ? parseInt(selectedMonthTo) : month,
+        total: 0,
+      };
+    }
+    if (!selectedCategory || selectedCategory === category) {
+      acc[key].total += expense.expenseAmount;
+    }
+
+    return acc;
   }, {});
 
   const dataLine = {
     labels: Object.keys(expensesByCategoryAndMonth).map((key) => {
-    const { month, category } = expensesByCategoryAndMonth[key];
-    return `${month} - ${category}`;
+      const { month, year, category } = expensesByCategoryAndMonth[key];
+      const monthNames = [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+      ];
+      return `${monthNames[month - 1]} ${year} - ${category}`;
     }),
+
     datasets: [
-    {
-    label: "Expenses",
-    data: Object.values(expensesByCategoryAndMonth).map(
-    (data) => data.total
-    ),
-    backgroundColor: "green",
-    tension: 0.2,
-    },
+      {
+        label: "Expenses",
+        data: Object.values(expensesByCategoryAndMonth).map(
+          (data) => data.total
+        ),
+        backgroundColor: "red",
+        tension: 0.2,
+        options: {
+          scales: {
+            y: {
+              ticks: {
+                // Include a dollar sign in the ticks
+                callback: function (value, index, ticks) {
+                  return "$" + value;
+                },
+              },
+            },
+          },
+        },
+      },
     ],
-    };
-    
-    const dataDoughnut = {
+  };
+
+  const dataDoughnut = {
     labels: categories,
     datasets: [
-    {
-    data: categories.map((category) =>
-    expenses.reduce(
-    (acc, expense) =>
-    expense.expenseTypeName === category
-    ? acc + expense.expenseAmount
-    : acc,
-    0
-    )
-    ),
-    backgroundColor: ["green", "red", "blue", "brown", "yellow"],
-    borderWidth: 2,
-    spacing: 0.5,
-    offset: 8,
-    },
+      {
+        label: "Expenses by category",
+        data: categories.map((category) =>
+          expenses
+            .filter(
+              (expense) =>
+                expense.expenseTypeName === category &&
+                (!selectedMonthFrom ||
+                  new Date(expense.expenseDatetime) >=
+                    new Date(selectedMonthFrom)) &&
+                (!selectedMonthTo ||
+                  new Date(expense.expenseDatetime) <=
+                    new Date(selectedMonthTo))
+            )
+            .reduce((acc, expense) => acc + expense.expenseAmount, 0)
+        ),
+        backgroundColor: [
+          "#ffcd56",
+          "#ff6384",
+          "#36a2eb",
+          "#fd6b19",
+          "#4BC0C0",
+          "#9966FF",
+          "#C9CBCF",
+          "#CCD1D1",
+          "#ffcd56",
+          "#ff6384",
+          "#36a2eb",
+          "#fd6b19",
+          "#4BC0C0",
+          "#9966FF",
+          "#C9CBCF",
+          "#CCD1D1",
+          "#ffcd56",
+          "#ff6384",
+          "#36a2eb",
+          "#fd6b19",
+          "#4BC0C0",
+          "#9966FF",
+          "#C9CBCF",
+          "#CCD1D1",
+        ],
+        hoverBackgroundColor: [
+          "#FF6384",
+          "#36A2EB",
+          "#FFCE56",
+          "#8B008B",
+          "#ADFF2F",
+          "#00BFFF",
+          "#FFA07A",
+          "#20B2AA",
+          "#00FFFF",
+        ],
+      },
     ],
-    };
-    
-    const toggleChartType = () => {
-    setChartType((chartType) => (chartType === "Line" ? "Doughnut" : "Line"));
-    };
-    
-    return (
-    <Container
-    style={{
-    background: "#ffff",
-    border: "1px solid #ffffff",
-    boxShadow: "0px 1px 15px rgba(0, 0, 0, 0.06)",
-    padding: "2.5rem",
-    borderRadius: "20px",
-    height: "100%",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    }}
-    >
-    <div className="form-style">
-    <Row className="form-buttons-container">
-    <Col className="table-filter--sort">
-    <Button
-    variant={selectedCategory ? "secondary" : "primary"}
-    onClick={selectedCategory ? handleClearFilter : handleFilter}
-    className="button-clear-filter"
-    >
-    {selectedCategory ? "Clear Filter" : "Filter"}
-    </Button>
-            <Form.Select
-              value={selectedCategory}
-              onChange={handleCategoryChange}
-            >
-              <option value="">Select category</option>
-              {categories.map((category) => (
-                <option key={category} value={category}>
-                  {category}
-                </option>
-              ))}
-            </Form.Select>
+  };
 
-            <Button
-              variant={selectedMonth ? "secondary" : "primary"}
-              onClick={selectedMonth ? handleClearMonthFilter : handleFilter}
-            >
-              {selectedMonth ? "Clear filter" : "Filter"}
-            </Button>
+  return (
+    <Container>
+      <Container
+        style={{
+          background: "#ffff",
+          border: "1px solid #ffffff",
+          boxShadow: "0px 1px 15px rgba(0, 0, 0, 0.06)",
+          padding: "2.5rem",
+          borderRadius: "20px",
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        <div className="form-style">
+          <Row className="form-buttons-container">
+            <Col className="table-filter--sort">
+              <Button
+                variant={selectedCategory ? "secondary" : "primary"}
+                onClick={selectedCategory ? handleClearFilter : handleFilter}
+                className="button-clear-filter"
+              >
+                {selectedCategory ? "Clear Filter" : "Filter"}
+              </Button>
+              <Form.Select
+                as="select"
+                value={selectedCategory}
+                onChange={handleCategoryChange}
+              >
+                <option value="">Select category</option>
+                {categories.map((category) => (
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
+                ))}
+              </Form.Select>
 
-            <Form.Select value={selectedMonth} onChange={handleMonthChange}>
-              <option value="">Select Month</option>
-              {months.map((month, index) => (
-                <option key={index} value={index}>
-                  {month}
-                </option>
-              ))}
-            </Form.Select>
-          </Col>
-        </Row>
-      </div>
-      <Button onClick={toggleChartType}>
-        {chartType === "Line" ? "Switch to Doughnut" : "Switch to Line"}
-      </Button>
-      {chartType === "Line" ? (
+              <Button
+                variant={selectedMonthFrom ? "secondary" : "primary"}
+                onClick={
+                  selectedMonthFrom ? handleClearMonthFilter : handleFilter
+                }
+              >
+                {selectedMonthFrom ? "Clear filter" : "Filter"}
+              </Button>
+
+              <Form.Select value={selectedMonthFrom} onChange={dateChange}>
+                <option value="">Select From</option>
+                {months.map((month, index) => (
+                  <option key={index} value={index}>
+                    {month}
+                  </option>
+                ))}
+              </Form.Select>
+              <Form.Select value={selectedMonthFrom} onChange={dateChange}>
+                <option value="">Select To</option>
+                {months.map((month, index) => (
+                  <option key={index} value={index}>
+                    {month}
+                  </option>
+                ))}
+              </Form.Select>
+            </Col>
+          </Row>
+        </div>
         <Line data={dataLine} />
-      ) : (
+      </Container>
+      <td></td>
+      <Container
+        style={{
+          background: "#ffff",
+          border: "1px solid #ffffff",
+          boxShadow: "0px 1px 15px rgba(0, 0, 0, 0.06)",
+          padding: "2.5rem",
+          borderRadius: "20px",
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        <div className="form-style">
+          <Row className="form-buttons-container">
+            <Col className="table-filter--sort">
+              <Button
+                variant={selectedMonthFrom ? "secondary" : "primary"}
+                onClick={
+                  selectedMonthFrom ? handleClearMonthFilter : handleFilter
+                }
+              >
+                {selectedMonthFrom ? "Clear filter" : "Filter"}
+              </Button>
+
+                
+                
+
+
+                
+       
+               <Form.Select value={selectedMonthTo} onChange={dateChange}>
+               <option value="">Select To</option>
+               {months.map((month, index) => (
+                  <option key={index} value={index}>
+                    {month}
+                  </option>
+                ))}
+              </Form.Select>
+            </Col>
+          </Row>
+        </div>
         <Doughnut data={dataDoughnut} />
-      )}
+      </Container>
     </Container>
   );
 }
