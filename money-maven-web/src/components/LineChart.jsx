@@ -1,4 +1,4 @@
-import { Line, Doughnut } from "react-chartjs-2";
+import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJs,
   CategoryScale,
@@ -27,7 +27,7 @@ ChartJs.register(
   ArcElement
 );
 
-function ExpenseCharts() {
+function LineChart() {
   const [expenses, setExpenses] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedMonthFrom, setSelectedMonthFrom] = useState("");
@@ -182,66 +182,6 @@ function ExpenseCharts() {
     ],
   };
 
-  const dataDoughnut = {
-    labels: categories,
-    datasets: [
-      {
-        label: "Expenses by category",
-        data: categories.map((category) =>
-          expenses
-            .filter(
-              (expense) =>
-                expense.expenseTypeName === category &&
-                (!selectedMonthFrom ||
-                  new Date(expense.expenseDatetime) >=
-                    new Date(selectedMonthFrom)) &&
-                (!selectedMonthTo ||
-                  new Date(expense.expenseDatetime) <=
-                    new Date(selectedMonthTo))
-            )
-            .reduce((acc, expense) => acc + expense.expenseAmount, 0)
-        ),
-        backgroundColor: [
-          "#ffcd56",
-          "#ff6384",
-          "#36a2eb",
-          "#fd6b19",
-          "#4BC0C0",
-          "#9966FF",
-          "#C9CBCF",
-          "#CCD1D1",
-          "#ffcd56",
-          "#ff6384",
-          "#36a2eb",
-          "#fd6b19",
-          "#4BC0C0",
-          "#9966FF",
-          "#C9CBCF",
-          "#CCD1D1",
-          "#ffcd56",
-          "#ff6384",
-          "#36a2eb",
-          "#fd6b19",
-          "#4BC0C0",
-          "#9966FF",
-          "#C9CBCF",
-          "#CCD1D1",
-        ],
-        hoverBackgroundColor: [
-          "#FF6384",
-          "#36A2EB",
-          "#FFCE56",
-          "#8B008B",
-          "#ADFF2F",
-          "#00BFFF",
-          "#FFA07A",
-          "#20B2AA",
-          "#00FFFF",
-        ],
-      },
-    ],
-  };
-
   return (
     <Container>
       <Container
@@ -310,53 +250,8 @@ function ExpenseCharts() {
         </div>
         <Line data={dataLine} />
       </Container>
-      <td></td>
-      <Container
-        style={{
-          background: "#ffff",
-          border: "1px solid #ffffff",
-          boxShadow: "0px 1px 15px rgba(0, 0, 0, 0.06)",
-          padding: "2.5rem",
-          borderRadius: "20px",
-          height: "100%",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
-        <div className="form-style">
-          <Row className="form-buttons-container">
-            <Col className="table-filter--sort">
-              <Button
-                variant={selectedMonthFrom ? "secondary" : "primary"}
-                onClick={
-                  selectedMonthFrom ? handleClearMonthFilter : handleFilter
-                }
-              >
-                {selectedMonthFrom ? "Clear filter" : "Filter"}
-              </Button>
-
-                
-                
-
-
-                
-       
-               <Form.Select value={selectedMonthTo} onChange={dateChange}>
-               <option value="">Select To</option>
-               {months.map((month, index) => (
-                  <option key={index} value={index}>
-                    {month}
-                  </option>
-                ))}
-              </Form.Select>
-            </Col>
-          </Row>
-        </div>
-        <Doughnut data={dataDoughnut} />
-      </Container>
     </Container>
   );
 }
 
-export default ExpenseCharts;
+export default LineChart;

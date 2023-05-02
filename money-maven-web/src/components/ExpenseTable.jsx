@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { Table, Container, Button, Row, Form, Col } from "react-bootstrap";
 import Expense from "./Expense";
-// import ExpenseCharts from "./components/ExpenseCharts";
+import DoughnutChart from "./DoughnutChart";
 import NoElementsTableRow from "./NoElementsTableRow";
 import { Link } from "react-router-dom";
 
@@ -113,24 +113,7 @@ function ExpenseTable() {
           
         </Container>
         <div>
-          {/* <ExpenseCharts /> */}
-        <Table
-          style={{
-            background: "#fcf6f9",
-            border: "1px solid #ffffff",
-            boxShadow: "0px 1px 15px rgba(0, 0, 0, 0.06)",
-            padding: "2.5rem",
-            borderRadius: "20px",
-            height: "100%",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          
-          
-        </Table>
+          <DoughnutChart />;
         </div>
 
       </Container>
