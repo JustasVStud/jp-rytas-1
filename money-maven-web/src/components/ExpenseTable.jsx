@@ -67,7 +67,7 @@ function ExpenseTable() {
 
   const handleStartDateChange = (e) => {
     if(e != null){
-      setStartDate(moment(e).format('YYYY-MM-DDT00:00:00'));
+      setStartDate(moment(e).format('YYYY-MM-DDTHH:mm:ss'));
     } else {
       setStartDate(e);
     }
@@ -75,7 +75,7 @@ function ExpenseTable() {
   
   const handleEndDateChange = (e) => {
     if(e != null){
-      setEndDate(moment(e).format('YYYY-MM-DDT23:59:59'));
+      setEndDate(moment(e).format('YYYY-MM-DDTHH:mm:ss'));
     } else {
       setEndDate(e);
     }
