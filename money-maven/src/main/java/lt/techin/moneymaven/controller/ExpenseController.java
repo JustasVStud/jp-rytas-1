@@ -40,7 +40,6 @@ public class ExpenseController {
 			@RequestParam(required = false) LocalDateTime startDate,
 			@RequestParam(required = false) LocalDateTime endDate
 			){
-		
 		Pageable pageable = PageRequest.of(page, pageSize, Sort.by(direction, "expenseDatetime"));
 			return new ResponseEntity<>(expenseService.getExpensesPage(pageable, expenseTypeName, startDate, endDate), HttpStatus.OK);		
 	}

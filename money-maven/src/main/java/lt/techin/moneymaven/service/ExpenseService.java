@@ -48,9 +48,9 @@ public class ExpenseService {
 			} else if (expenseTypeName != null) {
 				expenses = expenseRepository.findByExpenseTypeName(expenseTypeName, pageable);
 			} else if (startDate != null) {
-				expenses = expenseRepository.findByExpenseDatetimeAfter(startDate, pageable);
+				expenses = expenseRepository.findByExpenseDatetimeGreaterThanEqual(startDate, pageable);
 			} else if (endDate != null) {
-				expenses = expenseRepository.findByExpenseDatetimeBefore(endDate, pageable);
+				expenses = expenseRepository.findByExpenseDatetimeLessThanEqual(endDate, pageable);
 			} else {
 				expenses = expenseRepository.findAll(pageable);
 			}

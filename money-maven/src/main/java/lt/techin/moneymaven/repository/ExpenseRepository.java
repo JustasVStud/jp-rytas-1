@@ -15,9 +15,9 @@ public interface ExpenseRepository extends JpaRepository<Expense, Integer>{
 	@Query("SELECT e FROM Expense e JOIN e.expenseType et WHERE et.typeName = :expenseTypeName")
 	Page<Expense> findByExpenseTypeName(@Param("expenseTypeName") String expenseTypeName, Pageable pageable);
 	
-	Page<Expense> findByExpenseDatetimeAfter(LocalDateTime startDate, Pageable pageable);
+	Page<Expense> findByExpenseDatetimeGreaterThanEqual(LocalDateTime startDate, Pageable pageable);
 	
-	Page<Expense> findByExpenseDatetimeBefore(LocalDateTime endDate, Pageable pageable);
+	Page<Expense> findByExpenseDatetimeLessThanEqual(LocalDateTime endDate, Pageable pageable);
 	
 	Page<Expense> findByExpenseDatetimeBetween(LocalDateTime startDate, LocalDateTime endDate, Pageable pageable);
 	
