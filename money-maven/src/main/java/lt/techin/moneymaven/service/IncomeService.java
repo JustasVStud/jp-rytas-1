@@ -27,7 +27,7 @@ public class IncomeService {
 	@Autowired
 	private ModelMapper modelMapper;
 	
-	public Page<IncomeDto >getAllIncomes(Pageable pageable){
+	public Page<IncomeDto >getIncomes(Pageable pageable){
 		try {
 			Page<Income> incomes = incomeRepository.findAll(pageable);
 			if (incomes.isEmpty()) {

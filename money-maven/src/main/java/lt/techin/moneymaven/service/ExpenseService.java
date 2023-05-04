@@ -1,16 +1,15 @@
 package lt.techin.moneymaven.service;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.time.LocalDateTime;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import lt.techin.moneymaven.dto.ExpenseDto;
 import lt.techin.moneymaven.exception.ExpenseNotFoundException;
-import lt.techin.moneymaven.exception.ExpenseTypeDeletionException;
 import lt.techin.moneymaven.exception.NoEntriesFoundException;
 import lt.techin.moneymaven.exception.UserNotFoundException;
 import lt.techin.moneymaven.model.Expense;
@@ -34,16 +33,34 @@ public class ExpenseService {
 	@Autowired
 	private ModelMapper modelMapper;
 	
-	public List<ExpenseDto> getAllExpenses() {
+	public Page<ExpenseDto> getExpensesPage(Pageable pageable, String expenseTypeName, LocalDateTime startDate, LocalDateTime endDate) {
 		try {
-			List<Expense> expenses = expenseRepository.findAll();
-			if(expenses.isEmpty()) {
+			Page<Expense> expenses;
+			
+			if (expenseTypeName != null && startDate != null && endDate != null) {
+				expenses = expenseRepository.findByExpenseTypeNameAndExpenseDatetimeBetween(expenseTypeName, startDate, endDate, pageable);
+			} else if (expenseTypeName != null && startDate != null) {
+				expenses = expenseRepository.findByExpenseTypeNameAndExpenseDatetimeAfter(expenseTypeName, startDate, pageable);
+			} else if (expenseTypeName != null && endDate != null) {
+				expenses = expenseRepository.findByExpenseTypeNameAndExpenseDatetimeBefore(expenseTypeName, endDate, pageable);
+			} else if (startDate != null && endDate != null) {
+				expenses = expenseRepository.findByExpenseDatetimeBetween(startDate, endDate, pageable);
+			} else if (expenseTypeName != null) {
+				expenses = expenseRepository.findByExpenseTypeName(expenseTypeName, pageable);
+			} else if (startDate != null) {
+				expenses = expenseRepository.findByExpenseDatetimeGreaterThanEqual(startDate, pageable);
+			} else if (endDate != null) {
+				expenses = expenseRepository.findByExpenseDatetimeLessThanEqual(endDate, pageable);
+			} else {
+				expenses = expenseRepository.findAll(pageable);
+			}
+			
+			if (expenses.isEmpty()) {
 				throw new NoEntriesFoundException("expenses");
 			}
-			return expenses.stream()
-					.map(expense -> modelMapper.map(expense, ExpenseDto.class))
-					.collect(Collectors.toList());
-		} catch (NoEntriesFoundException e){
+			
+			return expenses.map(expense -> modelMapper.map(expense, ExpenseDto.class));
+		} catch (NoEntriesFoundException e) {
 			throw e;
 		} catch (Exception e) {
 			throw new RuntimeException("Error while getting expenses", e);

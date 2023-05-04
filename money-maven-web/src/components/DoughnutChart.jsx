@@ -37,9 +37,10 @@ function DoughnutChart() {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:8080/api/expenses`, {})
-      // .get(`http://localhost:8080/api/expenses?limit=1000`)
-      .then((response) => setExpenses(response.data))
+      // .get(`http://localhost:8080/api/expenses`, {})
+      .get('http://localhost:8080/api/expenses?page=0&pageSize=1000')
+      .then((response) => console.log(response))
+      // .then((response) => setExpenses(response.data))
       .catch((err) => console.log(err));
   }, [
     deleteExpense,
