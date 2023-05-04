@@ -12,9 +12,10 @@ import {
 } from "chart.js";
 import DateTimePicker from "react-datetime-picker";
 import { FaCalendarAlt } from "react-icons/fa";
-import { Container, Button, Row, Form, Col } from "react-bootstrap";
+import { Container, Row, Form, Col } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import moment from "moment";
 
 ChartJs.register(
   CategoryScale,
@@ -30,114 +31,75 @@ ChartJs.register(
 function DoughnutChart() {
   const [expenses, setExpenses] = useState([]);
   const [selectedCategory] = useState("");
-  const [selectedMonthFrom, setSelectedMonthFrom] = useState("");
-  const [selectedMonthTo, setSelectedMonthTo] = useState("");
+  const [selectedStartDate] = useState("");
+  const [selectedSetEndDate] = useState("");
   const [deleteExpense] = useState([]);
   const [deleteIncome] = useState([]);
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
 
   useEffect(() => {
     axios
-      // .get(`http://localhost:8080/api/expenses`, {})
-      .get('http://localhost:8080/api/expenses?page=0&pageSize=1000')
-      .then((response) => console.log(response))
-      // .then((response) => setExpenses(response.data))
+      .get("http://localhost:8080/api/expenses?page=0&pageSize=10000", {
+        params: {
+          startDate: startDate || null,
+          endDate: endDate || null,
+        },
+      })
+      .then((response) => setExpenses(response.data.content))
       .catch((err) => console.log(err));
   }, [
     deleteExpense,
     deleteIncome,
-    selectedMonthFrom,
-    selectedMonthTo,
+
     selectedCategory,
+    startDate,
+    endDate,
   ]);
 
-  const categories = Array.from(
-    new Set(expenses.map((expense) => expense.expenseTypeName))
-  );
-  const handleMonthFromChange = (date) => {
-    const month = date.getMonth();
-    setSelectedMonthFrom(month);
+  const categories = expenses
+    ? Array.from(new Set(expenses.map((expense) => expense.expenseTypeName)))
+    : [];
+
+  const handleStartDateChange = (e) => {
+    if (e != null) {
+      setStartDate(moment(e).format("YYYY-MM-DDTHH:mm:ss"));
+    } else {
+      setStartDate(e);
+    }
   };
 
-  const handleMonthToChange = (date) => {
-    const month = date.getMonth();
-    setSelectedMonthTo(month);
+  const handleEndDateChange = (e) => {
+    if (e != null) {
+      setEndDate(moment(e).format("YYYY-MM-DDTHH:mm:ss"));
+    } else {
+      setEndDate(e);
+    }
   };
-
-  const handleFilter = () => {
-    
-    let url = "http://localhost:8080/api/expenses";
-    if (selectedCategory) {
-      url += `?expenseTypeName=${selectedCategory}`;
-    }
-    if (selectedMonthFrom && selectedMonthTo) {
-      url += `${selectedCategory ? "&" : "?"
-      }monthFrom=${selectedMonthFrom}&monthTo=${selectedMonthTo}`;
-    }
-    axios
-      .get(url)
-      .then((response) => setExpenses(response.data))
-      .catch((err) => console.log(err));
-  };
-
-
-  const handleClearMonthFilter = () => {
-    setSelectedMonthFrom("");
-    setSelectedMonthTo("");
-    handleFilter();
-    axios
-      .get("http://localhost:8080/api/expenses")
-      .then((response) => setExpenses(response.data))
-      .catch((err) => console.log(err));
-  };
-
-  const expensesByCategoryAndMonth = expenses.reduce((acc, expense) => { 
-    const month = new Date(expense.expenseDatetime).getMonth();
-    const category = expense.expenseTypeName;
-  
-    if (
-      (selectedMonthFrom && month < selectedMonthFrom) ||
-      (selectedMonthTo && month > selectedMonthTo) ||
-      (selectedCategory && category !== selectedCategory)
-    ) 
-    {
-      return acc;
-    }
-  
-    if (!acc[category]) {
-      acc[category] = {};
-    }
-    if (!acc[category][month]) {
-      acc[category][month] = {
-        total: 0,
-      };
-    }
-    acc[category][month].total += expense.expenseAmount;
-  
-    return acc;
-  }, {});
 
   const dataDoughnut = {
-    labels:  categories,
+    labels: categories,
     datapoints: "1,2,3",
     datasets: [
       {
         label: "Expenses by category",
         data:
-         categories.map((category) =>
-          expenses
-            .filter(
-              (expense) =>
-                expense.expenseTypeName === category &&
-                (!selectedMonthFrom ||
-                  new Date(expense.expenseDatetime) >=
-                    new Date(selectedMonthFrom)) &&
-                (!selectedMonthTo ||
-                  new Date(expense.expenseDatetime) <=
-                    new Date(selectedMonthTo))
-            )
-            .reduce((acc, expense) => acc + expense.expenseAmount, 0),
-        ),
-        
+          categories &&
+          categories.map((category) =>
+            expenses
+              .filter(
+                (expense) =>
+                  expense.expenseTypeName === category &&
+                  (!selectedStartDate ||
+                    new Date(expense.expenseDatetime) >=
+                      new Date(selectedStartDate)) &&
+                  (!selectedSetEndDate ||
+                    new Date(expense.expenseDatetime) <=
+                      new Date(selectedSetEndDate))
+              )
+              .reduce((acc, expense) => acc + expense.expenseAmount, 0)
+          ),
+
         backgroundColor: [
           "#ffcd56",
           "#ff6384",
@@ -180,55 +142,53 @@ function DoughnutChart() {
   };
 
   return (
-<Container>
-<Row className='table-filter'>
-<Col className='table-filter--size'>
-<Form.Label>Doughnut Chart</Form.Label>
-<Row className="form-buttons-container">
-<Form.Group>
-<Form.Label>Date from</Form.Label>
-<DateTimePicker
-value={selectedMonthFrom ? new Date(2023, selectedMonthFrom) : null}
-name="selectedMonthFrom"
-format="MM/yyyy"
-className="form-control"
-onChange= {handleMonthFromChange}
-disableClock={true}
-calendarIcon={<FaCalendarAlt />}
-/>
-</Form.Group>
-<Form.Group>
-<Form.Label>Date to</Form.Label>
-<DateTimePicker
-value={selectedMonthTo ? new Date(2023, selectedMonthTo) : null}
-name="selectedMonthTo"
-format="MM/yyyy"
-className="form-control"
-onChange={handleMonthToChange}
-disableClock={true}
-calendarIcon={<FaCalendarAlt />}
-/>
+    <Container>
+      <Row className="table-filter">
+        
+          <Form.Label>Doughnut Chart</Form.Label>
 
-</Form.Group>
-<Col className='table-filter--size'>
-<Row className="form-buttons-container">
-<Button onClick={handleClearMonthFilter}>
-Clear date filter
-</Button>
-
-</Row>
-</Col>
-</Row>
-</Col>
-</Row>
-
-<Doughnut data={dataDoughnut} />  
-<Row className='table-filter'>
-<Col className='table-filter--size'>
-</Col>
-</Row>
-
-</Container>
+          <Row className="table-filter">
+            <Col className="table-filter--size">
+              <Form.Group>
+                <Col>
+                  <Form.Label>Date from:</Form.Label>
+                  <DateTimePicker
+                    value={startDate}
+                    name="startDate"
+                    format="yyyy-MM-dd"
+                    className="table-filter--date"
+                    onChange={handleStartDateChange}
+                    disableClock={true}
+                    calendarIcon={<FaCalendarAlt />}
+                  />
+                </Col>
+              </Form.Group>
+            </Col>
+            </Row>
+            <Row className="table-filter">
+            <Col className="table-filter--size">
+              <Form.Group>
+                <Col>
+                  <Form.Label>Date to:</Form.Label>
+                  <DateTimePicker
+                    value={endDate}
+                    name="endDate"
+                    format="yyyy-MM-dd"
+                    className="table-filter--date"
+                    onChange={handleEndDateChange}
+                    disableClock={true}
+                    calendarIcon={<FaCalendarAlt />}
+                  />
+                </Col>
+              </Form.Group>
+            </Col>
+          </Row>
+          
+        
+      </Row>
+      {!expenses&&<h4>Data not exist, wrong date format</h4>}
+      <Doughnut data={dataDoughnut} />
+    </Container>
   );
 }
 export default DoughnutChart;
