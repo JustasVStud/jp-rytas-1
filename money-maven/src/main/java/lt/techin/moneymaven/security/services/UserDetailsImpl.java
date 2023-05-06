@@ -1,10 +1,9 @@
 package lt.techin.moneymaven.security.services;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -35,10 +34,12 @@ public class UserDetailsImpl implements UserDetails{
 	}
 	
 	public static UserDetailsImpl build(User user) {
-		List<GrantedAuthority> authorities = Stream.of("USER")
-		        .filter(s -> user.isAdmin() || !"ADMIN".equals(s))
-		        .map(SimpleGrantedAuthority::new)
-		        .collect(Collectors.toList());
+	    List<GrantedAuthority> authorities = new ArrayList<>();
+	    authorities.add(new SimpleGrantedAuthority("USER"));
+
+	    if (user.isAdmin()) {
+	        authorities.add(new SimpleGrantedAuthority("ADMIN"));
+	    }
 
 		return new UserDetailsImpl(
 				user.getUserId(), 
