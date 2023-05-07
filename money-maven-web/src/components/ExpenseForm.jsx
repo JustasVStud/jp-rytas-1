@@ -3,7 +3,6 @@ import { Formik } from "formik";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { Row } from "react-bootstrap";
-
 import { Container } from "react-bootstrap";
 import axios from "axios";
 import DateTimePicker from "react-datetime-picker";
@@ -34,14 +33,24 @@ const ExpenseValidationSchema = Yup.object().shape({
 function ExpenseForm() {
   const navigate = useNavigate();
   const [expenseTypes, setExpenseTypes] = useState([]);
-  
+  const token = JSON.parse(localStorage.getItem('user'));
+  const source = axios.CancelToken.source();
 
   useEffect(() => {
     axios
-      .get("http://localhost:8080/api/expenseTypes")
+      .get("http://localhost:8080/api/expenseTypes", {
+        headers: {
+          Authorization: `Bearer ${token.accessToken}`
+        },
+        cancelToken: source.token
+      })
       .then((response) => setExpenseTypes(response.data))
-      .catch((err) => console.log(err));
-  }, []);
+      .catch((err) => {
+        if (!axios.isCancel(err)) {
+          console.log(err);
+        }
+      });
+  }, [token, source]);
 
   return (
     <Container className="form-style">
@@ -59,13 +68,22 @@ function ExpenseForm() {
               "YYYY-MM-DDTHH:mm:ss"
             );
             axios
-              .post(baseUrl, values)
+              .post(baseUrl, values, {
+                headers: {
+                  Authorization: `Bearer ${token.accessToken}`
+                },
+                cancelToken: source.token
+              })
               .then((response) => {
                 console.log(response.data);
                 resetForm();
                 navigate("/expense");
               })
-              .catch((err) => console.log(err));
+              .catch((err) => {
+                if (!axios.isCancel(err)) {
+                  console.log(err);
+                }
+              });
           }}
           enableReinitialize
         >

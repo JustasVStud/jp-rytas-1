@@ -9,13 +9,27 @@ function CategoryTable() {
   const [expenseTypes, setExpenseTypes] = useState([]);
   const [deleteExpenseTypes, setDeleteExpenseTypes] = useState([]);
   const [errorMessage, setErrorMessage] = useState(null);
-
+  const token = JSON.parse(localStorage.getItem('user'));
+  
   useEffect(() => {
+    const source = axios.CancelToken.source();
     axios
-      .get('http://localhost:8080/api/expenseTypes')
+      .get('http://localhost:8080/api/expenseTypes', {
+        headers: {
+          Authorization: `Bearer ${token.accessToken}`
+        },
+        cancelToken: source.token
+      })
       .then((response) => setExpenseTypes(response.data))
-      .catch((err) => console.log(err));
-  }, [deleteExpenseTypes]);
+      .catch((err) => {
+        if (!axios.isCancel(err)) {
+          console.log(err);
+        }
+      });
+      return () => {
+        source.cancel('Component unmounted');
+    };
+  }, [deleteExpenseTypes, token]);
 
   let categoryjsx;
   if (expenseTypes.length > 0) {

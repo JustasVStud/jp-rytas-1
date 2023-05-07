@@ -31,7 +31,9 @@ const ExpenseEditValidationSchema = Yup.object().shape({
 
 function ExpenseEditForm() {
   const navigate = useNavigate();
-  const [expenseTypes, setExpenseTypes] = useState([]); // added state for expense types
+  const [expenseTypes, setExpenseTypes] = useState([]); 
+  const token = JSON.parse(localStorage.getItem('user'));
+  const source = axios.CancelToken.source();
 
   let { id } = useParams();
   let [existingExpense, setExistingExpense] = useState({
@@ -43,15 +45,33 @@ function ExpenseEditForm() {
 
   useEffect(() => {
     axios
-      .get(`${baseUrl}/${id}`)
+      .get(`${baseUrl}/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token.accessToken}`
+        },
+        cancelToken: source.token
+      })
       .then((response) => setExistingExpense(response.data))
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        if (!axios.isCancel(err)) {
+          console.log(err);
+        }
+      });
 
     axios // added axios call to get expense types
-      .get("http://localhost:8080/api/expenseTypes")
+      .get('http://localhost:8080/api/expenseTypes', {
+        headers: {
+          Authorization: `Bearer ${token.accessToken}`
+        },
+        cancelToken: source.token
+      })
       .then((response) => setExpenseTypes(response.data))
-      .catch((err) => console.log(err));
-  }, [id]);
+      .catch((err) => {
+        if (!axios.isCancel(err)) {
+          console.log(err);
+        }
+      });
+  }, [id, token, source]);
 
   return (
     <Container className="form-style">
@@ -68,13 +88,22 @@ function ExpenseEditForm() {
               "YYYY-MM-DDTHH:mm:ss"
             );
             axios
-              .patch(`${baseUrl}/${id}`, values) // changed URL to include id
+              .patch(`${baseUrl}/${id}`, values, {
+                headers: {
+                  Authorization: `Bearer ${token.accessToken}`
+                },
+                cancelToken: source.token
+              })
               .then((response) => {
                 console.log(response.data);
                 resetForm();
                 navigate("/expense");
               })
-              .catch((err) => console.log(err));
+              .catch((err) => {
+                if (!axios.isCancel(err)) {
+                  console.log(err);
+                }
+              });
           }}
           enableReinitialize
         >

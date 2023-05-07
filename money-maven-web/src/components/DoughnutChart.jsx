@@ -37,24 +37,30 @@ function DoughnutChart() {
   const [deleteIncome] = useState([]);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
-
+  const token = JSON.parse(localStorage.get('user'));
+  const source = axios.CancelToken.source();
   useEffect(() => {
     axios
       .get("http://localhost:8080/api/expenses?page=0&pageSize=10000", {
+        headers: {
+          Authorization: `Bearer ${token.accessToken}`
+        },
         params: {
           startDate: startDate || null,
           endDate: endDate || null,
         },
+        cancelToken: source.token
       })
       .then((response) => setExpenses(response.data.content))
       .catch((err) => console.log(err));
   }, [
     deleteExpense,
     deleteIncome,
-
     selectedCategory,
     startDate,
     endDate,
+    token,
+    source
   ]);
 
   const categories = expenses

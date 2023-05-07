@@ -5,7 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 import authService from '../services/auth.service';
 
-const loginValidationSchema = Yup.object().shape({
+const registerValidationSchema = Yup.object().shape({
       username: Yup.string()
         .min(3, 'Username is too short')
         .max(20, 'Username is too long')
@@ -13,27 +13,31 @@ const loginValidationSchema = Yup.object().shape({
       password: Yup.string()
         .min(6, 'Password is too short')
         .max(30, 'Password is too long')
-        .required('Password is required')
+        .required('Password is required'),
+      passwordConfirmation: Yup.string()
+        .oneOf([Yup.ref('password'), null], 'Passwords must match')
+        .required('Password confirmation is required')
 });
 
-function LoginForm() {
+function RegisterForm() {
   const navigate = useNavigate();
   return (
     <Container>
       <Row>
-        <h3>Login to Your Account</h3>
+        <h3>Welcome Onboard</h3>
       </Row>
       <Row>
       <Formik
         initialValues={{
           username: '',
-          password: ''
+          password: '',
+          passwordConfirmation: ''
         }}
-        validationSchema={loginValidationSchema}
+        validationSchema={registerValidationSchema}
         onSubmit={(values, {resetForm}) => {
-          authService.login(values.username, values.password).then(() => {
+          authService.register(values.username, values.password).then(() => {
             resetForm()
-            navigate('/income')
+            navigate('/login')
           })
           .catch((err) => console.log(err))
         }}
@@ -79,9 +83,24 @@ function LoginForm() {
                 {errors.password}
               </Form.Control.Feedback>
             </Form.Group>
+            <Form.Group>
+              <Form.Label>Confirm Password</Form.Label>
+              <Form.Control
+                type='passwordConfirmation'
+                name='passwordConfirmation'
+                size='sm'
+                value={values.passwordConfirmation}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                isInvalid={touched.passwordConfirmation && errors.passwordConfirmation}
+              />
+              <Form.Control.Feedback type='invalid'>
+                {errors.passwordConfirmation}
+              </Form.Control.Feedback>
+            </Form.Group>
             <Row className="form-buttons-container">
               <Col>
-                <Button variant="primary" type="submit" disabled={!dirty}>Login</Button>
+                <Button variant="primary" type="submit" disabled={!dirty}>Register</Button>
               </Col>
             </Row>
           </Form>
@@ -90,14 +109,14 @@ function LoginForm() {
       </Row>
       <Row>
         <Col>
-          <span>
-              Not registered yet?
-          </span>
-          <Link to={'/register'}>Create an Account</Link>
+            <span>
+                Already registered?
+            </span>
+            <Link to={'/login'}>Login</Link>
         </Col>
       </Row>
     </Container>
   )
 }
 
-export default LoginForm
+export default RegisterForm;
