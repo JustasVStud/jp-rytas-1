@@ -27,10 +27,15 @@ function ExpenseTable() {
   const [selectedExpenseType, setSelectedExpenseType] = useState("");
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
+  const token = JSON.parse(localStorage.getItem('user'));
 
   useEffect(() => {
+    const source = axios.CancelToken.source();
     axios
       .get(`http://localhost:8080/api/expenses`, {
+        headers: {
+          Authorization: `Bearer ${token.accessToken}`
+        },
         params: {
           page: currentPage,
           pageSize: pageSize,
@@ -39,6 +44,7 @@ function ExpenseTable() {
           startDate: startDate || null,
           endDate: endDate || null,
         },
+        cancelToken: source.token
       })
       .then((response) => {
         if (response.status === 200) {
@@ -51,12 +57,28 @@ function ExpenseTable() {
           setCurrentPage(0);
         }
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        if (!axios.isCancel(err)) {
+          console.log(err);
+        }
+      });
 
     axios // added axios call to get expense types
-      .get("http://localhost:8080/api/expenseTypes")
+      .get("http://localhost:8080/api/expenseTypes", {
+        headers: {
+          Authorization: `Bearer ${token.accessToken}`
+        },
+        cancelToken: source.token
+      })
       .then((response) => setExpenseTypes(response.data))
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        if (!axios.isCancel(err)) {
+          console.log(err);
+        }
+      });
+      return () => {
+        source.cancel('Component unmounted');
+    };
   }, [
     currentPage,
     pageSize,
@@ -65,6 +87,7 @@ function ExpenseTable() {
     selectedExpenseType,
     startDate,
     endDate,
+    token
   ]);
 
   const handlePageSizeChange = (e) => {

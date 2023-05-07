@@ -25,22 +25,38 @@ function AddEditCategory() {
   });
   
   const [errorMsg, setErrorMsg] = useState("");
+  const token = JSON.parse(localStorage.getItem('user'));
+  const source = axios.CancelToken.source();
 
   useEffect(() => {
     if (id) {
       axios
-        .get(`${baseUrl}/${id}`)
+        .get(`${baseUrl}/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token.accssToken}`
+          },
+          cancelToken: source.token
+        })
         .then((response) => setExistingCategory(response.data))
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          if (!axios.isCancel(err)) {
+            console.log(err);
+          }
+        });
     }
-  }, [id]);
+  }, [id, token, source]);
 
   let categorySubmission = (values, { resetForm }) => {
     const { id, ...data } = values;
     const url = id ? `${baseUrl}/${id}` : baseUrl;
     const method = id ? "put" : "post";
     
-    axios[method](url, data)
+    axios[method](url, data, {
+      headers: {
+        Authorization: `Bearer ${token.accessToken}`
+      },
+      cancelToken: source.token
+    })
       .then((res) => {
 
         if (categorySubmission) {
@@ -56,10 +72,10 @@ function AddEditCategory() {
         } else {
           setErrorMsg("Error saving category");
         }
-       
-        console.log(err);
+        if (!axios.isCancel(err)) {
+          console.log(err);
+        }
       },[categorySubmission]);
-    console.log(values);
   }
   
 

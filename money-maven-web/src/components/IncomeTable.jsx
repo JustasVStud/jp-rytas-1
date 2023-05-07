@@ -13,22 +13,37 @@ function IncomeTable() {
     const [totalPages, setTotalPages] = useState(0);
     const [pageSize, setPageSize] = useState(10);
     const [sortDirection, setSortDirection] = useState('DESC');
-
+    const token = JSON.parse(localStorage.getItem('user'));
+    
     useEffect(() => {
+        const source = axios.CancelToken.source()
         axios
         .get(`http://localhost:8080/api/incomes`, {
+            headers: {
+                Authorization: `Bearer ${token.accessToken}`
+            },
             params: {
                 page:currentPage,
                 pageSize: pageSize,
                 direction: sortDirection
-            }
+            },
+            cancelToken: source.token
         })
         .then(response => {
             setIncomes(response.data.content);
             setTotalPages(response.data.totalPages);
         })
-        .catch((err) => console.log(err))
-    }, [currentPage, pageSize, sortDirection, deleteIncome]);
+        .catch((err) => {
+            if (!axios.isCancel(err)) {
+                console.log(err);
+              }
+        })
+
+        return () => {
+            source.cancel('Component unmounted');
+        };
+        
+    }, [currentPage, pageSize, sortDirection, deleteIncome, token]);
 
     const handlePageSizeChange = (e) => {
         setPageSize(e.target.value);

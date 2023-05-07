@@ -6,9 +6,15 @@ import { Link } from "react-router-dom";
 
 
 function Expense({ expense, onDelete }) {
+  const token = JSON.parse(localStorage.getItem('user'));
+
   function deleteExpense(expenseId) {
     axios
-      .delete(`http://localhost:8080/api/expenses/${expenseId}`)
+      .delete(`http://localhost:8080/api/expenses/${expenseId}`, {
+        headers: {
+          Authorization: `Bearer ${token.accessToken}`
+        }
+      })
       .then((response) => {
         onDelete(response.data);
       })

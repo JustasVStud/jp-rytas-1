@@ -33,21 +33,34 @@ const IncomeEditValidationSchema = Yup.object().shape({
 });
 
 function IncomeEditForm() {
-
-       
-
-        let {id} = useParams();
-        let [existingIncome, setExistingIncome] = useState({
-            incomeAmount: "",
-            incomeDescription: "",
-            incomeDatetime: ""
+       const token = JSON.parse(localStorage.getItem('user'));
+       let {id} = useParams();
+       let [existingIncome, setExistingIncome] = useState({
+           incomeAmount: "",
+           incomeDescription: "",
+           incomeDatetime: ""
         });
-
+        
         useEffect(() => {
-            axios.get(baseUrl +id)
+            const source = axios.CancelToken.source();
+            axios.get(baseUrl + id, {
+                headers: {
+                    Authorization: `Bearer ${token.accessToken}`
+                },
+                cancelToken: source.token
+            })
             .then(response => setExistingIncome(response.data))
-            .catch((err) => console.log(err))
-        }, [id])
+            .catch((err) => {
+                if (!axios.isCancel(err)) {
+                    console.log(err);
+                }
+            })
+
+            return () => {
+                source.cancel('Component unmounted');
+            };
+
+        }, [id, token])
 
         const navigate = useNavigate();
     return ( 
@@ -62,13 +75,21 @@ function IncomeEditForm() {
                 onSubmit={(values, {resetForm}) => {
                     console.log(values);
                     values.incomeDatetime = moment(values.incomeDatetime).format('YYYY-MM-DDTHH:mm:ss');
-                    axios.patch(baseUrl + id, values)
+                    axios.patch(baseUrl + id, values, {
+                        headers: {
+                            Authorization: `Bearer ${token.accessToken}`
+                        }
+                    })
                     .then((response) => {
                         console.log(response.data)
                         resetForm()
                         navigate("/income");
                       })
-                      .catch((err) => console.log(err));
+                      .catch((err) => {
+                        if (!axios.isCancel(err)) {
+                            console.log(err);
+                        }
+                      });
                 }}
                 enableReinitialize
                 >
