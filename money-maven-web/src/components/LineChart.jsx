@@ -12,15 +12,22 @@ import {
 } from "chart.js";
 import DateTimePicker from "react-datetime-picker";
 import { FaCalendarAlt } from "react-icons/fa";
-import { Container, Button, Row, Form, Col } from "react-bootstrap";
+import { Container, Row, Form, Col } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import moment from "moment";
+import Chart from "chart.js/auto";
+
+Chart.register("myCustomChartType", {
+  // implementation goes here
+});
 
 ChartJs.register(
   CategoryScale,
   LinearScale,
   PointElement,
   LineElement,
+
   Title,
   Tooltip,
   Legend,
@@ -28,233 +35,213 @@ ChartJs.register(
 );
 
 function LineChart() {
+  const [incomes, setIncomes] = useState([]);
   const [expenses, setExpenses] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [selectedMonthFrom, setSelectedMonthFrom] = useState("");
-  const [selectedMonthTo, setSelectedMonthTo] = useState("");
-  const [deleteExpense] = useState([]);
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
   const [deleteIncome] = useState([]);
-
-  const months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
+  const [deleteExpense] = useState([]);
+  const [selectedStartDate] = useState("");
+  const [selectedSetEndDate] = useState("");
 
   useEffect(() => {
     axios
-      .get("http://localhost:8080/api/expenses")
-      .then((response) => setExpenses(response.data))
+      .get("http://localhost:8080/api/expenses?page=0&pageSize=10000", {
+        params: {
+          startDate: startDate || null,
+          endDate: endDate || null,
+        },
+      })
+      .then((response) => {
+        console.log("Expense data received:", response.data.content);
+        setExpenses(response.data.content);
+      })
       .catch((err) => console.log(err));
-  }, [
-    deleteExpense,
-    deleteIncome,
-    selectedMonthFrom,
-    selectedMonthTo,
-    selectedCategory,
-  ]);
+    axios
+      .get("http://localhost:8080/api/incomes?page=0&pageSize=10000", {
+        params: {
+          startDate: startDate || null,
+          endDate: endDate || null,
+        },
+      })
+      .then((response) => {
+        console.log("Income data received:", response.data.conten);
+        setIncomes(response.data.content);
+      })
+      .catch((err) => console.log(err));
+  }, [startDate, endDate, deleteIncome, deleteExpense]);
 
-  const categories = Array.from(
-    new Set(expenses.map((expense) => expense.expenseTypeName))
+  const arrayExpenses = expenses
+    ? Array.from(new Set(expenses.map((expense) => expense.expenseTypeName)))
+    : [];
+  const arrayIncomes = incomes
+    ? Array.from(new Set(incomes.map((income) => income.incomeAmount)))
+    : [];
+  const categories = expenses
+    ? Array.from(new Set(expenses.map((expense) => expense.expenseTypeName)))
+    : [];
+
+  const selectedExpenses = expenses.reduce(
+    (total, expense) => total + expense.expenseAmount,
+    0
   );
 
-  const handleCategoryChange = (e) => {
-    setSelectedCategory(e.target.value);
+  const handleStartDateChange = (e) => {
+    if (e != null) {
+      setStartDate(moment(e).format("YYYY-MM-DDTHH:mm:ss"));
+    } else {
+      setStartDate(e);
+    }
   };
 
-  const dateChange = (e) => {
-    setSelectedMonthFrom(e.target.value);
-    setSelectedMonthTo(e.target.value);
+  const handleEndDateChange = (e) => {
+    if (e != null) {
+      setEndDate(moment(e).format("YYYY-MM-DDTHH:mm:ss"));
+    } else {
+      setEndDate(e);
+    }
   };
 
-  const handleFilter = () => {
-    let url = "http://localhost:8080/api/expenses";
-    if (selectedCategory) {
-      url += `?expenseTypeName=${selectedCategory}`;
-    }
-    if (selectedMonthFrom) {
-      const monthIndexFrom = months.indexOf(selectedMonthFrom);
+  // const getLabels = (startDate, endDate) => {
+  //   const start = moment(startDate).startOf("month");
+  //   const end = moment(endDate).endOf("month");
+  //   const numMonths = end.diff(start, "months") + 1;
+  //   return Array(numMonths).fill().map((_, i) => start.clone().add(i, "months").format("MMM"));
+  // };
 
-      url += `${selectedCategory ? "&" : "?"}month=${monthIndexFrom}`;
-    }
-    axios
-      .get(url)
-      .then((response) => setExpenses(response.data))
-      .catch((err) => console.log(err));
+  const getLabels = (startDate, numMonths) => {
+    const start = startDate ? moment(startDate) : moment().startOf("year");
+    const end = moment(endDate).endOf("month");
+    return Array(numMonths)
+      .fill()
+      .map((_, i) => start.add(i, "months").format("MMM"));
   };
-
-  const handleClearFilter = () => {
-    setSelectedCategory("");
-    setSelectedMonthFrom("");
-    setSelectedMonthTo("");
-    axios
-      .get("http://localhost:8080/api/expenses")
-      .then((response) => setExpenses(response.data))
-      .catch((err) => console.log(err));
-  };
-
-  const handleClearMonthFilter = () => {
-    setSelectedMonthFrom("");
-    setSelectedMonthTo("");
-    handleFilter();
-  };
-
-  const expensesByCategoryAndMonth = expenses.reduce((acc, expense) => {
-    const month = new Date(expense.expenseDatetime).getMonth();
-    const category = expense.expenseTypeName;
-
-    if (selectedMonthFrom && month !== parseInt(selectedMonthFrom)) {
-      return acc;
-    }
-
-    if (selectedCategory && category !== selectedCategory) {
-      return acc;
-    }
-
-    const key = selectedCategory ? `${category}-${month}` : `${month}`;
-
-    if (!acc[key]) {
-      acc[key] = {
-        category: selectedCategory ? category : null,
-        monthFrom: selectedMonthFrom ? parseInt(selectedMonthFrom) : month,
-        monthTo: selectedMonthTo ? parseInt(selectedMonthTo) : month,
-        total: 0,
-      };
-    }
-    if (!selectedCategory || selectedCategory === category) {
-      acc[key].total += expense.expenseAmount;
-    }
-
-    return acc;
-  }, {});
 
   const dataLine = {
-    labels: Object.keys(expensesByCategoryAndMonth).map((key) => {
-      const { month, year, category } = expensesByCategoryAndMonth[key];
-      const monthNames = [
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December",
-      ];
-      return `${monthNames[month - 1]} ${year} - ${category}`;
-    }),
-
+    labels: getLabels(startDate, 6),
     datasets: [
       {
+        type: "line",
         label: "Expenses",
-        data: Object.values(expensesByCategoryAndMonth).map(
-          (data) => data.total
-        ),
         backgroundColor: "red",
-        tension: 0.2,
-        options: {
-          parsing:{
-          yAxisKey: 'monthNames',
-          },
-          scales: {
-            
-            y: {
-              beginAtZero: true,
-            
-              ticks: {
-                callback: function (value, index, ticks) {
-                  return "$" + value;
-                },
-              },
+        tension: 0.3,
+        data:
+          arrayExpenses &&
+          arrayExpenses.map((category) =>
+            expenses
+              .filter(
+                (expense) =>
+                  expense.expenseTypeName === category &&
+                  (!selectedStartDate ||
+                    new Date(expense.expenseDatetime) >=
+                      new Date(selectedStartDate)) &&
+                  (!selectedSetEndDate ||
+                    new Date(expense.expenseDatetime) <=
+                      new Date(selectedSetEndDate))
+              )
+              .reduce((acc, expense) => acc + expense.expenseAmount, 0)
+          ),
+      },
 
-            },
-          },
-        },
+      {
+        labels: categories,
+
+        type: "bar",
+        label: "Expenses by category",
+        data:
+          categories &&
+          categories.map((category) =>
+            expenses
+              .filter(
+                (expense) =>
+                  expense.expenseTypeName === category &&
+                  (!selectedStartDate ||
+                    new Date(expense.expenseDatetime) >=
+                      new Date(selectedStartDate)) &&
+                  (!selectedSetEndDate ||
+                    new Date(expense.expenseDatetime) <=
+                      new Date(selectedSetEndDate))
+              )
+              .reduce((acc, expense) => acc + expense.expenseAmount, 0)
+          ),
+        backgroundColor: ["#36a2eb"],
+      },
+      {
+        label: "Income",
+        backgroundColor: "green",
+        tension: 0.2,
+        data:
+          arrayIncomes &&
+          arrayIncomes.map((incomeId) =>
+            incomes
+              .filter(
+                (income) =>
+                  income.incomeId === incomeId &&
+                  (!selectedStartDate ||
+                    new Date(income.incomeDatetime) >=
+                      new Date(selectedStartDate)) &&
+                  (!selectedSetEndDate ||
+                    new Date(income.incomeDatetime) <=
+                      new Date(selectedSetEndDate))
+              )
+              .reduce((acc, income) => acc + income.incomeAmount, 0)
+          ),
       },
     ],
   };
 
   return (
     <Container>
-      <Container
-        style={{
-          background: "#ffff",
-          border: "1px solid #ffffff",
-          boxShadow: "0px 1px 15px rgba(0, 0, 0, 0.06)",
-          padding: "2.5rem",
-          borderRadius: "20px",
-          height: "100%",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
-        <div className="form-style">
-          <Row className="form-buttons-container">
-            <Col className="table-filter--sort">
-              <Button
-                variant={selectedCategory ? "secondary" : "primary"}
-                onClick={selectedCategory ? handleClearFilter : handleFilter}
-                className="button-clear-filter"
-              >
-                {selectedCategory ? "Clear Filter" : "Filter"}
-              </Button>
-              <Form.Select
-                as="select"
-                value={selectedCategory}
-                onChange={handleCategoryChange}
-              >
-                <option value="">Select category</option>
-                {categories.map((category) => (
-                  <option key={category} value={category}>
-                    {category}
-                  </option>
-                ))}
-              </Form.Select>
+      <Form.Label>Line Chart</Form.Label>
+      <Row className="table-cell">
+        <Row className="table-filter">
+          <Col className="table-filter--size">
+            <Form.Group>
+              <Col>
+                <Form.Label>Date from:</Form.Label>
+                <DateTimePicker
+                  value={startDate}
+                  name="startDate"
+                  format="yyyy-MM-dd"
+                  className="table-filter--date"
+                  onChange={handleStartDateChange}
+                  disableClock={true}
+                  calendarIcon={<FaCalendarAlt />}
+                />
+              </Col>
+            </Form.Group>
+          </Col>
+        </Row>
+        <Row className="table-filter">
+          <Col className="table-filter--size">
+            <Form.Group>
+              <Col>
+                <Form.Label>Date to:</Form.Label>
+                <DateTimePicker
+                  value={endDate}
+                  name="endDate"
+                  format="yyyy-MM-dd"
+                  className="table-filter--date"
+                  onChange={handleEndDateChange}
+                  disableClock={true}
+                  calendarIcon={<FaCalendarAlt />}
+                />
+              </Col>
+            </Form.Group>
+          </Col>
+        </Row>
+      </Row>
+      {!expenses && <h4>Data not exist, wrong date format</h4>}
+      <Line data={dataLine} />
+      <Form.Group>
+        <Row className="table-row">
+          <Form.Label>
+            Selected period Expenses : € {selectedExpenses}
+          </Form.Label>
 
-              <Button
-                variant={selectedMonthFrom ? "secondary" : "primary"}
-                onClick={
-                  selectedMonthFrom ? handleClearMonthFilter : handleFilter
-                }
-              >
-                {selectedMonthFrom ? "Clear filter" : "Filter"}
-              </Button>
-
-              <Form.Select value={selectedMonthFrom} onChange={dateChange}>
-                <option value="">Select From</option>
-                {months.map((month, index) => (
-                  <option key={index} value={index}>
-                    {month}
-                  </option>
-                ))}
-              </Form.Select>
-              <Form.Select value={selectedMonthFrom} onChange={dateChange}>
-                <option value="">Select To</option>
-                {months.map((month, index) => (
-                  <option key={index} value={index}>
-                    {month}
-                  </option>
-                ))}
-              </Form.Select>
-            </Col>
-          </Row>
-        </div>
-        <Line data={dataLine} />
-      </Container>
+          <Form.Label>Current year Expenses :</Form.Label>
+        </Row>
+      </Form.Group>
     </Container>
   );
 }

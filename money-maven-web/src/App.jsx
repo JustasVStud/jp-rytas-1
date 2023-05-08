@@ -11,7 +11,7 @@ import CategoryTable from './components/CategoryTable';
 import AddEditCategory from './components/AddEditCategory';
 import NavbarHeader from './components/NavbarHeader';
 import DoughnutChart from './components/DoughnutChart';
-
+import LineChart from './components/LineChart';
  
 
 
@@ -35,7 +35,7 @@ function App() {
         <Route path="/category/add/" element={<AddEditCategory />} />
         <Route path="/category/add/:id" element={<AddEditCategory />} />
         <Route path="/doughnut" element={<DoughnutChart />} />
-        
+        <Route path="/line" element={<LineChart />} />
        
       </Routes>
 

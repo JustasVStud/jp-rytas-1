@@ -51,7 +51,6 @@ function DoughnutChart() {
   }, [
     deleteExpense,
     deleteIncome,
-
     selectedCategory,
     startDate,
     endDate,
