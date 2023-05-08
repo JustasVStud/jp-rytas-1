@@ -25,37 +25,32 @@ function AddEditCategory() {
   });
   
   const [errorMsg, setErrorMsg] = useState("");
-  const token = JSON.parse(localStorage.getItem('user'));
-  const source = axios.CancelToken.source();
-
+  
   useEffect(() => {
+    const token = JSON.parse(localStorage.getItem('user'));
     if (id) {
       axios
         .get(`${baseUrl}/${id}`, {
           headers: {
             Authorization: `Bearer ${token.accssToken}`
-          },
-          cancelToken: source.token
+          }
         })
         .then((response) => setExistingCategory(response.data))
-        .catch((err) => {
-          if (!axios.isCancel(err)) {
-            console.log(err);
-          }
-        });
+        .catch((err) => console.log(err));
     }
-  }, [id, token, source]);
+  }, [id]);
 
   let categorySubmission = (values, { resetForm }) => {
     const { id, ...data } = values;
     const url = id ? `${baseUrl}/${id}` : baseUrl;
     const method = id ? "put" : "post";
+    const token = JSON.parse(localStorage.getItem('user'));
+
     
     axios[method](url, data, {
       headers: {
         Authorization: `Bearer ${token.accessToken}`
-      },
-      cancelToken: source.token
+      }
     })
       .then((res) => {
 
@@ -71,9 +66,6 @@ function AddEditCategory() {
           setErrorMsg("Category with the same name already exists");
         } else {
           setErrorMsg("Error saving category");
-        }
-        if (!axios.isCancel(err)) {
-          console.log(err);
         }
       },[categorySubmission]);
   }
