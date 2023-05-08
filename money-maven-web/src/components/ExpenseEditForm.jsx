@@ -32,9 +32,7 @@ const ExpenseEditValidationSchema = Yup.object().shape({
 function ExpenseEditForm() {
   const navigate = useNavigate();
   const [expenseTypes, setExpenseTypes] = useState([]); 
-  const token = JSON.parse(localStorage.getItem('user'));
-  const source = axios.CancelToken.source();
-
+  
   let { id } = useParams();
   let [existingExpense, setExistingExpense] = useState({
     expenseAmount: "",
@@ -44,34 +42,25 @@ function ExpenseEditForm() {
   });
 
   useEffect(() => {
+    const token = JSON.parse(localStorage.getItem('user'));
     axios
       .get(`${baseUrl}/${id}`, {
         headers: {
           Authorization: `Bearer ${token.accessToken}`
-        },
-        cancelToken: source.token
+        }
       })
       .then((response) => setExistingExpense(response.data))
-      .catch((err) => {
-        if (!axios.isCancel(err)) {
-          console.log(err);
-        }
-      });
+      .catch((err) => console.log(err));
 
     axios // added axios call to get expense types
       .get('http://localhost:8080/api/expenseTypes', {
         headers: {
           Authorization: `Bearer ${token.accessToken}`
-        },
-        cancelToken: source.token
+        }
       })
       .then((response) => setExpenseTypes(response.data))
-      .catch((err) => {
-        if (!axios.isCancel(err)) {
-          console.log(err);
-        }
-      });
-  }, [id, token, source]);
+      .catch((err) => console.log(err));
+  }, [id]);
 
   return (
     <Container className="form-style">
@@ -83,6 +72,7 @@ function ExpenseEditForm() {
           initialValues={existingExpense}
           validationSchema={ExpenseEditValidationSchema}
           onSubmit={(values, { resetForm }) => {
+            const token = JSON.parse(localStorage.getItem('user'));
             console.log(values);
             values.expenseDatetime = moment(values.expenseDatetime).format(
               "YYYY-MM-DDTHH:mm:ss"
@@ -91,19 +81,14 @@ function ExpenseEditForm() {
               .patch(`${baseUrl}/${id}`, values, {
                 headers: {
                   Authorization: `Bearer ${token.accessToken}`
-                },
-                cancelToken: source.token
+                }
               })
               .then((response) => {
                 console.log(response.data);
                 resetForm();
                 navigate("/expense");
               })
-              .catch((err) => {
-                if (!axios.isCancel(err)) {
-                  console.log(err);
-                }
-              });
+              .catch((err) => console.log(err));
           }}
           enableReinitialize
         >

@@ -13,10 +13,9 @@ function IncomeTable() {
     const [totalPages, setTotalPages] = useState(0);
     const [pageSize, setPageSize] = useState(10);
     const [sortDirection, setSortDirection] = useState('DESC');
-    const token = JSON.parse(localStorage.getItem('user'));
     
     useEffect(() => {
-        const source = axios.CancelToken.source()
+        const token = JSON.parse(localStorage.getItem('user'));
         axios
         .get(`http://localhost:8080/api/incomes`, {
             headers: {
@@ -26,24 +25,15 @@ function IncomeTable() {
                 page:currentPage,
                 pageSize: pageSize,
                 direction: sortDirection
-            },
-            cancelToken: source.token
+            }
         })
         .then(response => {
             setIncomes(response.data.content);
             setTotalPages(response.data.totalPages);
         })
-        .catch((err) => {
-            if (!axios.isCancel(err)) {
-                console.log(err);
-              }
-        })
+        .catch((err) => console.log(err))
 
-        return () => {
-            source.cancel('Component unmounted');
-        };
-        
-    }, [currentPage, pageSize, sortDirection, deleteIncome, token]);
+    }, [currentPage, pageSize, sortDirection, deleteIncome]);
 
     const handlePageSizeChange = (e) => {
         setPageSize(e.target.value);

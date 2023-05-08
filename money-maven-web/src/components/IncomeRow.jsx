@@ -5,23 +5,17 @@ import { Link } from 'react-router-dom';
 
 function IncomeRow({income, setDeleteIncome}) {
     const token = JSON.parse(localStorage.getItem('user'));
-    const source = axios.CancelToken.source();
     function deleteIncome(incomeId) {
         axios
         .delete('http://localhost:8080/api/incomes/' + incomeId, {
             headers: {
                 Authorization: `Bearer ${token.accessToken}`
-            },
-            cancelToken: source.token
+            }
         })
         .then(response => {
             setDeleteIncome(response.data)
         })
-        .catch((err) => {
-            if (!axios.isCancel(err)) {
-                console.log(err);
-            }
-        });
+        .catch((err) => console.log(err));
     }
     // duomenys reikalingi istrynimo popup
     let deleteParams = {id: income.incomeId, type: "Income entry", value: income.incomeAmount + " " + income.incomeDescription};

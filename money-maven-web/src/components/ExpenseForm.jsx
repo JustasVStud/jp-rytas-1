@@ -33,16 +33,14 @@ const ExpenseValidationSchema = Yup.object().shape({
 function ExpenseForm() {
   const navigate = useNavigate();
   const [expenseTypes, setExpenseTypes] = useState([]);
-  const token = JSON.parse(localStorage.getItem('user'));
-  const source = axios.CancelToken.source();
-
+  
   useEffect(() => {
+    const token = JSON.parse(localStorage.getItem('user'));
     axios
       .get("http://localhost:8080/api/expenseTypes", {
         headers: {
           Authorization: `Bearer ${token.accessToken}`
-        },
-        cancelToken: source.token
+        }
       })
       .then((response) => setExpenseTypes(response.data))
       .catch((err) => {
@@ -50,7 +48,7 @@ function ExpenseForm() {
           console.log(err);
         }
       });
-  }, [token, source]);
+  }, []);
 
   return (
     <Container className="form-style">
@@ -64,6 +62,7 @@ function ExpenseForm() {
           }}
           validationSchema={ExpenseValidationSchema}
           onSubmit={(values, { resetForm }) => {
+            const token = JSON.parse(localStorage.getItem('user'));
             values.expenseDatetime = moment(values.expenseDatetime).format(
               "YYYY-MM-DDTHH:mm:ss"
             );
@@ -71,19 +70,14 @@ function ExpenseForm() {
               .post(baseUrl, values, {
                 headers: {
                   Authorization: `Bearer ${token.accessToken}`
-                },
-                cancelToken: source.token
+                }
               })
               .then((response) => {
                 console.log(response.data);
                 resetForm();
                 navigate("/expense");
               })
-              .catch((err) => {
-                if (!axios.isCancel(err)) {
-                  console.log(err);
-                }
-              });
+              .catch((err) => console.log(err));
           }}
           enableReinitialize
         >

@@ -33,34 +33,24 @@ const IncomeEditValidationSchema = Yup.object().shape({
 });
 
 function IncomeEditForm() {
-       const token = JSON.parse(localStorage.getItem('user'));
-       let {id} = useParams();
-       let [existingIncome, setExistingIncome] = useState({
-           incomeAmount: "",
-           incomeDescription: "",
-           incomeDatetime: ""
-        });
-        
-        useEffect(() => {
-            const source = axios.CancelToken.source();
+    let {id} = useParams();
+    let [existingIncome, setExistingIncome] = useState({
+        incomeAmount: "",
+        incomeDescription: "",
+        incomeDatetime: ""
+    });
+    
+    useEffect(() => {
+            const token = JSON.parse(localStorage.getItem('user'));
             axios.get(baseUrl + id, {
                 headers: {
                     Authorization: `Bearer ${token.accessToken}`
-                },
-                cancelToken: source.token
-            })
-            .then(response => setExistingIncome(response.data))
-            .catch((err) => {
-                if (!axios.isCancel(err)) {
-                    console.log(err);
                 }
             })
+            .then(response => setExistingIncome(response.data))
+            .catch((err) => console.log(err));
 
-            return () => {
-                source.cancel('Component unmounted');
-            };
-
-        }, [id, token])
+        }, [id])
 
         const navigate = useNavigate();
     return ( 
@@ -73,6 +63,7 @@ function IncomeEditForm() {
                 initialValues = {existingIncome}
                 validationSchema={IncomeEditValidationSchema}
                 onSubmit={(values, {resetForm}) => {
+                    const token = JSON.parse(localStorage.getItem('user'));
                     console.log(values);
                     values.incomeDatetime = moment(values.incomeDatetime).format('YYYY-MM-DDTHH:mm:ss');
                     axios.patch(baseUrl + id, values, {

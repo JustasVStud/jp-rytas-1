@@ -34,7 +34,6 @@ const IncomeValidationSchema = Yup.object().shape({
 function IncomeForm() {
   const navigate = useNavigate();
   const token = JSON.parse(localStorage.getItem('user'));
-  const source = axios.CancelToken.source();
   return (
     <Container className="form-style">
       <Row>
@@ -54,19 +53,14 @@ function IncomeForm() {
             (baseUrl, values, {
               headers: {
                 Authorization: `Bearer ${token.accessToken}`
-              },
-              cancelToken: source.token
+              }
             })
               .then((response) => {
                 console.log(response.data)
                 resetForm()
                 navigate("/income");
               })
-              .catch((err) => {
-                if (!axios.isCancel(err)) {
-                  console.log(err);
-                }
-              });
+              .catch((err) => console.log(err));
           }}
           enableReinitialize
         >
