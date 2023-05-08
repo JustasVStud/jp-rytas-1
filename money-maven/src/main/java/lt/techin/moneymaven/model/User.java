@@ -28,9 +28,8 @@ public class User {
 		super();
 	}
 	
-	public User(Integer userId, String username, String password, boolean isAdmin) {
+	public User(String username, String password, boolean isAdmin) {
 		super();
-		this.userId = userId;
 		this.username = username;
 		this.password = password;
 		this.isAdmin = isAdmin;

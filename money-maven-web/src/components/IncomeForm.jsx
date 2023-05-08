@@ -33,112 +33,116 @@ const IncomeValidationSchema = Yup.object().shape({
 
 function IncomeForm() {
   const navigate = useNavigate();
-
+  const token = JSON.parse(localStorage.getItem('user'));
   return (
     <Container className="form-style">
       <Row>
-                <h3 className="">Income</h3>
-            </Row>
-            <Row>
-    <Formik
-      initialValues={{
-        incomeAmount: "",
-        incomeDescription: "",
-        incomeDatetime: ""
-      }}
-      validationSchema={IncomeValidationSchema}
-      onSubmit={(values, { resetForm }) => {
-        values.incomeDatetime = moment(values.incomeDatetime).format('YYYY-MM-DDTHH:mm:ss');
-        axios.post
-        (baseUrl, values)
-          .then((response) => {
-            console.log(response.data)
-            resetForm()
-            navigate("/income");
-          })
-          .catch((err) => console.log(err));
-      }}
-      enableReinitialize
-    >
-      {({ 
-        values, 
-        errors,
-        touched,
-        handleChange, 
-        handleBlur, 
-        handleSubmit, 
-        setFieldValue, 
-        dirty }) => (
-        <Form onSubmit={handleSubmit}>
-          <Form.Group className="mb-3">
-            <Form.Label>Amount</Form.Label>
-            <Form.Control
-              type="number"
-              placeholder="1000 &#x20AC;"
-              name="incomeAmount"
-              size="sm"
-              value={values.incomeAmount}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              isInvalid={touched.incomeAmount && errors.incomeAmount}
-            />
-            <Form.Control.Feedback type = "invalid">
-              {errors.incomeAmount}
-            </Form.Control.Feedback>
-          </Form.Group>
-          <Form.Group className="mb-3">
-            <Form.Label>Decription</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Source of Income"
-              name="incomeDescription"
-              size="sm"
-              value={values.incomeDescription}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              isInvalid={touched.incomeDescription && errors.incomeDescription}
-            />
-            <Form.Control.Feedback type="invalid">
-              {errors.incomeDescription}
-            </Form.Control.Feedback>
-          </Form.Group>
-          <Form.Group className="mb-3">
-            <Form.Label>Date and Time</Form.Label>
-            <DateTimePicker
-                value={values.incomeDatetime}
-                name="incomeDatetime"
-                format="yyyy-MM-dd HH:mm"
-                className={`form-control ${touched.incomeDatetime && errors.incomeDatetime ? 'is-invalid': ''}`}
-                calendarIcon={<FaCalendarAlt/>}
-                disableClock={true}
-                yearPlaceholder="YYYY"
-                monthPlaceholder="MM"
-                dayPlaceholder="DD"
-                hourPlaceholder="hh"
-                minutePlaceholder="mm"
-                onChange={(value) => setFieldValue('incomeDatetime', value)}
+        <h3 className="">Income</h3>
+      </Row>
+      <Row>
+        <Formik
+          initialValues={{
+            incomeAmount: "",
+            incomeDescription: "",
+            incomeDatetime: ""
+          }}
+          validationSchema={IncomeValidationSchema}
+          onSubmit={(values, { resetForm }) => {
+            values.incomeDatetime = moment(values.incomeDatetime).format('YYYY-MM-DDTHH:mm:ss');
+            axios.post
+            (baseUrl, values, {
+              headers: {
+                Authorization: `Bearer ${token.accessToken}`
+              }
+            })
+              .then((response) => {
+                console.log(response.data)
+                resetForm()
+                navigate("/income");
+              })
+              .catch((err) => console.log(err));
+          }}
+          enableReinitialize
+        >
+          {({ 
+            values, 
+            errors,
+            touched,
+            handleChange, 
+            handleBlur, 
+            handleSubmit, 
+            setFieldValue, 
+            dirty }) => (
+            <Form onSubmit={handleSubmit}>
+              <Form.Group className="mb-3">
+                <Form.Label>Amount</Form.Label>
+                <Form.Control
+                  type="number"
+                  placeholder="1000 &#x20AC;"
+                  name="incomeAmount"
+                  size="sm"
+                  value={values.incomeAmount}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  isInvalid={touched.incomeAmount && errors.incomeAmount}
                 />
-                {touched.incomeDatetime && errors.incomeDatetime && (
-                  <Form.Control.Feedback type="invalid">
-                    {errors.incomeDatetime}
-                  </Form.Control.Feedback>
-                )}
-          </Form.Group>
+                <Form.Control.Feedback type = "invalid">
+                  {errors.incomeAmount}
+                </Form.Control.Feedback>
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Decription</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Source of Income"
+                  name="incomeDescription"
+                  size="sm"
+                  value={values.incomeDescription}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  isInvalid={touched.incomeDescription && errors.incomeDescription}
+                />
+                <Form.Control.Feedback type="invalid">
+                  {errors.incomeDescription}
+                </Form.Control.Feedback>
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Date and Time</Form.Label>
+                <DateTimePicker
+                    value={values.incomeDatetime}
+                    name="incomeDatetime"
+                    format="yyyy-MM-dd HH:mm"
+                    className={`form-control ${touched.incomeDatetime && errors.incomeDatetime ? 'is-invalid': ''}`}
+                    calendarIcon={<FaCalendarAlt/>}
+                    disableClock={true}
+                    yearPlaceholder="YYYY"
+                    monthPlaceholder="MM"
+                    dayPlaceholder="DD"
+                    hourPlaceholder="hh"
+                    minutePlaceholder="mm"
+                    onChange={(value) => setFieldValue('incomeDatetime', value)}
+                    />
+                    {touched.incomeDatetime && errors.incomeDatetime && (
+                      <Form.Control.Feedback type="invalid">
+                        {errors.incomeDatetime}
+                      </Form.Control.Feedback>
+                    )}
+              </Form.Group>
 
-          <Row className="form-buttons-container">
-            <Col>
-              <Button variant="primary" type="submit" disabled={!dirty}>Submit</Button>
-            </Col>
-            <Col>
-                <Link to={"/income"}>
-                    <Button variant="primary">Cancel</Button>
-                </Link>
-            </Col>
-          </Row>
-        </Form>
-      )}
-    </Formik>
-    </Row>
+              <Row className="form-buttons-container">
+                <Col>
+                  <Button variant="primary" type="submit" disabled={!dirty}>Submit</Button>
+                </Col>
+                <Col>
+                    <Link to={"/income"}>
+                        <Button variant="primary">Cancel</Button>
+                    </Link>
+                </Col>
+              </Row>
+            </Form>
+          )}
+        </Formik>
+      </Row>
     </Container>
   );
 }

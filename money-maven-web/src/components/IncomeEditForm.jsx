@@ -33,20 +33,23 @@ const IncomeEditValidationSchema = Yup.object().shape({
 });
 
 function IncomeEditForm() {
-
-       
-
-        let {id} = useParams();
-        let [existingIncome, setExistingIncome] = useState({
-            incomeAmount: "",
-            incomeDescription: "",
-            incomeDatetime: ""
-        });
-
-        useEffect(() => {
-            axios.get(baseUrl +id)
+    let {id} = useParams();
+    let [existingIncome, setExistingIncome] = useState({
+        incomeAmount: "",
+        incomeDescription: "",
+        incomeDatetime: ""
+    });
+    
+    useEffect(() => {
+            const token = JSON.parse(localStorage.getItem('user'));
+            axios.get(baseUrl + id, {
+                headers: {
+                    Authorization: `Bearer ${token.accessToken}`
+                }
+            })
             .then(response => setExistingIncome(response.data))
-            .catch((err) => console.log(err))
+            .catch((err) => console.log(err));
+
         }, [id])
 
         const navigate = useNavigate();
@@ -60,15 +63,24 @@ function IncomeEditForm() {
                 initialValues = {existingIncome}
                 validationSchema={IncomeEditValidationSchema}
                 onSubmit={(values, {resetForm}) => {
+                    const token = JSON.parse(localStorage.getItem('user'));
                     console.log(values);
                     values.incomeDatetime = moment(values.incomeDatetime).format('YYYY-MM-DDTHH:mm:ss');
-                    axios.patch(baseUrl + id, values)
+                    axios.patch(baseUrl + id, values, {
+                        headers: {
+                            Authorization: `Bearer ${token.accessToken}`
+                        }
+                    })
                     .then((response) => {
                         console.log(response.data)
                         resetForm()
                         navigate("/income");
                       })
-                      .catch((err) => console.log(err));
+                      .catch((err) => {
+                        if (!axios.isCancel(err)) {
+                            console.log(err);
+                        }
+                      });
                 }}
                 enableReinitialize
                 >

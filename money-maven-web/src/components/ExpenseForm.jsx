@@ -3,7 +3,6 @@ import { Formik } from "formik";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { Row } from "react-bootstrap";
-
 import { Container } from "react-bootstrap";
 import axios from "axios";
 import DateTimePicker from "react-datetime-picker";
@@ -35,12 +34,20 @@ function ExpenseForm() {
   const navigate = useNavigate();
   const [expenseTypes, setExpenseTypes] = useState([]);
   
-
   useEffect(() => {
+    const token = JSON.parse(localStorage.getItem('user'));
     axios
-      .get("http://localhost:8080/api/expenseTypes")
+      .get("http://localhost:8080/api/expenseTypes", {
+        headers: {
+          Authorization: `Bearer ${token.accessToken}`
+        }
+      })
       .then((response) => setExpenseTypes(response.data))
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        if (!axios.isCancel(err)) {
+          console.log(err);
+        }
+      });
   }, []);
 
   return (
@@ -55,11 +62,16 @@ function ExpenseForm() {
           }}
           validationSchema={ExpenseValidationSchema}
           onSubmit={(values, { resetForm }) => {
+            const token = JSON.parse(localStorage.getItem('user'));
             values.expenseDatetime = moment(values.expenseDatetime).format(
               "YYYY-MM-DDTHH:mm:ss"
             );
             axios
-              .post(baseUrl, values)
+              .post(baseUrl, values, {
+                headers: {
+                  Authorization: `Bearer ${token.accessToken}`
+                }
+              })
               .then((response) => {
                 console.log(response.data);
                 resetForm();

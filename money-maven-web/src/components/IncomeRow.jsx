@@ -4,9 +4,14 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 
 function IncomeRow({income, setDeleteIncome}) {
+    const token = JSON.parse(localStorage.getItem('user'));
     function deleteIncome(incomeId) {
         axios
-        .delete('http://localhost:8080/api/incomes/' + incomeId)
+        .delete('http://localhost:8080/api/incomes/' + incomeId, {
+            headers: {
+                Authorization: `Bearer ${token.accessToken}`
+            }
+        })
         .then(response => {
             setDeleteIncome(response.data)
         })

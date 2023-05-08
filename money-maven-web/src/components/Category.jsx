@@ -4,10 +4,15 @@ import axios from "axios";
 import { deleteHandler } from '../services/deleteHandler';
 
 function Category({ expenseType, onDelete, onError}) {
-
+  
   function deleteExpenseType(typeId) {
+    const token = JSON.parse(localStorage.getItem('user'));
     axios
-      .delete('http://localhost:8080/api/expenseTypes/' + typeId)
+      .delete('http://localhost:8080/api/expenseTypes/' + typeId, {
+        headers: {
+          Authorization: `Bearer ${token.accessToken}`
+        }
+      })
       .then(() => {
         onDelete(expenseType.typeId);
       })

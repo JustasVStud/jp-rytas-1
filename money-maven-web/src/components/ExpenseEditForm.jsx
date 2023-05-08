@@ -31,8 +31,8 @@ const ExpenseEditValidationSchema = Yup.object().shape({
 
 function ExpenseEditForm() {
   const navigate = useNavigate();
-  const [expenseTypes, setExpenseTypes] = useState([]); // added state for expense types
-
+  const [expenseTypes, setExpenseTypes] = useState([]); 
+  
   let { id } = useParams();
   let [existingExpense, setExistingExpense] = useState({
     expenseAmount: "",
@@ -42,13 +42,22 @@ function ExpenseEditForm() {
   });
 
   useEffect(() => {
+    const token = JSON.parse(localStorage.getItem('user'));
     axios
-      .get(`${baseUrl}/${id}`)
+      .get(`${baseUrl}/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token.accessToken}`
+        }
+      })
       .then((response) => setExistingExpense(response.data))
       .catch((err) => console.log(err));
 
     axios // added axios call to get expense types
-      .get("http://localhost:8080/api/expenseTypes")
+      .get('http://localhost:8080/api/expenseTypes', {
+        headers: {
+          Authorization: `Bearer ${token.accessToken}`
+        }
+      })
       .then((response) => setExpenseTypes(response.data))
       .catch((err) => console.log(err));
   }, [id]);
@@ -63,12 +72,17 @@ function ExpenseEditForm() {
           initialValues={existingExpense}
           validationSchema={ExpenseEditValidationSchema}
           onSubmit={(values, { resetForm }) => {
+            const token = JSON.parse(localStorage.getItem('user'));
             console.log(values);
             values.expenseDatetime = moment(values.expenseDatetime).format(
               "YYYY-MM-DDTHH:mm:ss"
             );
             axios
-              .patch(`${baseUrl}/${id}`, values) // changed URL to include id
+              .patch(`${baseUrl}/${id}`, values, {
+                headers: {
+                  Authorization: `Bearer ${token.accessToken}`
+                }
+              })
               .then((response) => {
                 console.log(response.data);
                 resetForm();
