@@ -27,10 +27,14 @@ function ExpenseTable() {
   const [selectedExpenseType, setSelectedExpenseType] = useState("");
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
-
+  
   useEffect(() => {
+    const token = JSON.parse(localStorage.getItem('user'));
     axios
       .get(`http://localhost:8080/api/expenses`, {
+        headers: {
+          Authorization: `Bearer ${token.accessToken}`
+        },
         params: {
           page: currentPage,
           pageSize: pageSize,
@@ -38,7 +42,7 @@ function ExpenseTable() {
           expenseTypeName: selectedExpenseType || null,
           startDate: startDate || null,
           endDate: endDate || null,
-        },
+        }
       })
       .then((response) => {
         if (response.status === 200) {
@@ -54,9 +58,18 @@ function ExpenseTable() {
       .catch((err) => console.log(err));
 
     axios // added axios call to get expense types
-      .get("http://localhost:8080/api/expenseTypes")
+      .get("http://localhost:8080/api/expenseTypes", {
+        headers: {
+          Authorization: `Bearer ${token.accessToken}`
+        },
+      })
       .then((response) => setExpenseTypes(response.data))
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        if (!axios.isCancel(err)) {
+          console.log(err);
+        }
+      });
+      
   }, [
     currentPage,
     pageSize,
@@ -64,7 +77,7 @@ function ExpenseTable() {
     deleteExpense,
     selectedExpenseType,
     startDate,
-    endDate,
+    endDate
   ]);
 
   const handlePageSizeChange = (e) => {

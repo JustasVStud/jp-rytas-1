@@ -13,10 +13,14 @@ function IncomeTable() {
     const [totalPages, setTotalPages] = useState(0);
     const [pageSize, setPageSize] = useState(10);
     const [sortDirection, setSortDirection] = useState('DESC');
-
+    
     useEffect(() => {
+        const token = JSON.parse(localStorage.getItem('user'));
         axios
         .get(`http://localhost:8080/api/incomes`, {
+            headers: {
+                Authorization: `Bearer ${token.accessToken}`
+            },
             params: {
                 page:currentPage,
                 pageSize: pageSize,
@@ -28,6 +32,7 @@ function IncomeTable() {
             setTotalPages(response.data.totalPages);
         })
         .catch((err) => console.log(err))
+
     }, [currentPage, pageSize, sortDirection, deleteIncome]);
 
     const handlePageSizeChange = (e) => {

@@ -9,12 +9,18 @@ function CategoryTable() {
   const [expenseTypes, setExpenseTypes] = useState([]);
   const [deleteExpenseTypes, setDeleteExpenseTypes] = useState([]);
   const [errorMessage, setErrorMessage] = useState(null);
-
+  
   useEffect(() => {
+    const token = JSON.parse(localStorage.getItem('user'));
     axios
-      .get('http://localhost:8080/api/expenseTypes')
+      .get('http://localhost:8080/api/expenseTypes', {
+        headers: {
+          Authorization: `Bearer ${token.accessToken}`
+        }
+      })
       .then((response) => setExpenseTypes(response.data))
       .catch((err) => console.log(err));
+      
   }, [deleteExpenseTypes]);
 
   let categoryjsx;

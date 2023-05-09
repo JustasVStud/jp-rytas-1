@@ -37,14 +37,17 @@ function DoughnutChart() {
   const [deleteIncome] = useState([]);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
-
   useEffect(() => {
+    const token = JSON.parse(localStorage.getItem('user'));
     axios
       .get("http://localhost:8080/api/expenses?page=0&pageSize=10000", {
+        headers: {
+          Authorization: `Bearer ${token.accessToken}`
+        },
         params: {
           startDate: startDate || null,
           endDate: endDate || null,
-        },
+        }
       })
       .then((response) => setExpenses(response.data.content))
       .catch((err) => console.log(err));
@@ -53,7 +56,7 @@ function DoughnutChart() {
     deleteIncome,
     selectedCategory,
     startDate,
-    endDate,
+    endDate
   ]);
 
   const categories = expenses
@@ -107,35 +110,12 @@ function DoughnutChart() {
           "#4BC0C0",
           "#9966FF",
           "#C9CBCF",
-          "#CCD1D1",
-          "#ffcd56",
-          "#ff6384",
-          "#36a2eb",
-          "#fd6b19",
-          "#4BC0C0",
-          "#9966FF",
-          "#C9CBCF",
-          "#CCD1D1",
-          "#ffcd56",
-          "#ff6384",
-          "#36a2eb",
-          "#fd6b19",
-          "#4BC0C0",
-          "#9966FF",
-          "#C9CBCF",
-          "#CCD1D1",
-        ],
-        hoverBackgroundColor: [
-          "#FF6384",
-          "#36A2EB",
-          "#FFCE56",
           "#8B008B",
-          "#ADFF2F",
-          "#00BFFF",
-          "#FFA07A",
-          "#20B2AA",
+          "#9966FF",
           "#00FFFF",
+          "#20B2AA",
         ],
+        hoverBackgroundColor: ["#C9CBCF"],
       },
     ],
   };
@@ -143,49 +123,46 @@ function DoughnutChart() {
   return (
     <Container>
       <Row className="table-filter">
-        
-          <Form.Label>Doughnut Chart</Form.Label>
+        <Form.Label>Doughnut Chart</Form.Label>
 
-          <Row className="table-filter">
-            <Col className="table-filter--size">
-              <Form.Group>
-                <Col>
-                  <Form.Label>Date from:</Form.Label>
-                  <DateTimePicker
-                    value={startDate}
-                    name="startDate"
-                    format="yyyy-MM-dd"
-                    className="table-filter--date"
-                    onChange={handleStartDateChange}
-                    disableClock={true}
-                    calendarIcon={<FaCalendarAlt />}
-                  />
-                </Col>
-              </Form.Group>
-            </Col>
-            </Row>
-            <Row className="table-filter">
-            <Col className="table-filter--size">
-              <Form.Group>
-                <Col>
-                  <Form.Label>Date to:</Form.Label>
-                  <DateTimePicker
-                    value={endDate}
-                    name="endDate"
-                    format="yyyy-MM-dd"
-                    className="table-filter--date"
-                    onChange={handleEndDateChange}
-                    disableClock={true}
-                    calendarIcon={<FaCalendarAlt />}
-                  />
-                </Col>
-              </Form.Group>
-            </Col>
-          </Row>
-          
-        
+        <Row className="row justify-center">
+          <Col className="table-filter--size">
+            <Form.Group>
+              <Col>
+                <Form.Label>Date from:</Form.Label>
+                <DateTimePicker
+                  value={startDate}
+                  name="startDate"
+                  format="yyyy-MM-dd"
+                  className="table-filter--date"
+                  onChange={handleStartDateChange}
+                  disableClock={true}
+                  calendarIcon={<FaCalendarAlt />}
+                />
+              </Col>
+            </Form.Group>
+          </Col>
+        </Row>
+        <Row className="table-filter">
+          <Col className="table-filter--size">
+            <Form.Group>
+              <Col>
+                <Form.Label>Date until:</Form.Label>
+                <DateTimePicker
+                  value={endDate}
+                  name="endDate"
+                  format="yyyy-MM-dd"
+                  className="table-filter--date"
+                  onChange={handleEndDateChange}
+                  disableClock={true}
+                  calendarIcon={<FaCalendarAlt />}
+                />
+              </Col>
+            </Form.Group>
+          </Col>
+        </Row>
       </Row>
-      {!expenses&&<h4>Data not exist, wrong date format</h4>}
+      {!expenses && <h4>Data not exist, wrong date format</h4>}
       <Doughnut data={dataDoughnut} />
     </Container>
   );

@@ -25,11 +25,16 @@ function AddEditCategory() {
   });
   
   const [errorMsg, setErrorMsg] = useState("");
-
+  
   useEffect(() => {
+    const token = JSON.parse(localStorage.getItem('user'));
     if (id) {
       axios
-        .get(`${baseUrl}/${id}`)
+        .get(`${baseUrl}/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token.accssToken}`
+          }
+        })
         .then((response) => setExistingCategory(response.data))
         .catch((err) => console.log(err));
     }
@@ -39,8 +44,14 @@ function AddEditCategory() {
     const { id, ...data } = values;
     const url = id ? `${baseUrl}/${id}` : baseUrl;
     const method = id ? "put" : "post";
+    const token = JSON.parse(localStorage.getItem('user'));
+
     
-    axios[method](url, data)
+    axios[method](url, data, {
+      headers: {
+        Authorization: `Bearer ${token.accessToken}`
+      }
+    })
       .then((res) => {
 
         if (categorySubmission) {
@@ -56,10 +67,7 @@ function AddEditCategory() {
         } else {
           setErrorMsg("Error saving category");
         }
-       
-        console.log(err);
       },[categorySubmission]);
-    console.log(values);
   }
   
 
