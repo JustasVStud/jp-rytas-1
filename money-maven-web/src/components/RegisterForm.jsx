@@ -3,7 +3,7 @@ import React from 'react';
 import { Container, Row, Form, Col, Button } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
-import authService from '../services/auth.service';
+import authService from '../services/Auth.service';
 
 const registerValidationSchema = Yup.object().shape({
       username: Yup.string()

@@ -13,6 +13,7 @@ import DoughnutChart from "./components/DoughnutChart";
 import LineChart from "./components/LineChart";
 import LoginForm from "./components/LoginForm";
 import RegisterForm from "./components/RegisterForm";
+import ProfilePage from "./components/ProfilePage";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route index element={<LoginForm />} />
         <Route path="/login" element={<LoginForm />} />
         <Route path="/register" element={<RegisterForm />} />
+        <Route path="/profile" element={<ProfilePage />} />
         <Route path="/income" element={<IncomeTable />} />
         <Route path="/income/create" element={<IncomeForm />} />
         <Route path="/income/edit/:id" element={<IncomeEditForm />} />
