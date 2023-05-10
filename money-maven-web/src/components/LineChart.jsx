@@ -33,8 +33,7 @@ function LineChart() {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [deleteExpense] = useState(false);
-  // const [date, setDate] = useState(new Date());
-  const currentDate = new Date();
+
 
   useEffect(() => {
     const token = JSON.parse(localStorage.getItem("user"));
@@ -75,12 +74,6 @@ function LineChart() {
       setEndDate(null);
     }
   };
-
-  const isEndDateInvalid =
-    startDate && endDate && moment(startDate).isAfter(moment(endDate), "day");
-
-  const isStartDateInvalid =
-    startDate && endDate && moment(endDate).isAfter(moment(startDate), "day");
 
   const getLabels = (startDate, endDate) => {
     const start = startDate ? moment(startDate) : moment().startOf("year");
@@ -149,7 +142,6 @@ function LineChart() {
                     disableClock={true}
                     calendarIcon={<FaCalendarAlt />}
                     disableDaysBeforeToday={true}
-                    // disabledDays={{after: new Date()}}
                     className="table-filter--date"
                   />
                 </Col>
