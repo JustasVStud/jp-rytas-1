@@ -57,7 +57,8 @@ public class IncomeController {
 	    if (userDetails == null) {
 	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
 	    }
-		return new ResponseEntity<>(incomeService.getIncomeById(id), HttpStatus.OK);
+	    Integer userId = userDetails.getUserId();
+		return new ResponseEntity<>(incomeService.getIncomeById(id, userId), HttpStatus.OK);
 	}
 	
 	@PostMapping
@@ -81,7 +82,8 @@ public class IncomeController {
 		if (userDetails == null) {
 	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
 	    }
-		return new ResponseEntity<>(incomeService.updateIncome(id, incomeDto), HttpStatus.OK);
+		Integer userId = userDetails.getUserId();
+		return new ResponseEntity<>(incomeService.updateIncome(id, incomeDto, userId), HttpStatus.OK);
 	}
 	
 	@DeleteMapping("/{id}")
@@ -92,7 +94,8 @@ public class IncomeController {
 		if (userDetails == null) {
 	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
 	    }
-		incomeService.deleteIncome(id);
+		Integer userId = userDetails.getUserId();
+		incomeService.deleteIncome(id, userId);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 	

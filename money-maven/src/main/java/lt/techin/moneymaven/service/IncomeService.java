@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import lt.techin.moneymaven.dto.IncomeDto;
 import lt.techin.moneymaven.exception.IncomeNotFoundException;
 import lt.techin.moneymaven.exception.NoEntriesFoundException;
+import lt.techin.moneymaven.exception.UnauthorizedAccessException;
 import lt.techin.moneymaven.exception.UserNotFoundException;
 import lt.techin.moneymaven.model.Income;
 import lt.techin.moneymaven.model.User;
@@ -42,12 +43,19 @@ public class IncomeService {
 		
 	}
 	
-	public IncomeDto getIncomeById(Integer id) {
+	public IncomeDto getIncomeById(Integer id, Integer userId) {
 		try {			
 			Income income = incomeRepository.findById(id)
 					.orElseThrow(() -> new IncomeNotFoundException("Income Id", id));
+			
+			if (!income.getUser().getUserId().equals(userId)) {
+	            throw new UnauthorizedAccessException("Income", id, userId);
+	        }
+			
 			return modelMapper.map(income,  IncomeDto.class);
 		} catch (IncomeNotFoundException e) {
+			throw e;
+		} catch (UnauthorizedAccessException e){
 			throw e;
 		} catch (Exception e) {
 			throw new RuntimeException("Error while getting income", e);
@@ -69,26 +77,40 @@ public class IncomeService {
 		}
 	}
 	
-	public IncomeDto updateIncome(Integer id, IncomeDto incomeDto) {
+	public IncomeDto updateIncome(Integer id, IncomeDto incomeDto, Integer userId) {
 		try {
 			Income existingIncome = incomeRepository.findById(id)
 					.orElseThrow(() -> new IncomeNotFoundException("Income Id", id));
+			
+			if (!existingIncome.getUser().getUserId().equals(userId)) {
+	            throw new UnauthorizedAccessException("Income", id, userId);
+	        }
+			
 			modelMapper.map(incomeDto, existingIncome);
 			Income savedIncome = incomeRepository.save(existingIncome);
 			return modelMapper.map(savedIncome, IncomeDto.class);
 		} catch (IncomeNotFoundException e) {
+			throw e;
+		} catch (UnauthorizedAccessException e){
 			throw e;
 		} catch (Exception e) {
 			throw new RuntimeException("Error while updating income", e);
 		}
 	}
 	
-	public void deleteIncome(Integer id) {
+	public void deleteIncome(Integer id, Integer userId) {
 		try {
 			Income income = incomeRepository.findById(id)
 			.orElseThrow(() -> new IncomeNotFoundException("Income_id", id));
+			
+			if (!income.getUser().getUserId().equals(userId)) {
+	            throw new UnauthorizedAccessException("Income", id, userId);
+	        }
+			
 			incomeRepository.delete(income);
 		} catch (IncomeNotFoundException e) {
+			throw e;
+		} catch (UnauthorizedAccessException e){
 			throw e;
 		} catch (Exception e) {
 			throw new RuntimeException("Error while deleting income", e);

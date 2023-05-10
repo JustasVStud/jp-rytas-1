@@ -10,6 +10,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import lt.techin.moneymaven.dto.ExpenseDto;
+import lt.techin.moneymaven.security.services.UserDetailsImpl;
 import lt.techin.moneymaven.service.ExpenseService;
 
 @CrossOrigin("*")
@@ -40,31 +42,38 @@ public class ExpenseController {
 			@RequestParam(defaultValue = "DESC") Sort.Direction direction,
 			@RequestParam(required = false) String expenseTypeName,
 			@RequestParam(required = false) LocalDateTime startDate,
-			@RequestParam(required = false) LocalDateTime endDate
+			@RequestParam(required = false) LocalDateTime endDate,
+			@AuthenticationPrincipal UserDetailsImpl userDetails
 			){
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-	    if (authentication == null) {
+	    if (userDetails == null) {
 	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
 	    }
+	    Integer userId = userDetails.getUserId();
 		Pageable pageable = PageRequest.of(page, pageSize, Sort.by(direction, "expenseDatetime"));
 			return new ResponseEntity<>(expenseService.getExpensesPage(pageable, expenseTypeName, startDate, endDate), HttpStatus.OK);		
 	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<ExpenseDto> getExpenseById(@PathVariable Integer id){
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-	    if (authentication == null) {
+	public ResponseEntity<ExpenseDto> getExpenseById(
+			@PathVariable Integer id,
+			@AuthenticationPrincipal UserDetailsImpl userDetails
+			){
+		if (userDetails == null) {
 	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
 	    }
+	    Integer userId = userDetails.getUserId();
 		return new ResponseEntity<>(expenseService.getExpenseById(id), HttpStatus.OK);
 	}
 	
 	@PostMapping
-	public ResponseEntity<ExpenseDto> createExpense(@RequestBody ExpenseDto expenseDto){
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-	    if (authentication == null) {
+	public ResponseEntity<ExpenseDto> createExpense(
+			@RequestBody ExpenseDto expenseDto,
+			@AuthenticationPrincipal UserDetailsImpl userDetails
+			){
+		if (userDetails == null) {
 	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
 	    }
+	    Integer userId = userDetails.getUserId();
 		return new ResponseEntity<>(expenseService.createExpense(expenseDto), HttpStatus.OK);
 	}
 	

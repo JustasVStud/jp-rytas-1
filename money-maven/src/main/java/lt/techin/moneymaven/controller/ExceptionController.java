@@ -17,6 +17,7 @@ import lt.techin.moneymaven.exception.ExpenseTypeDeletionException;
 import lt.techin.moneymaven.exception.ExpenseTypeNotFoundException;
 import lt.techin.moneymaven.exception.IncomeNotFoundException;
 import lt.techin.moneymaven.exception.NoEntriesFoundException;
+import lt.techin.moneymaven.exception.UnauthorizedAccessException;
 import lt.techin.moneymaven.exception.UserNotFoundException;
 
 @ControllerAdvice
@@ -110,5 +111,16 @@ public class ExceptionController extends ResponseEntityExceptionHandler {
     	body.put("cause", ex.getCause());
     
     	return new ResponseEntity<>(body, HttpStatus.CONFLICT);
+    }
+    
+    @ExceptionHandler(UnauthorizedAccessException.class)
+    public ResponseEntity<Object> handleUnauthorizedAccessException(
+    		UnauthorizedAccessException ex, WebRequest request) {
+    	Map<String, Object> body = new LinkedHashMap<>();
+    	body.put("timestamp", LocalDateTime.now());
+    	body.put("message", ex.getMessage());
+    	body.put("cause", ex.getCause());
+    
+    	return new ResponseEntity<>(body, HttpStatus.UNAUTHORIZED);
     }
 }
