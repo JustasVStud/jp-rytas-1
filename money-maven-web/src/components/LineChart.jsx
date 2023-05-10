@@ -12,7 +12,7 @@ import {
 } from "chart.js";
 import DateTimePicker from "react-datetime-picker";
 import { FaCalendarAlt } from "react-icons/fa";
-import { Container, Row, Form, Col, Table } from "react-bootstrap";
+import { Container, Row, Form, Col } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import moment from "moment";
@@ -32,7 +32,9 @@ function LineChart() {
   const [expenses, setExpenses] = useState([]);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
-  const [deleteExpense, setDeleteExpense] = useState(false);
+  const [deleteExpense] = useState(false);
+  // const [date, setDate] = useState(new Date());
+  const currentDate = new Date();
 
   useEffect(() => {
     const token = JSON.parse(localStorage.getItem("user"));
@@ -52,10 +54,6 @@ function LineChart() {
       })
       .catch((err) => console.log(err));
   }, [startDate, endDate, deleteExpense]);
-
-  const arrayExpenses = expenses
-    ? Array.from(new Set(expenses.map((expense) => expense.expenseTypeName)))
-    : [];
 
   const selectedExpenses = expenses.reduce(
     (total, expense) => total + expense.expenseAmount,
@@ -77,6 +75,12 @@ function LineChart() {
       setEndDate(null);
     }
   };
+
+  const isEndDateInvalid =
+    startDate && endDate && moment(startDate).isAfter(moment(endDate), "day");
+
+  const isStartDateInvalid =
+    startDate && endDate && moment(endDate).isAfter(moment(startDate), "day");
 
   const getLabels = (startDate, endDate) => {
     const start = startDate ? moment(startDate) : moment().startOf("year");
@@ -105,7 +109,7 @@ function LineChart() {
   };
   return (
     <Container>
-      <Form.Label>Line Chart</Form.Label>
+      <Form.Label>Expenses Chart</Form.Label>
       <Row className="row justify-center">
         <Row className="table-cell">
           <Row className="table-filter">
@@ -115,12 +119,16 @@ function LineChart() {
                   <Form.Label>Date from:</Form.Label>
                   <DateTimePicker
                     value={startDate}
+                    minDate={moment(startDate).toDate()}
+                    maxDate={moment().toDate(endDate)}
                     name="startDate"
                     format="yyyy-MM-dd"
-                    className="table-filter--date"
                     onChange={handleStartDateChange}
                     disableClock={true}
                     calendarIcon={<FaCalendarAlt />}
+                    disableDaysBeforeToday={true}
+                    className="table-filter--date"
+                    useCurrent={false}
                   />
                 </Col>
               </Form.Group>
@@ -133,18 +141,15 @@ function LineChart() {
                   <Form.Label>Date until:</Form.Label>
                   <DateTimePicker
                     value={endDate}
+                    minDate={moment(startDate).toDate()}
+                    maxDate={moment().toDate()}
                     name="endDate"
                     format="yyyy-MM-dd"
                     onChange={handleEndDateChange}
                     disableClock={true}
                     calendarIcon={<FaCalendarAlt />}
-                    isInvalid={
-                      startDate &&
-                      endDate &&
-                      moment(startDate).isAfter(moment(endDate))
-                        ? "is-invalid"
-                        : "Start date cannot be after end date"
-                    }
+                    disableDaysBeforeToday={true}
+                    // disabledDays={{after: new Date()}}
                     className="table-filter--date"
                   />
                 </Col>
@@ -152,20 +157,24 @@ function LineChart() {
             </Col>
           </Row>
         </Row>
-        {!expenses && <tr>Data not exist, wrong date format</tr>}
+        <table className="table">
+          {!expenses && <tr>Data not exist, wrong date format</tr>}
+        </table>
         <Line data={dataLine} />
-        <Table class="table table">
-          <tbody>
-            <td class="table-active">
-              <Row className="table-filter--date">
-                <td class="table-Secondary">
-                  Selected period expenses : € {selectedExpenses}
-                </td>
-              </Row>
-            </td>
-          </tbody>
-        </Table>
       </Row>
+      <table className="table">
+        <thead>
+          <tr className="table-row"></tr>
+        </thead>
+        <tbody>
+          <tr className="table-row">
+            <td className="table-cell table-button">
+              Selected period expenses:
+            </td>
+            <td className="table-cell table-button">€ {selectedExpenses}</td>
+          </tr>
+        </tbody>
+      </table>
     </Container>
   );
 }
