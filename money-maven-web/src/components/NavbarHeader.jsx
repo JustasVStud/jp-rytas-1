@@ -41,7 +41,8 @@ function NavbarHeader() {
                   <Nav.Link href="/income">Income</Nav.Link>
                   <Nav.Link href="/expense">Expense</Nav.Link>
                   <Nav.Link href="/category/">Category</Nav.Link>
-                  <Nav.Link href="/doughnut">Doughnut</Nav.Link>
+                  <Nav.Link href="/doughnut">Doughnut Chart</Nav.Link>
+                  <Nav.Link href="/line">Line Chart</Nav.Link>
                 </Nav>
               </Offcanvas.Body>
             </Navbar.Offcanvas>
