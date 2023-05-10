@@ -27,9 +27,9 @@ public class IncomeService {
 	@Autowired
 	private ModelMapper modelMapper;
 	
-	public Page<IncomeDto >getIncomes(Pageable pageable){
+	public Page<IncomeDto >getIncomes(Pageable pageable, Integer userId){
 		try {
-			Page<Income> incomes = incomeRepository.findAll(pageable);
+			Page<Income> incomes = incomeRepository.findAllByUser_userId(pageable, userId);
 			if (incomes.isEmpty()) {
 				throw new NoEntriesFoundException("incomes");
 			}
@@ -54,11 +54,11 @@ public class IncomeService {
 		}
 	}
 	
-	public IncomeDto createIncome(IncomeDto incomeDto) {
+	public IncomeDto createIncome(IncomeDto incomeDto, Integer userId) {
 		try {
 			Income income = modelMapper.map(incomeDto, Income.class);
-			User user = userRepository.findById(1)
-					.orElseThrow(() -> new UserNotFoundException("User Id", 1));
+			User user = userRepository.findById(userId)
+					.orElseThrow(() -> new UserNotFoundException("User Id", userId));
 			income.setUser(user);
 			Income savedIncome = incomeRepository.save(income);
 			return modelMapper.map(savedIncome, IncomeDto.class);

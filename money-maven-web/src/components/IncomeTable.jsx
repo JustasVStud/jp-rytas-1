@@ -28,6 +28,7 @@ function IncomeTable() {
             }
         })
         .then(response => {
+            console.log(response)
             setIncomes(response.data.content);
             setTotalPages(response.data.totalPages);
         })
