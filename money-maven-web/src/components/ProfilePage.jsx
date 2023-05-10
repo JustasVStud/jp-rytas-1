@@ -27,12 +27,11 @@ function ProfilePage() {
         )
     }
     return ( 
-        <Container>
-            <Row></Row>
+        <Container className="profile-page">
             <Row>
-                <h2>Welcome Student Techin!</h2>
+                <h2 className="profile-header">Welcome Student Techin!</h2>
             </Row>
-            <Row>
+            <Row className="profile-line">
                 <Col>
                     Username:
                 </Col>
@@ -40,27 +39,27 @@ function ProfilePage() {
                     {currentUser.username}
                 </Col>
             </Row>
-            <Row>
+            <Row className="profile-line">
                 <Col>
                     Roles:
                 </Col>
                 <Col>
                        {currentUser.authorities.includes('USER') && 
-                       <Row>User</Row>
+                       <Row className="profile-row">User</Row>
                        }
                        {currentUser.authorities.includes('ADMIN') &&
-                       <Row>Administrator</Row>
+                       <Row className="profile-row">Administrator</Row>
                        }
                 </Col>
             </Row>
-            <Row>
-                <Link to={'/income'}>Go to Incomes</Link>
+            <Row className="profile-line">
+                <Link to={'/income'} className="profile-link">Go to Incomes</Link>
             </Row>
-            <Row>
-                <Link to={'/expense'}>Go to Expenses</Link>
+            <Row className="profile-line">
+                <Link to={'/expense'} className="profile-link">Go to Expenses</Link>
             </Row>
-            <Row>
-                <span onClick={() => logoutHandler(navigate)} className="">Sign out</span>
+            <Row className="profile-line">
+                <span onClick={() => logoutHandler(navigate)} className="profile-link">Sign out</span>
             </Row>
             <Row className="fixed-bottom profile-student justify-content-center">
                 <Image src={profileStudent} alt='a sitting student holding some pages' fluid className="profile-student__img"/>

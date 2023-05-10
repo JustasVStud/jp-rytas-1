@@ -16,8 +16,8 @@ function NavbarHeader() {
           <Container>
             <Navbar.Brand href="#" className='mr-auto'>MONEY MAVEN</Navbar.Brand>
             <NavDropdown title={<FaUserAlt/>}>
-              <NavDropdown.Item>
-                <Link to={'/profile'}>Profile</Link>
+              <NavDropdown.Item href='/profile'>
+                Profile
               </NavDropdown.Item>
               <NavDropdown.Item onClick={() => logoutHandler(navigate)}>
                 Logout

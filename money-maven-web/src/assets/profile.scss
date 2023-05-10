@@ -5,3 +5,31 @@
         height: auto;
     }
 }
+.container {
+    &.profile-page{
+        font-size: 14px;
+        padding-left: 2.25rem;
+        padding-right: 2.25rem
+    }
+
+}
+.profile-header {
+    text-align: center;
+    font-weight: 700;
+    padding-bottom: 0.67rem;
+}
+.profile-line {
+    line-height: 2.25rem;
+    padding: 0 0 0.67rem 0;
+}
+.profile-row {
+    padding: inherit;
+}
+.profile-link {
+    color: inherit;
+    text-decoration: none;
+    &:hover {
+        cursor: pointer;
+        color: var(--link-color);
+    }
+}
