@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import lt.techin.moneymaven.dto.ExpenseDto;
 import lt.techin.moneymaven.exception.ExpenseNotFoundException;
 import lt.techin.moneymaven.exception.NoEntriesFoundException;
+import lt.techin.moneymaven.exception.UnauthorizedAccessException;
 import lt.techin.moneymaven.exception.UserNotFoundException;
 import lt.techin.moneymaven.model.Expense;
 import lt.techin.moneymaven.model.ExpenseType;
@@ -33,26 +34,48 @@ public class ExpenseService {
 	@Autowired
 	private ModelMapper modelMapper;
 	
-	public Page<ExpenseDto> getExpensesPage(Pageable pageable, String expenseTypeName, LocalDateTime startDate, LocalDateTime endDate) {
+	public Page<ExpenseDto> getExpensesPage(
+			Pageable pageable, 
+			String expenseTypeName, 
+			LocalDateTime startDate, 
+			LocalDateTime endDate,
+			Integer userId
+			) {
 		try {
 			Page<Expense> expenses;
 			
 			if (expenseTypeName != null && startDate != null && endDate != null) {
-				expenses = expenseRepository.findByExpenseTypeNameAndExpenseDatetimeBetween(expenseTypeName, startDate, endDate, pageable);
+				expenses = expenseRepository.findByExpenseType_TypeNameAndExpenseDatetimeBetweenAndUser_UserId(
+						expenseTypeName, 
+						startDate, 
+						endDate, 
+						userId, 
+						pageable
+						);
 			} else if (expenseTypeName != null && startDate != null) {
-				expenses = expenseRepository.findByExpenseTypeNameAndExpenseDatetimeAfter(expenseTypeName, startDate, pageable);
+				expenses = expenseRepository.findByExpenseType_TypeNameAndExpenseDatetimeGreaterThanEqualAndUser_UserId(
+						expenseTypeName, 
+						startDate, 
+						userId, 
+						pageable
+						);
 			} else if (expenseTypeName != null && endDate != null) {
-				expenses = expenseRepository.findByExpenseTypeNameAndExpenseDatetimeBefore(expenseTypeName, endDate, pageable);
+				expenses = expenseRepository.findByExpenseType_TypeNameAndExpenseDatetimeLessThanEqualAndUser_UserId(
+						expenseTypeName, 
+						endDate, 
+						userId, 
+						pageable
+						);
 			} else if (startDate != null && endDate != null) {
-				expenses = expenseRepository.findByExpenseDatetimeBetween(startDate, endDate, pageable);
+				expenses = expenseRepository.findByExpenseDatetimeBetweenAndUser_UserId(startDate, endDate, userId, pageable);
 			} else if (expenseTypeName != null) {
-				expenses = expenseRepository.findByExpenseTypeName(expenseTypeName, pageable);
+				expenses = expenseRepository.findByExpenseType_TypeNameAndUser_UserId(expenseTypeName, userId, pageable);
 			} else if (startDate != null) {
-				expenses = expenseRepository.findByExpenseDatetimeGreaterThanEqual(startDate, pageable);
+				expenses = expenseRepository.findByExpenseDatetimeGreaterThanEqualAndUser_UserId(startDate, userId, pageable);
 			} else if (endDate != null) {
-				expenses = expenseRepository.findByExpenseDatetimeLessThanEqual(endDate, pageable);
+				expenses = expenseRepository.findByExpenseDatetimeLessThanEqualAndUser_UserId(endDate, userId, pageable);
 			} else {
-				expenses = expenseRepository.findAll(pageable);
+                expenses = expenseRepository.findAllByUser_UserId(userId, pageable);
 			}
 			
 			if (expenses.isEmpty()) {
@@ -67,23 +90,30 @@ public class ExpenseService {
 		}
 	}
 	
-	public ExpenseDto getExpenseById(Integer id) {
+	public ExpenseDto getExpenseById(Integer id, Integer userId) {
 		try {			
 			Expense expense = expenseRepository.findById(id)
 					.orElseThrow(() -> new ExpenseNotFoundException("Expense Id", id));
+			
+			if (!expense.getUser().getUserId().equals(userId)) {
+	            throw new UnauthorizedAccessException("Expense", id, userId);
+	        }
+			
 			return modelMapper.map(expense,  ExpenseDto.class);
 		} catch (ExpenseNotFoundException e) {
+			throw e;
+		} catch (UnauthorizedAccessException e){
 			throw e;
 		} catch (Exception e) {
 			throw new RuntimeException("Error while getting expense", e);
 		}
 	}
 	
-	public ExpenseDto createExpense(ExpenseDto expenseDto) {
+	public ExpenseDto createExpense(ExpenseDto expenseDto, Integer userId) {
 		try {
 			Expense expense = modelMapper.map(expenseDto, Expense.class);
-			User user = userRepository.findById(1)
-					.orElseThrow(() -> new UserNotFoundException("User Id", 1));
+			User user = userRepository.findById(userId)
+					.orElseThrow(() -> new UserNotFoundException("User Id", userId));
 			ExpenseType expenseType = modelMapper.map(
 					expenseTypeService.getExpenseTypeByName(
 							expenseDto.getExpenseTypeName()), ExpenseType.class
@@ -99,10 +129,14 @@ public class ExpenseService {
 		}
 	}
 	
-	public ExpenseDto updateExpense(Integer id, ExpenseDto expenseDto) {
+	public ExpenseDto updateExpense(Integer id, ExpenseDto expenseDto, Integer userId) {
 		try {
 			Expense existingExpense = expenseRepository.findById(id)
 					.orElseThrow(() -> new ExpenseNotFoundException("Expense Id", id));
+			
+			if (!existingExpense.getUser().getUserId().equals(userId)) {
+	            throw new UnauthorizedAccessException("Expense", id, userId);
+	        }
 			
 			ExpenseType expenseType = modelMapper.map(
 					expenseTypeService.getExpenseTypeByName(
@@ -118,17 +152,26 @@ public class ExpenseService {
 			return modelMapper.map(savedExpense, ExpenseDto.class);
 		} catch (ExpenseNotFoundException e) {
 			throw e;
+		} catch (UnauthorizedAccessException e){
+			throw e;
 		} catch (Exception e) {
 			throw new RuntimeException("Error while updating expense", e);
 		}
 	}
 	
-	public void deleteExpense(Integer id) {
+	public void deleteExpense(Integer id, Integer userId) {
 		try {
 			Expense expense = expenseRepository.findById(id)
 			.orElseThrow(() -> new ExpenseNotFoundException("Expense Id", id));
+			
+			if (!expense.getUser().getUserId().equals(userId)) {
+	            throw new UnauthorizedAccessException("Expense", id, userId);
+	        }
+			
 			expenseRepository.delete(expense);
 		} catch (ExpenseNotFoundException e) {
+			throw e;
+		} catch (UnauthorizedAccessException e){
 			throw e;
 		} catch (Exception e) {
 			e.printStackTrace();
