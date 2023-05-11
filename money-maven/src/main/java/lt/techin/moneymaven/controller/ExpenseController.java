@@ -50,7 +50,7 @@ public class ExpenseController {
 	    }
 	    Integer userId = userDetails.getUserId();
 		Pageable pageable = PageRequest.of(page, pageSize, Sort.by(direction, "expenseDatetime"));
-			return new ResponseEntity<>(expenseService.getExpensesPage(pageable, expenseTypeName, startDate, endDate), HttpStatus.OK);		
+			return new ResponseEntity<>(expenseService.getExpensesPage(pageable, expenseTypeName, startDate, endDate, userId), HttpStatus.OK);		
 	}
 	
 	@GetMapping("/{id}")
@@ -62,7 +62,7 @@ public class ExpenseController {
 	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
 	    }
 	    Integer userId = userDetails.getUserId();
-		return new ResponseEntity<>(expenseService.getExpenseById(id), HttpStatus.OK);
+		return new ResponseEntity<>(expenseService.getExpenseById(id, userId), HttpStatus.OK);
 	}
 	
 	@PostMapping
@@ -74,25 +74,31 @@ public class ExpenseController {
 	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
 	    }
 	    Integer userId = userDetails.getUserId();
-		return new ResponseEntity<>(expenseService.createExpense(expenseDto), HttpStatus.OK);
+		return new ResponseEntity<>(expenseService.createExpense(expenseDto, userId), HttpStatus.OK);
 	}
 	
 	@PatchMapping("/{id}")
-	public ResponseEntity<ExpenseDto> updateExpense(@PathVariable Integer id, @RequestBody ExpenseDto expenseDto){
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-	    if (authentication == null) {
+	public ResponseEntity<ExpenseDto> updateExpense(
+			@PathVariable Integer id, 
+			@RequestBody ExpenseDto expenseDto,
+			@AuthenticationPrincipal UserDetailsImpl userDetails
+			){
+	    if (userDetails == null) {
 	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
 	    }
-		return new ResponseEntity<>(expenseService.updateExpense(id, expenseDto), HttpStatus.OK);
+	    Integer userId = userDetails.getUserId();
+		return new ResponseEntity<>(expenseService.updateExpense(id, expenseDto, userId) , HttpStatus.OK);
 	}
 	
 	@DeleteMapping("/{id}")
-	public ResponseEntity<HttpStatus> deleteExpense(@PathVariable Integer id){
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-	    if (authentication == null) {
+	public ResponseEntity<HttpStatus> deleteExpense(
+			@PathVariable Integer id,
+			@AuthenticationPrincipal UserDetailsImpl userDetails){
+	    if (userDetails == null) {
 	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
 	    }
-		expenseService.deleteExpense(id);
+	    Integer userId = userDetails.getUserId();
+		expenseService.deleteExpense(id, userId);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 }
