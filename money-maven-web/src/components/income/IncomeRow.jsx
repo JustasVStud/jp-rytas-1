@@ -1,22 +1,16 @@
 import {FaEdit, FaTrashAlt} from 'react-icons/fa';
 import { deleteHandler } from '../services/deleteHandler';
-import axios from 'axios';
+import { deleteIncome } from '../../services/Income.service';
 import { Link } from 'react-router-dom';
 
 function IncomeRow({income, setDeleteIncome}) {
-    const token = JSON.parse(localStorage.getItem('user'));
-    function deleteIncome(incomeId) {
-        axios
-        .delete('http://localhost:8080/api/incomes/' + incomeId, {
-            headers: {
-                Authorization: `Bearer ${token.accessToken}`
-            }
-        })
-        .then(response => {
-            setDeleteIncome(response.data)
-        })
-        .catch((err) => console.log(err));
-    }
+    function handleDelete(incomeId) {
+        deleteIncome(incomeId)
+          .then(response => {
+            setDeleteIncome(response.data);
+          })
+          .catch(error => console.log(error));
+      }
     // duomenys reikalingi istrynimo popup
     let deleteParams = {id: income.incomeId, type: "Income entry", value: income.incomeAmount + " " + income.incomeDescription};
     return ( 
@@ -31,7 +25,7 @@ function IncomeRow({income, setDeleteIncome}) {
             </td>
             <td>
                 <span>
-                    <FaTrashAlt onClick={() => deleteHandler(deleteParams, deleteIncome)}/>
+                    <FaTrashAlt onClick={() => deleteHandler(deleteParams, handleDelete)}/>
                 </span>
                 
             </td>

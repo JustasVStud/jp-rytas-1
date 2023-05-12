@@ -1,5 +1,5 @@
 import { FaTrashAlt, FaEuroSign, FaPencilAlt, FaCalendarAlt, FaCommentAlt} from "react-icons/fa";
-import { deleteHandler } from "../services/deleteHandler";
+import { deleteHandler } from "../../services/deleteHandler";
 import axios from "axios";
 import { Link } from "react-router-dom";
 

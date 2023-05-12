@@ -4,15 +4,13 @@ import Button from "react-bootstrap/Button";
 import { Row } from "react-bootstrap";
 import { Col } from "react-bootstrap";
 import { Container } from "react-bootstrap";
-import axios from "axios";
 import * as Yup from "yup";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import DateTimePicker from "react-datetime-picker";
 import moment from "moment";
 import { FaCalendarAlt } from "react-icons/fa";
-
-const baseUrl = "http://localhost:8080/api/incomes/";
+import { getIncome, patchIncome } from "../../services/Income.service";
 
 const IncomeEditValidationSchema = Yup.object().shape({
     incomeAmount: Yup.number()
@@ -41,18 +39,12 @@ function IncomeEditForm() {
     });
     
     useEffect(() => {
-            const token = JSON.parse(localStorage.getItem('user'));
-            axios.get(baseUrl + id, {
-                headers: {
-                    Authorization: `Bearer ${token.accessToken}`
-                }
-            })
-            .then(response => setExistingIncome(response.data))
+        getIncome(id)
+            .then(response => setExistingIncome(response))
             .catch((err) => console.log(err));
-
-        }, [id])
-
-        const navigate = useNavigate();
+    }, [id])
+    
+    const navigate = useNavigate();
     return ( 
         <Container className="form-style">
             <Row>
@@ -62,26 +54,16 @@ function IncomeEditForm() {
                 <Formik
                 initialValues = {existingIncome}
                 validationSchema={IncomeEditValidationSchema}
-                onSubmit={(values, {resetForm}) => {
-                    const token = JSON.parse(localStorage.getItem('user'));
-                    console.log(values);
-                    values.incomeDatetime = moment(values.incomeDatetime).format('YYYY-MM-DDTHH:mm:ss');
-                    axios.patch(baseUrl + id, values, {
-                        headers: {
-                            Authorization: `Bearer ${token.accessToken}`
-                        }
-                    })
-                    .then((response) => {
-                        console.log(response.data)
-                        resetForm()
-                        navigate("/income");
-                      })
-                      .catch((err) => {
-                        if (!axios.isCancel(err)) {
-                            console.log(err);
-                        }
-                      });
-                }}
+                onSubmit={async (values, { resetForm }) => {
+                    try {
+                      values.incomeDatetime = moment(values.incomeDatetime).format('YYYY-MM-DDTHH:mm:ss');
+                      await patchIncome(id, values);
+                      resetForm();
+                      navigate('/income');
+                    } catch (error) {
+                      console.log(error);
+                    }
+                  }}
                 enableReinitialize
                 >
                 {({

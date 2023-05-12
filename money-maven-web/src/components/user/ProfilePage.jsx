@@ -1,9 +1,9 @@
-import { Row, Col, Container, Image } from "react-bootstrap";
-import AuthService from "../services/Auth.service";
-import { useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { logoutHandler } from "../services/logoutHandler";
-import profileStudent from '../assets/profile-student.svg';
+import { Row, Col, Container, Image } from 'react-bootstrap';
+import AuthService from '../../services/Auth.service';
+import { useEffect, useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { logoutHandler } from '../../services/logoutHandler';
+import profileStudent from '../../assets/profile-student.svg';
 
 
 function ProfilePage() {

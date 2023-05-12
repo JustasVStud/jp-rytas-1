@@ -1,7 +1,7 @@
 import { FaTrashAlt, FaPencilAlt } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import axios from "axios";
-import { deleteHandler } from '../services/deleteHandler';
+import { deleteHandler } from '../../services/deleteHandler';
 
 function Category({ expenseType, onDelete, onError}) {
   
