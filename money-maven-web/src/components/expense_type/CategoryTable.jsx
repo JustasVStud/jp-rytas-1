@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Button, Row, Table, Container } from 'react-bootstrap';
-import NoElementsTableRow from './NoElementsTableRow';
+import NoElementsTableRow from '../NoElementsTableRow';
 import Category from './Category';
 import { Link } from 'react-router-dom';
 

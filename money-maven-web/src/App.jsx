@@ -1,19 +1,19 @@
 import "./App.scss";
 import { Route, Routes } from "react-router-dom";
-import IncomeTable from "./components/IncomeTable";
-import IncomeForm from "./components/IncomeForm";
-import IncomeEditForm from "./components/IncomeEditForm";
-import ExpenseTable from "./components/ExpenseTable";
-import ExpenseForm from "./components/ExpenseForm";
-import ExpenseEditForm from "./components/ExpenseEditForm";
-import CategoryTable from "./components/CategoryTable";
-import AddEditCategory from "./components/AddEditCategory";
+import IncomeList from "./components/income/IncomeList";
+import IncomeForm from "./components/income/IncomeForm";
+import IncomeEditForm from "./components/income/IncomeEditForm";
+import ExpenseTable from "./components/expense/ExpenseTable";
+import ExpenseForm from "./components/expense/ExpenseForm";
+import ExpenseEditForm from "./components/expense/ExpenseEditForm";
+import CategoryTable from "./components/expense_type/CategoryTable";
+import AddEditCategory from "./components/expense_type/AddEditCategory";
 import NavbarHeader from "./components/NavbarHeader";
 import DoughnutChart from "./components/DoughnutChart";
 import LineChart from "./components/LineChart";
-import LoginForm from "./components/LoginForm";
-import RegisterForm from "./components/RegisterForm";
-import ProfilePage from "./components/ProfilePage";
+import LoginForm from "./components/user/LoginForm";
+import RegisterForm from "./components/user/RegisterForm";
+import ProfilePage from "./components/user/ProfilePage";
 
 function App() {
   return (
@@ -24,7 +24,7 @@ function App() {
         <Route path="/login" element={<LoginForm />} />
         <Route path="/register" element={<RegisterForm />} />
         <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/income" element={<IncomeTable />} />
+        <Route path="/income" element={<IncomeList />} />
         <Route path="/income/create" element={<IncomeForm />} />
         <Route path="/income/edit/:id" element={<IncomeEditForm />} />
         <Route path="/expense" element={<ExpenseTable />} />

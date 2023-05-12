@@ -1,17 +1,15 @@
-import { Formik } from "formik";
-import Form from "react-bootstrap/Form";
-import Button from "react-bootstrap/Button";
-import { Row } from "react-bootstrap";
-import { Col } from "react-bootstrap";
-import { Container } from "react-bootstrap";
-import axios from "axios";
-import {Link, useNavigate } from "react-router-dom";
-import DateTimePicker from "react-datetime-picker";
-import {FaCalendarAlt} from "react-icons/fa";
-import moment from "moment";
-import * as Yup from "yup";
-
-const baseUrl = "http://localhost:8080/api/incomes";
+import { Formik } from 'formik';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
+import { Row } from 'react-bootstrap';
+import { Col } from 'react-bootstrap';
+import { Container } from 'react-bootstrap';
+import {Link, useNavigate } from 'react-router-dom';
+import DateTimePicker from 'react-datetime-picker';
+import {FaCalendarAlt} from 'react-icons/fa';
+import moment from 'moment';
+import * as Yup from 'yup';
+import { createIncome } from '../../services/Income.service';
 
 const IncomeValidationSchema = Yup.object().shape({
     incomeAmount: Yup.number()
@@ -33,7 +31,6 @@ const IncomeValidationSchema = Yup.object().shape({
 
 function IncomeForm() {
   const navigate = useNavigate();
-  const token = JSON.parse(localStorage.getItem('user'));
   return (
     <Container className="form-style">
       <Row>
@@ -47,20 +44,15 @@ function IncomeForm() {
             incomeDatetime: ""
           }}
           validationSchema={IncomeValidationSchema}
-          onSubmit={(values, { resetForm }) => {
-            values.incomeDatetime = moment(values.incomeDatetime).format('YYYY-MM-DDTHH:mm:ss');
-            axios.post
-            (baseUrl, values, {
-              headers: {
-                Authorization: `Bearer ${token.accessToken}`
-              }
-            })
-              .then((response) => {
-                console.log(response.data)
-                resetForm()
-                navigate("/income");
-              })
-              .catch((err) => console.log(err));
+          onSubmit={async (values, { resetForm }) => {
+            try {
+              values.incomeDatetime = moment(values.incomeDatetime).format('YYYY-MM-DDTHH:mm:ss');
+              await createIncome(values);
+              resetForm();
+              navigate('/income');
+            } catch (error) {
+              console.log(error);
+            }
           }}
           enableReinitialize
         >
