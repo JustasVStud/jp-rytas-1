@@ -5,28 +5,22 @@ import java.time.LocalDateTime;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import lt.techin.moneymaven.model.Expense;
 
 public interface ExpenseRepository extends JpaRepository<Expense, Integer>{
 	
-	Page<Expense> findAllByUser_UserId(Integer userId, Pageable pageable);
-	
-    Page<Expense> findByExpenseType_TypeNameAndUser_UserId(String expenseTypeName, Integer userId, Pageable pageable);
-
-    Page<Expense> findByExpenseDatetimeBetweenAndUser_UserId(LocalDateTime startDate, LocalDateTime endDate, Integer userId, Pageable pageable);
-
-    Page<Expense> findByExpenseDatetimeGreaterThanEqualAndUser_UserId(LocalDateTime startDate, Integer userId, Pageable pageable);
-
-    Page<Expense> findByExpenseDatetimeLessThanEqualAndUser_UserId(LocalDateTime endDate, Integer userId, Pageable pageable);
-
-    Page<Expense> findByExpenseType_TypeNameAndExpenseDatetimeBetweenAndUser_UserId(
-            String expenseTypeName, LocalDateTime startDate, LocalDateTime endDate, Integer userId, Pageable pageable);
-
-    Page<Expense> findByExpenseType_TypeNameAndExpenseDatetimeGreaterThanEqualAndUser_UserId(
-            String expenseTypeName, LocalDateTime startDate, Integer userId, Pageable pageable);
-
-    Page<Expense> findByExpenseType_TypeNameAndExpenseDatetimeLessThanEqualAndUser_UserId(
-            String expenseTypeName, LocalDateTime endDate, Integer userId, Pageable pageable);
+	@Query("SELECT e FROM Expense e " +
+	           "WHERE (:expenseTypeName IS NULL OR e.expenseType.typeName = :expenseTypeName) " +
+	           "AND (:startDate IS NULL OR e.expenseDatetime >= :startDate) " +
+	           "AND (:endDate IS NULL OR e.expenseDatetime <= :endDate) " +
+	           "AND e.user.userId = :userId")
+	    Page<Expense> findExpenses(Pageable pageable,
+	                               @Param("expenseTypeName") String expenseTypeName,
+	                               @Param("startDate") LocalDateTime startDate,
+	                               @Param("endDate") LocalDateTime endDate,
+	                               @Param("userId") Integer userId);
 	
 }

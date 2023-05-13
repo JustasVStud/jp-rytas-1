@@ -3,6 +3,9 @@ import Income from './Income';
 import NoElementsTableRow from '../NoElementsTableRow';
 
 function IncomeTable({ incomes, onDeleteIncome }) {
+  const handleDeleteIncome = (deletedIncomeId) => {
+    onDeleteIncome(incomes.filter(income => income.incomeId !== deletedIncomeId));
+  };
   return (
     <Table>
       <thead>
@@ -20,7 +23,7 @@ function IncomeTable({ incomes, onDeleteIncome }) {
             <Income
               key={income.incomeId}
               income={income}
-              onDelete={() => onDeleteIncome(Date.now())}
+              onDelete={() => handleDeleteIncome(income.incomeId)}
             />
           ))
         ) : (
