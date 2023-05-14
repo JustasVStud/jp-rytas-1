@@ -37,6 +37,7 @@ function IncomeEditForm() {
         incomeDescription: "",
         incomeDatetime: ""
     });
+    const navigate = useNavigate();
     
     useEffect(() => {
         getIncome(id)
@@ -44,7 +45,6 @@ function IncomeEditForm() {
             .catch((err) => console.log(err));
     }, [id])
     
-    const navigate = useNavigate();
     return ( 
         <Container className="form-style">
             <Row>

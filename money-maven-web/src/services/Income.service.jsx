@@ -45,7 +45,7 @@ export const patchIncome = async (incomeId, incomeData) => {
   try {
     const response = await axios.patch(`${BASE_URL}/${incomeId}`, incomeData, {
       headers: authHeader()
-    })
+    });
     return response.data;
   } catch (error) {
     throw error;

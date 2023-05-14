@@ -4,15 +4,14 @@ import Button from "react-bootstrap/Button";
 import { Row } from "react-bootstrap";
 import { Col } from "react-bootstrap";
 import { Container } from "react-bootstrap";
-import axios from "axios";
 import * as Yup from "yup";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import DateTimePicker from "react-datetime-picker";
 import moment from "moment";
 import { FaCalendarAlt } from "react-icons/fa";
-
-const baseUrl = "http://localhost:8080/api/expenses";
+import { getExpense , patchExpense } from '../../services/Expense.service';
+import { getExpenseTypes } from '../../services/Expense_type.service';
 
 const ExpenseEditValidationSchema = Yup.object().shape({
   expenseAmount: Yup.number()
@@ -42,25 +41,30 @@ function ExpenseEditForm() {
   });
 
   useEffect(() => {
-    const token = JSON.parse(localStorage.getItem('user'));
-    axios
-      .get(`${baseUrl}/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token.accessToken}`
-        }
-      })
-      .then((response) => setExistingExpense(response.data))
-      .catch((err) => console.log(err));
-
-    axios // added axios call to get expense types
-      .get('http://localhost:8080/api/expenseTypes', {
-        headers: {
-          Authorization: `Bearer ${token.accessToken}`
-        }
-      })
-      .then((response) => setExpenseTypes(response.data))
-      .catch((err) => console.log(err));
+    const fetchExpense = async () => {
+      try {
+        const response = await getExpense(id)
+        setExistingExpense(response);
+      } catch (error) {
+        console.log(error);
+      }  
+    };
+  
+    fetchExpense();
   }, [id]);
+
+  useEffect(() => {
+    const fetchExpenseTypes = async () => {
+      try {
+        const expenseTypesData = await getExpenseTypes();
+        setExpenseTypes(expenseTypesData);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+  
+    fetchExpenseTypes();
+  }, []);
 
   return (
     <Container className="form-style">
@@ -71,24 +75,15 @@ function ExpenseEditForm() {
         <Formik
           initialValues={existingExpense}
           validationSchema={ExpenseEditValidationSchema}
-          onSubmit={(values, { resetForm }) => {
-            const token = JSON.parse(localStorage.getItem('user'));
-            console.log(values);
-            values.expenseDatetime = moment(values.expenseDatetime).format(
-              "YYYY-MM-DDTHH:mm:ss"
-            );
-            axios
-              .patch(`${baseUrl}/${id}`, values, {
-                headers: {
-                  Authorization: `Bearer ${token.accessToken}`
-                }
-              })
-              .then((response) => {
-                console.log(response.data);
-                resetForm();
-                navigate("/expense");
-              })
-              .catch((err) => console.log(err));
+          onSubmit={async (values, { resetForm }) => {
+            try {
+              values.expenseDatetime = moment(values.expenseDatetime).format('YYYY-MM-DDTHH:mm:ss');
+              await patchExpense(id, values);
+              resetForm();
+              navigate('/expense');
+            } catch (error) {
+              console.log(error);
+            }
           }}
           enableReinitialize
         >

@@ -4,15 +4,14 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { Row } from "react-bootstrap";
 import { Container } from "react-bootstrap";
-import axios from "axios";
 import DateTimePicker from "react-datetime-picker";
 import { FaCalendarAlt } from "react-icons/fa";
 import {Link, useNavigate } from "react-router-dom";
 import moment from "moment";
 import * as Yup from "yup";
 import { useState, useEffect } from "react";
-
-const baseUrl = "http://localhost:8080/api/expenses";
+import { getExpenseTypes } from '../../services/Expense_type.service';
+import { createExpense } from '../../services/Expense.service';
 
 const ExpenseValidationSchema = Yup.object().shape({
   expenseAmount: Yup.number()
@@ -35,19 +34,16 @@ function ExpenseForm() {
   const [expenseTypes, setExpenseTypes] = useState([]);
   
   useEffect(() => {
-    const token = JSON.parse(localStorage.getItem('user'));
-    axios
-      .get("http://localhost:8080/api/expenseTypes", {
-        headers: {
-          Authorization: `Bearer ${token.accessToken}`
-        }
-      })
-      .then((response) => setExpenseTypes(response.data))
-      .catch((err) => {
-        if (!axios.isCancel(err)) {
-          console.log(err);
-        }
-      });
+    const fetchExpenseTypes = async () => {
+      try {
+        const expenseTypesData = await getExpenseTypes();
+        setExpenseTypes(expenseTypesData);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+  
+    fetchExpenseTypes();
   }, []);
 
   return (
@@ -61,23 +57,15 @@ function ExpenseForm() {
             expenseDatetime: "",
           }}
           validationSchema={ExpenseValidationSchema}
-          onSubmit={(values, { resetForm }) => {
-            const token = JSON.parse(localStorage.getItem('user'));
-            values.expenseDatetime = moment(values.expenseDatetime).format(
-              "YYYY-MM-DDTHH:mm:ss"
-            );
-            axios
-              .post(baseUrl, values, {
-                headers: {
-                  Authorization: `Bearer ${token.accessToken}`
-                }
-              })
-              .then((response) => {
-                console.log(response.data);
-                resetForm();
-                navigate("/expense");
-              })
-              .catch((err) => console.log(err));
+          onSubmit={async (values, { resetForm }) => {
+            try {
+              values.expenseDatetime = moment(values.expenseDatetime).format('YYYY-MM-DDTHH:mm:ss');
+              await createExpense(values);
+              resetForm();
+              navigate('/expense');
+            } catch (error) {
+              console.log(error);
+            }
           }}
           enableReinitialize
         >

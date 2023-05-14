@@ -3,7 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import IncomeList from "./components/income/IncomeList";
 import IncomeForm from "./components/income/IncomeForm";
 import IncomeEditForm from "./components/income/IncomeEditForm";
-import ExpenseTable from "./components/expense/ExpenseTable";
+import ExpenseList from "./components/expense/ExpenseList";
 import ExpenseForm from "./components/expense/ExpenseForm";
 import ExpenseEditForm from "./components/expense/ExpenseEditForm";
 import CategoryTable from "./components/expense_type/CategoryTable";
@@ -27,7 +27,7 @@ function App() {
         <Route path="/income" element={<IncomeList />} />
         <Route path="/income/create" element={<IncomeForm />} />
         <Route path="/income/edit/:id" element={<IncomeEditForm />} />
-        <Route path="/expense" element={<ExpenseTable />} />
+        <Route path="/expense" element={<ExpenseList />} />
         <Route path="/expense/create" element={<ExpenseForm />} />
         <Route path="/expense/edit/:id" element={<ExpenseEditForm />} />
         <Route path="/category" element={<CategoryTable />} />

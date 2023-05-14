@@ -40,9 +40,6 @@ public class IncomeController {
 			@RequestParam(defaultValue = "DESC") Sort.Direction direction,
 			@AuthenticationPrincipal UserDetailsImpl userDetails
 			){
-		 if (userDetails == null) {
-		        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-		    }
 		Integer userId = userDetails.getUserId();
 		Pageable pageable = PageRequest.of(page, pageSize, Sort.by(direction, "incomeDatetime"));
 		
@@ -54,9 +51,6 @@ public class IncomeController {
 			@PathVariable Integer id,
 			@AuthenticationPrincipal UserDetailsImpl userDetails
 			){
-	    if (userDetails == null) {
-	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-	    }
 	    Integer userId = userDetails.getUserId();
 		return new ResponseEntity<>(incomeService.getIncomeById(id, userId), HttpStatus.OK);
 	}
@@ -66,9 +60,6 @@ public class IncomeController {
 			@RequestBody IncomeDto incomeDto, 
 			@AuthenticationPrincipal UserDetailsImpl userDetails
 			){
-		if (userDetails == null) {
-	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-	    }
 		Integer userId = userDetails.getUserId();
 		return new ResponseEntity<>(incomeService.createIncome(incomeDto, userId), HttpStatus.OK);
 	}
@@ -79,9 +70,6 @@ public class IncomeController {
 			@RequestBody IncomeDto incomeDto, 
 			@AuthenticationPrincipal UserDetailsImpl userDetails
 			){
-		if (userDetails == null) {
-	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-	    }
 		Integer userId = userDetails.getUserId();
 		return new ResponseEntity<>(incomeService.updateIncome(id, incomeDto, userId), HttpStatus.OK);
 	}
@@ -91,9 +79,6 @@ public class IncomeController {
 			@PathVariable Integer id, 
 			@AuthenticationPrincipal UserDetailsImpl userDetails
 			){
-		if (userDetails == null) {
-	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-	    }
 		Integer userId = userDetails.getUserId();
 		incomeService.deleteIncome(id, userId);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
