@@ -1,6 +1,6 @@
 import { Formik } from 'formik';
-import React from 'react';
-import { Container, Row, Form, Col, Button } from 'react-bootstrap';
+import { useState } from 'react';
+import { Container, Row, Form, Col, Button, Alert } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 import authService from '../../services/Auth.service';
@@ -21,11 +21,20 @@ const registerValidationSchema = Yup.object().shape({
 
 function RegisterForm() {
   const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState('');
+  const [showError, setShowError] = useState(false);
   return (
     <Container>
       <Row>
         <h3>Welcome Onboard</h3>
       </Row>
+      {showError && (
+        <Row> 
+          <Alert variant="danger" onClose={() => setShowError(false)} dismissible>
+            {errorMessage}
+          </Alert>
+        </Row>
+      )}
       <Row>
       <Formik
         initialValues={{
@@ -39,7 +48,11 @@ function RegisterForm() {
             resetForm()
             navigate('/login')
           })
-          .catch((err) => console.log(err))
+          .catch((err) => {
+            console.log(err)
+            setShowError(true);
+            setErrorMessage(err.response.data.message);
+          })
         }}
         enableReinitialize
       >
@@ -86,7 +99,7 @@ function RegisterForm() {
             <Form.Group>
               <Form.Label>Confirm Password</Form.Label>
               <Form.Control
-                type='passwordConfirmation'
+                type='password'
                 name='passwordConfirmation'
                 size='sm'
                 value={values.passwordConfirmation}
