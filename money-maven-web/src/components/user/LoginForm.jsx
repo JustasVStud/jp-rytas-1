@@ -1,9 +1,9 @@
 import { Formik } from 'formik';
-import React from 'react';
+import React, { useContext } from 'react';
 import { Container, Row, Form, Col, Button } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
-import authService from '../../services/Auth.service';
+import { AuthContext } from '../../services/AuthContext';
 
 const loginValidationSchema = Yup.object().shape({
       username: Yup.string()
@@ -18,6 +18,19 @@ const loginValidationSchema = Yup.object().shape({
 
 function LoginForm() {
   const navigate = useNavigate();
+  const { login } = useContext(AuthContext);
+
+  const handleLogin = (values, {resetForm}) => {
+    login(values.username, values.password)
+      .then(() => {
+        resetForm();
+        navigate('/income');
+      })
+      .catch((error) => {
+        console.error('Login failed:', error);
+      });
+  };
+
   return (
     <Container>
       <Row>
@@ -30,12 +43,8 @@ function LoginForm() {
           password: ''
         }}
         validationSchema={loginValidationSchema}
-        onSubmit={(values, {resetForm}) => {
-          authService.login(values.username, values.password).then(() => {
-            resetForm()
-            navigate('/income')
-          })
-          .catch((err) => console.log(err))
+        onSubmit={(values, { resetForm }) => {
+          handleLogin(values, {resetForm});
         }}
         enableReinitialize
       >

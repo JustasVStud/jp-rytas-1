@@ -1,9 +1,9 @@
 import { Formik } from 'formik';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { Container, Row, Form, Col, Button, Alert } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
-import authService from '../../services/Auth.service';
+import { AuthContext } from '../../services/AuthContext';
 
 const registerValidationSchema = Yup.object().shape({
       username: Yup.string()
@@ -23,6 +23,20 @@ function RegisterForm() {
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState('');
   const [showError, setShowError] = useState(false);
+  const { register } = useContext(AuthContext);
+
+  const handleRegister = (values, {resetForm}) => {
+    register(values.username, values.password)
+      .then(() => {
+        resetForm();
+        navigate('/income');
+      })
+      .catch((error) => {
+        console.log(error)
+            setShowError(true);
+            setErrorMessage(error.response.data.message);
+      });
+  };
   return (
     <Container>
       <Row>
@@ -43,16 +57,8 @@ function RegisterForm() {
           passwordConfirmation: ''
         }}
         validationSchema={registerValidationSchema}
-        onSubmit={(values, {resetForm}) => {
-          authService.register(values.username, values.password).then(() => {
-            resetForm()
-            navigate('/login')
-          })
-          .catch((err) => {
-            console.log(err)
-            setShowError(true);
-            setErrorMessage(err.response.data.message);
-          })
+        onSubmit={(values, { resetForm }) => {
+          handleRegister(values, {resetForm});
         }}
         enableReinitialize
       >
