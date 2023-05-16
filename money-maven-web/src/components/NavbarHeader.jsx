@@ -4,13 +4,14 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import { FaUserAlt } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { logoutHandler } from "../services/logoutHandler";
 import { useContext } from 'react';
 import { AuthContext } from '../services/AuthContext';
 
 function NavbarHeader() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { logout, user } = useContext(AuthContext);
 
   const handleLogout = () => {
@@ -19,14 +20,15 @@ function NavbarHeader() {
 
   const isAdmin = user && user.authorities.includes('ADMIN');
   const isLoggedIn = !!user;
+  const isProfilePage = location.pathname === '/profile';
 
   return (
     <>
       {['md'].map((expand) => (
-        <Navbar key={expand} bg="light" expand={false} className="mb-3">
+        <Navbar key={expand} bg="light" expand={expand} className="mb-3">
           <Container>
             <Navbar.Brand href="#" className='mr-auto'>MONEY MAVEN</Navbar.Brand>
-            {isLoggedIn && (
+            {isLoggedIn && !isProfilePage && (
               <NavDropdown title={<FaUserAlt/>}>
                 <NavDropdown.Item href='/profile'>
                   Profile
@@ -57,14 +59,17 @@ function NavbarHeader() {
                 )}
                 {isLoggedIn &&(
                   <>
-                    <Nav.Link href="/profile">User</Nav.Link>
                     <Nav.Link href="/income">Income</Nav.Link>
                     <Nav.Link href="/expense">Expense</Nav.Link>
-                    {isAdmin && (
-                      <Nav.Link href="/category/">Category</Nav.Link>
-                    )}
                     <Nav.Link href="/doughnut">Doughnut Chart</Nav.Link>
                     <Nav.Link href="/line">Line Chart</Nav.Link>
+                    {isAdmin && (
+                        <NavDropdown title="Administration">
+                          <NavDropdown.Item href="/category/">
+                            Category
+                          </NavDropdown.Item>
+                        </NavDropdown>
+                    )}
                   </>
                 )}
                 </Nav>

@@ -1,6 +1,6 @@
 import { Formik } from 'formik';
-import React, { useContext } from 'react';
-import { Container, Row, Form, Col, Button } from 'react-bootstrap';
+import React, { useContext, useState } from 'react';
+import { Container, Row, Form, Col, Button, Alert } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 import { AuthContext } from '../../services/AuthContext';
@@ -19,6 +19,8 @@ const loginValidationSchema = Yup.object().shape({
 function LoginForm() {
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [showError, setShowError] = useState(false);
 
   const handleLogin = (values, {resetForm}) => {
     login(values.username, values.password)
@@ -27,7 +29,9 @@ function LoginForm() {
         navigate('/income');
       })
       .catch((error) => {
-        console.error('Login failed:', error);
+        console.log(error);
+        setShowError(true);
+        setErrorMessage('Username or password incorrect');
       });
   };
 
@@ -36,6 +40,13 @@ function LoginForm() {
       <Row>
         <h3>Login to Your Account</h3>
       </Row>
+      {showError && (
+        <Row> 
+          <Alert variant="danger" onClose={() => setShowError(false)} dismissible>
+            {errorMessage}
+          </Alert>
+        </Row>
+      )}
       <Row>
       <Formik
         initialValues={{
