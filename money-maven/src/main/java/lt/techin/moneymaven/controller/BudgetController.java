@@ -1,7 +1,5 @@
 package lt.techin.moneymaven.controller;
 
-import java.time.LocalDateTime;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,67 +19,61 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import lt.techin.moneymaven.dto.ExpenseDto;
+import lt.techin.moneymaven.dto.BudgetDto;
 import lt.techin.moneymaven.security.services.UserDetailsImpl;
-import lt.techin.moneymaven.service.ExpenseService;
+import lt.techin.moneymaven.service.BudgetService;
 
 @CrossOrigin("*")
 @RestController
-@RequestMapping("api/expenses")
-public class ExpenseController {
-	
+@RequestMapping("api/budgets")
+public class BudgetController {
+
 	@Autowired
-	private ExpenseService expenseService;
+	BudgetService budgetService;
 	
 	@GetMapping
-	public ResponseEntity<Page<ExpenseDto>> getExpensesPage(
+	public ResponseEntity<Page<BudgetDto>> getBudgetsPage(
 			@RequestParam(defaultValue="0") int page,
 			@RequestParam(defaultValue = "10") int pageSize,
 			@RequestParam(defaultValue = "DESC") Sort.Direction direction,
-			@RequestParam(required = false) String expenseTypeName,
-			@RequestParam(required = false) LocalDateTime startDate,
-			@RequestParam(required = false) LocalDateTime endDate,
 			@AuthenticationPrincipal UserDetailsImpl userDetails
 			){
 	    Integer userId = userDetails.getUserId();
-		Pageable pageable = PageRequest.of(page, pageSize, Sort.by(direction, "expenseDatetime"));
-			return new ResponseEntity<>(expenseService.getExpensesPage(pageable, expenseTypeName, startDate, endDate, userId), HttpStatus.OK);		
+	    Pageable pageable = PageRequest.of(page, pageSize, Sort.by(direction, "budgetMonth"));
+	    return new ResponseEntity<>(budgetService.getBudgetsPage(pageable, userId), HttpStatus.OK);
 	}
-	
 	@GetMapping("/{id}")
-	public ResponseEntity<ExpenseDto> getExpenseById(
+	public ResponseEntity<BudgetDto> getBudgetById(
 			@PathVariable Integer id,
 			@AuthenticationPrincipal UserDetailsImpl userDetails
 			){
-	    Integer userId = userDetails.getUserId();
-		return new ResponseEntity<>(expenseService.getExpenseById(id, userId), HttpStatus.OK);
+		Integer userId = userDetails.getUserId();
+		return new ResponseEntity<>(budgetService.getBudgetById(id, userId), HttpStatus.OK);
 	}
-	
 	@PostMapping
-	public ResponseEntity<ExpenseDto> createExpense(
-			@RequestBody ExpenseDto expenseDto,
+	public ResponseEntity<BudgetDto> createBudget(
+			@RequestBody BudgetDto budgetDto,
 			@AuthenticationPrincipal UserDetailsImpl userDetails
 			){
-	    Integer userId = userDetails.getUserId();
-		return new ResponseEntity<>(expenseService.createExpense(expenseDto, userId), HttpStatus.OK);
+		Integer userId = userDetails.getUserId();
+		return new ResponseEntity<>(budgetService.createBudget(budgetDto, userId), HttpStatus.OK);
 	}
-	
 	@PatchMapping("/{id}")
-	public ResponseEntity<ExpenseDto> updateExpense(
-			@PathVariable Integer id, 
-			@RequestBody ExpenseDto expenseDto,
+	public ResponseEntity<BudgetDto> updateBudget(
+			@PathVariable Integer id,
+			@RequestBody BudgetDto budgetDto,
 			@AuthenticationPrincipal UserDetailsImpl userDetails
 			){
-	    Integer userId = userDetails.getUserId();
-		return new ResponseEntity<>(expenseService.updateExpense(id, expenseDto, userId) , HttpStatus.OK);
+		Integer userId = userDetails.getUserId();
+		return new ResponseEntity<>(budgetService.updateBudget(id, budgetDto, userId), HttpStatus.OK);
 	}
-	
 	@DeleteMapping("/{id}")
-	public ResponseEntity<HttpStatus> deleteExpense(
+	public ResponseEntity<HttpStatus> deleteBudget(
 			@PathVariable Integer id,
-			@AuthenticationPrincipal UserDetailsImpl userDetails){
-	    Integer userId = userDetails.getUserId();
-		expenseService.deleteExpense(id, userId);
+			@AuthenticationPrincipal UserDetailsImpl userDetails
+			){
+		Integer userId = userDetails.getUserId();
+		budgetService.deleteBudget(id, userId);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 }
