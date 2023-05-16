@@ -47,11 +47,14 @@ function ExpenseEditForm() {
         setExistingExpense(response);
       } catch (error) {
         console.log(error);
+        if(error.response.status === 401){
+          navigate('/profile');
+        }
       }  
     };
   
     fetchExpense();
-  }, [id]);
+  }, [id, navigate]);
 
   useEffect(() => {
     const fetchExpenseTypes = async () => {

@@ -1,9 +1,9 @@
 import { Formik } from 'formik';
-import React from 'react';
-import { Container, Row, Form, Col, Button } from 'react-bootstrap';
+import { useState, useContext } from 'react';
+import { Container, Row, Form, Col, Button, Alert } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
-import authService from '../../services/Auth.service';
+import { AuthContext } from '../../services/AuthContext';
 
 const registerValidationSchema = Yup.object().shape({
       username: Yup.string()
@@ -21,11 +21,34 @@ const registerValidationSchema = Yup.object().shape({
 
 function RegisterForm() {
   const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState('');
+  const [showError, setShowError] = useState(false);
+  const { register } = useContext(AuthContext);
+
+  const handleRegister = (values, {resetForm}) => {
+    register(values.username, values.password)
+      .then(() => {
+        resetForm();
+        navigate('/income');
+      })
+      .catch((error) => {
+        console.log(error)
+            setShowError(true);
+            setErrorMessage(error.response.data.message);
+      });
+  };
   return (
     <Container>
       <Row>
         <h3>Welcome Onboard</h3>
       </Row>
+      {showError && (
+        <Row> 
+          <Alert variant="danger" onClose={() => setShowError(false)} dismissible>
+            {errorMessage}
+          </Alert>
+        </Row>
+      )}
       <Row>
       <Formik
         initialValues={{
@@ -34,12 +57,8 @@ function RegisterForm() {
           passwordConfirmation: ''
         }}
         validationSchema={registerValidationSchema}
-        onSubmit={(values, {resetForm}) => {
-          authService.register(values.username, values.password).then(() => {
-            resetForm()
-            navigate('/login')
-          })
-          .catch((err) => console.log(err))
+        onSubmit={(values, { resetForm }) => {
+          handleRegister(values, {resetForm});
         }}
         enableReinitialize
       >
@@ -86,7 +105,7 @@ function RegisterForm() {
             <Form.Group>
               <Form.Label>Confirm Password</Form.Label>
               <Form.Control
-                type='passwordConfirmation'
+                type='password'
                 name='passwordConfirmation'
                 size='sm'
                 value={values.passwordConfirmation}

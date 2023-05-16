@@ -1,9 +1,9 @@
 import { Formik } from 'formik';
-import React from 'react';
-import { Container, Row, Form, Col, Button } from 'react-bootstrap';
+import React, { useContext, useState } from 'react';
+import { Container, Row, Form, Col, Button, Alert } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
-import authService from '../../services/Auth.service';
+import { AuthContext } from '../../services/AuthContext';
 
 const loginValidationSchema = Yup.object().shape({
       username: Yup.string()
@@ -18,11 +18,35 @@ const loginValidationSchema = Yup.object().shape({
 
 function LoginForm() {
   const navigate = useNavigate();
+  const { login } = useContext(AuthContext);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [showError, setShowError] = useState(false);
+
+  const handleLogin = (values, {resetForm}) => {
+    login(values.username, values.password)
+      .then(() => {
+        resetForm();
+        navigate('/income');
+      })
+      .catch((error) => {
+        console.log(error);
+        setShowError(true);
+        setErrorMessage('Username or password incorrect');
+      });
+  };
+
   return (
     <Container>
       <Row>
         <h3>Login to Your Account</h3>
       </Row>
+      {showError && (
+        <Row> 
+          <Alert variant="danger" onClose={() => setShowError(false)} dismissible>
+            {errorMessage}
+          </Alert>
+        </Row>
+      )}
       <Row>
       <Formik
         initialValues={{
@@ -30,12 +54,8 @@ function LoginForm() {
           password: ''
         }}
         validationSchema={loginValidationSchema}
-        onSubmit={(values, {resetForm}) => {
-          authService.login(values.username, values.password).then(() => {
-            resetForm()
-            navigate('/income')
-          })
-          .catch((err) => console.log(err))
+        onSubmit={(values, { resetForm }) => {
+          handleLogin(values, {resetForm});
         }}
         enableReinitialize
       >

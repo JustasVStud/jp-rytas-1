@@ -42,8 +42,13 @@ function IncomeEditForm() {
     useEffect(() => {
         getIncome(id)
             .then(response => setExistingIncome(response))
-            .catch((err) => console.log(err));
-    }, [id])
+            .catch((err) => {
+                console.log(err)
+                if(err.response.status === 401){
+                    navigate('/profile');
+                }
+            });
+    }, [id, navigate])
     
     return ( 
         <Container className="form-style">

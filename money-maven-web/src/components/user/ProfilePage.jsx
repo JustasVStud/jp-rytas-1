@@ -1,23 +1,22 @@
 import { Row, Col, Container, Image } from 'react-bootstrap';
-import AuthService from '../../services/Auth.service';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { logoutHandler } from '../../services/logoutHandler';
 import profileStudent from '../../assets/profile-student.svg';
+import { AuthContext } from '../../services/AuthContext';
 
 
 function ProfilePage() {
     const [currentUser, setCurrentUser] = useState(null);
     const navigate = useNavigate();
-    
+    const { logout, user } = useContext(AuthContext);
+
+    const handleLogout = () => {
+        logoutHandler(logout, navigate);
+    };
     useEffect(() => {
-        const currentUser = AuthService.getCurrentUser();
-        if(!currentUser){
-            navigate("/login");
-            return;
-        }
-        setCurrentUser(currentUser);
-    }, [navigate]);
+        setCurrentUser(user);
+    }, [user]);
 
     if(!currentUser){
         return (
@@ -59,7 +58,7 @@ function ProfilePage() {
                 <Link to={'/expense'} className="profile-link">Go to Expenses</Link>
             </Row>
             <Row className="profile-line">
-                <span onClick={() => logoutHandler(navigate)} className="profile-link">Sign out</span>
+                <span onClick={handleLogout} className="profile-link">Sign out</span>
             </Row>
             <Row className="fixed-bottom profile-student justify-content-center">
                 <Image src={profileStudent} alt='a sitting student holding some pages' fluid className="profile-student__img"/>
