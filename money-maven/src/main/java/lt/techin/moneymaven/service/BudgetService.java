@@ -2,6 +2,8 @@ package lt.techin.moneymaven.service;
 
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
@@ -37,13 +39,16 @@ public class BudgetService {
 	@Autowired 
 	private ModelMapper modelMapper;
 	
+	@Autowired
+	private CalculationService calculationService;
+	
 	
 	public Page<BudgetDto> getBudgetsPage(Pageable pageable, Integer userId){
 		Page<Budget> budgets = budgetRepository.findAllByUser_userId(pageable, userId);
 		if(budgets.isEmpty()) {
 			throw new NoEntriesFoundException("budgets");
 		}
-		return budgets.map(budget -> modelMapper.map(budget, BudgetDto.class));
+		return budgets.map(this::mapToBudgetDto);
 	}
 	
 	public BudgetDto getBudgetById(Integer id, Integer userId) {
@@ -53,7 +58,7 @@ public class BudgetService {
 		if (!budget.getUser().getUserId().equals(userId)) {
 			throw new UnauthorizedAccessException("Budget", id, userId);
 		}
-		return modelMapper.map(budget, BudgetDto.class);
+		return mapToBudgetDto(budget);
 	}
 	
 	public BudgetDto createBudget(BudgetDto budgetDto, Integer userId) {
@@ -123,5 +128,29 @@ public class BudgetService {
 		for (Budget budget : oldBudgets) {
 			budgetRepository.delete(budget);
 		}
+	}
+	
+	private BudgetDto mapToBudgetDto(Budget budget) {
+		BudgetDto budgetDto = modelMapper.map(budget, BudgetDto.class);
+		
+		Integer userId = budget.getUser().getUserId();
+		String expenseTypeName = budget.getExpenseType().getTypeName();
+		LocalDateTime now = LocalDateTime.now();
+        // Get the start of the current month
+        LocalDateTime startOfMonth = now.with(TemporalAdjusters.firstDayOfMonth())
+                                      .withHour(0)
+                                      .withMinute(0)
+                                      .withSecond(0);
+        // Get the end of the current month
+        LocalDateTime endOfMonth = now.with(TemporalAdjusters.lastDayOfMonth())
+                                      .withHour(23)
+                                      .withMinute(59)
+                                      .withSecond(59);
+		
+		
+		budgetDto.setExpenseAmount(calculationService.getTotalExpense(userId, startOfMonth, endOfMonth, expenseTypeName));
+		budgetDto.setBudgetRemainder(calculationService.getBudgetRemainder(userId, expenseTypeName));
+		
+		return budgetDto;
 	}
 }

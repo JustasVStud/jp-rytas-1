@@ -20,6 +20,7 @@ function BudgetList() {
                     currentPage,
                     pageSize
                 );
+                console.log(content);
                 setBudgets(content);
                 setTotalPages(totalPages);
             } catch (error) {

@@ -1,6 +1,8 @@
 package lt.techin.moneymaven.repository;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,5 +24,17 @@ public interface ExpenseRepository extends JpaRepository<Expense, Integer>{
 	                               @Param("startDate") LocalDateTime startDate,
 	                               @Param("endDate") LocalDateTime endDate,
 	                               @Param("userId") Integer userId);
+	
+	@Query("SELECT SUM(e.expenseAmount) FROM Expense e " +
+	           "WHERE e.user.userId = :userId " +
+	           "AND (:startDate IS NULL OR e.expenseDatetime >= :startDate) " +
+	           "AND (:endDate IS NULL OR e.expenseDatetime <= :endDate) " +
+	           "AND (:expenseTypeName IS NULL OR e.expenseType.typeName = :expenseTypeName)")
+	    Optional<BigDecimal> getTotalExpense(@Param("userId") Integer userId,
+	                               @Param("startDate") LocalDateTime startDate,
+	                               @Param("endDate") LocalDateTime endDate,
+	                               @Param("expenseTypeName") String expenseTypeName);
+	
+	
 	
 }
