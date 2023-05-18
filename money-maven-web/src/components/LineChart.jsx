@@ -33,26 +33,54 @@ function LineChart() {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [deleteExpense] = useState(false);
-
+  const [deleteIncome] = useState([]);
+  const [incomes, setIncomes] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const token = JSON.parse(localStorage.getItem("user"));
-    axios
-      .get("http://localhost:8080/api/expenses?page=0&pageSize=10000", {
+
+    Promise.all([
+      axios.get("http://localhost:8080/api/expenses", {
         headers: {
           Authorization: `Bearer ${token.accessToken}`,
         },
         params: {
+          page: 0,
+          pageSize: 10000,
           startDate: startDate || null,
           endDate: endDate || null,
         },
+      }),
+      axios.get("http://localhost:8080/api/incomes", {
+        headers: {
+          Authorization: `Bearer ${token.accessToken}`,
+        },
+        params: {
+          page: 0,
+          pageSize: 10000,
+          startDate: startDate || null,
+          endDate: endDate || null,
+        },
+      }),
+    ])
+      .then(([expensesResponse, incomesResponse]) => {
+        console.log("Expense data received:", expensesResponse.data.content);
+        console.log("Income data received:", incomesResponse.data.content);
+        setExpenses(expensesResponse.data.content);
+        setIncomes(incomesResponse.data.content);
+        setLoading(false);
       })
-      .then((response) => {
-        console.log("Expense data received:", response.data.content);
-        setExpenses(response.data.content);
-      })
-      .catch((err) => console.log(err));
-  }, [startDate, endDate, deleteExpense]);
+      .catch((err) => {
+        console.log(err);
+        setLoading(false);
+      });
+  }, [startDate, endDate, deleteExpense, deleteIncome]);
+
+  const selectedIncomes = incomes.reduce(
+    (total, income) => total + income.incomeAmount,
+    0
+  );
 
   const selectedExpenses = expenses.reduce(
     (total, expense) => total + expense.expenseAmount,
@@ -94,9 +122,18 @@ function LineChart() {
         label: "Expenses",
         backgroundColor: "red",
         tension: 0.3,
+        fill: false,
         data: expenses.map(
           (selectedExpenses) => selectedExpenses.expenseAmount
         ),
+      },
+      {
+        type: "line",
+        label: "Income",
+        backgroundColor: "green",
+        tension: 0.3,
+        fill: false,
+        data: incomes.map((selectedIncomes) => selectedIncomes.incomeAmount),
       },
     ],
   };
@@ -152,8 +189,8 @@ function LineChart() {
         <table className="table">
           {!expenses && <tr>Data not exist, wrong date format</tr>}
         </table>
+        </Row>
         <Line data={dataLine} />
-      </Row>
       <table className="table">
         <thead>
           <tr className="table-row"></tr>
@@ -164,6 +201,14 @@ function LineChart() {
               Selected period expenses:
             </td>
             <td className="table-cell table-button">€ {selectedExpenses}</td>
+          </tr>
+        </tbody>
+        <tbody>
+          <tr className="table-row">
+            <td className="table-cell table-button">
+              Selected incomes period :
+            </td>
+            <td className="table-cell table-button">€ {selectedIncomes}</td>
           </tr>
         </tbody>
       </table>

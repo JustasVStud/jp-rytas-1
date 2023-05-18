@@ -1,5 +1,7 @@
 package lt.techin.moneymaven.controller;
 
+import java.time.LocalDateTime;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -38,12 +40,14 @@ public class IncomeController {
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int pageSize,
 			@RequestParam(defaultValue = "DESC") Sort.Direction direction,
+			@RequestParam(required = false) LocalDateTime startDate,
+			@RequestParam(required = false) LocalDateTime endDate,
 			@AuthenticationPrincipal UserDetailsImpl userDetails
 			){
 		Integer userId = userDetails.getUserId();
 		Pageable pageable = PageRequest.of(page, pageSize, Sort.by(direction, "incomeDatetime"));
 		
-		return new ResponseEntity<>(incomeService.getIncomes(pageable, userId), HttpStatus.OK);
+		return new ResponseEntity<>(incomeService.getIncomes(pageable, userId, startDate, endDate), HttpStatus.OK);
 	}
 	
 	@GetMapping("/{id}")
