@@ -1,5 +1,7 @@
 package lt.techin.moneymaven.service;
 
+import java.time.LocalDateTime;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,11 +30,23 @@ public class IncomeService {
 	@Autowired
 	private ModelMapper modelMapper;
 	
-	public Page<IncomeDto >getIncomes(Pageable pageable, Integer userId){
+	public Page<IncomeDto >getIncomes(
+			Pageable pageable,
+			Integer userId,
+			LocalDateTime startDate,
+			LocalDateTime endDate){
 		try {
-			Page<Income> incomes = incomeRepository.findAllByUser_userId(pageable, userId);
+			Page<Income> incomes;
+			incomes = incomeRepository.findIncomes(pageable, startDate, endDate, userId );
+			
+//---------- Pirminis kodas
+//			Page<Income> incomes = incomeRepository.findAllByUser_userId(pageable, userId);
+//			if (incomes.isEmpty()) {
+//				throw new NoEntriesFoundException("incomes");
+			
+			
 			if (incomes.isEmpty()) {
-				throw new NoEntriesFoundException("incomes");
+			throw new NoEntriesFoundException("incomes");
 			}
 			return incomes.map(income -> modelMapper.map(income, IncomeDto.class));
 		} catch (NoEntriesFoundException e) {
