@@ -32,9 +32,9 @@ function RegisterForm() {
         navigate('/income');
       })
       .catch((error) => {
-        console.log(error)
-            setShowError(true);
-            setErrorMessage(error.response.data.message);
+        console.log(error);
+        setShowError(true);
+        setErrorMessage(error.response.data.message);
       });
   };
   return (

@@ -3,6 +3,9 @@ import Expense from './Expense';
 import NoElementsTableRow from '../NoElementsTableRow';
 
 function ExpenseTable({ expenses, onDeleteExpense}) {
+    const handleDeleteExpense = (deletedExpenseId) => {
+        onDeleteExpense(expenses.filter(expense => expense.incomeId !== deletedExpenseId));
+      };
     return ( 
         <Table>
             <thead>
@@ -21,7 +24,7 @@ function ExpenseTable({ expenses, onDeleteExpense}) {
                         <Expense
                             key={expense.expenseId}
                             expense={expense}
-                            onDelete={() => onDeleteExpense(Date.now())}
+                            onDelete={() => handleDeleteExpense(expense.expenseId)}
                         />
                     ))
                 ) : (

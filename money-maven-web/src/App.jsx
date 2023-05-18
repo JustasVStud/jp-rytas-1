@@ -17,6 +17,9 @@ import LoginForm from "./components/user/LoginForm";
 import RegisterForm from "./components/user/RegisterForm";
 import ProfilePage from "./components/user/ProfilePage";
 import AdminRoutes from './services/AdminRoutes';
+import BudgetList from './components/budget/BudgetList';
+import BudgetForm from './components/budget/BudgetForm';
+import BudgetEditForm from './components/budget/BudgetEditForm';
 
 function App() {
 
@@ -35,6 +38,9 @@ function App() {
             <Route path="/expense" element={<ExpenseList />} exact/>
             <Route path="/expense/create" element={<ExpenseForm />} exact/>
             <Route path="/expense/edit/:id" element={<ExpenseEditForm />} exact/>
+            <Route path="/budget" element={<BudgetList />} exact/>
+            <Route path="/budget/create" element={<BudgetForm />} exact/>
+            <Route path="/budget/edit/:id" element={<BudgetEditForm />} exact/>
             <Route path="/doughnut" element={<DoughnutChart />} exact/>
             <Route path="/line" element={<LineChart />} exact/>
             <Route element={<AdminRoutes/>}>
