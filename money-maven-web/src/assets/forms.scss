@@ -3,7 +3,7 @@
 }
 
 .form-style{
-    &  .form-control {
+    .form-control, .form-select {
         background-color: var(--form-input);
         border-radius: 20px;
         margin: 0.75em 0;

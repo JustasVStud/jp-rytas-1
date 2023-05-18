@@ -3,13 +3,15 @@ import Budget from './Budget';
 import NoElementsTableRow from '../NoElementsTableRow';
 
 function BudgetTable({budgets, onDeleteBudget}) {
+    const handleDeleteBudget = (deletedBudgetId) => {
+        onDeleteBudget(budgets.filter(budget => budget.budgetId !== deletedBudgetId))
+    };
     return ( 
         <Table>
             <thead>
                 <tr>
                     <th>ExpenseType</th>
                     <th>Amount</th>
-                    <th>Month</th>
                     <th>Edit</th>
                     <th>Delete</th>
                 </tr>
@@ -20,7 +22,7 @@ function BudgetTable({budgets, onDeleteBudget}) {
                         <Budget
                             key={budget.budgetId}
                             budget={budget}
-                            onDelete={() => onDeleteBudget(Date.now())}
+                            onDelete={() => handleDeleteBudget(budget.budgetId)}
                         />
                     ))
                 ) : (

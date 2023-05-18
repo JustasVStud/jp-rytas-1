@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Container, Row, Col, Form, Spinner, Pagination, Button } from 'react-bootstrap';
+import { Container, Row, Spinner, Pagination, Button } from 'react-bootstrap';
 import PageSizeSelect from '../PageSizeSelect';
 import { getBudgets } from '../../services/Budget.service';
 import BudgetTable from './BudgetTable';
@@ -10,7 +10,6 @@ function BudgetList() {
     const [currentPage, setCurrentPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
     const [pageSize, setPageSize] = useState(10);
-    const [sortDirection, setSortDirection] = useState("DESC");
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
@@ -19,8 +18,7 @@ function BudgetList() {
                 setIsLoading(true);
                 const { content, totalPages } = await getBudgets(
                     currentPage,
-                    pageSize,
-                    sortDirection
+                    pageSize
                 );
                 setBudgets(content);
                 setTotalPages(totalPages);
@@ -32,17 +30,11 @@ function BudgetList() {
         };
 
         fetchBudgets()
-    }, [currentPage, pageSize, sortDirection]);
+    }, [currentPage, pageSize]);
 
     const handlePageSizeChange = (selectedPageSize) => {
         setPageSize(selectedPageSize);
         setCurrentPage(0);
-    };
-
-    const handleSortDirectionChange = () => {
-        setSortDirection((prevSortDirection) =>
-            prevSortDirection === 'ASC' ? 'DESC' : 'ASC'
-        );
     };
 
     const handlePageChange = (selectedPage) => {
@@ -56,17 +48,6 @@ function BudgetList() {
                     pageSize={pageSize}
                     onPageSizeChange={handlePageSizeChange}
                 />    
-                <Col className='table-filter--sort'>
-                    <Form.Group className='form-style'>
-                        <Button
-                            className='mx-2'
-                            variant='primary'
-                            onClick={handleSortDirectionChange}
-                        >
-                            {sortDirection === 'ASC' ? 'Oldest to Newest' : 'Newest to Oldest'}
-                        </Button>
-                    </Form.Group>
-                </Col>
             </Row>
 
             {isLoading ? (

@@ -12,6 +12,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import lt.techin.moneymaven.exception.BudgetNotFoundException;
+import lt.techin.moneymaven.exception.DuplicateBudgetException;
 import lt.techin.moneymaven.exception.DuplicateExpenseTypeException;
 import lt.techin.moneymaven.exception.ExpenseNotFoundException;
 import lt.techin.moneymaven.exception.ExpenseTypeDeletionException;
@@ -134,6 +135,17 @@ public class ExceptionController extends ResponseEntityExceptionHandler {
     	body.put("cause", ex.getCause());
     
     	return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+    }
+    
+    @ExceptionHandler(DuplicateBudgetException.class)
+    public ResponseEntity<Object> handleDuplicateBudgetException(
+    		DuplicateBudgetException ex, WebRequest request) {
+    	Map<String, Object> body = new LinkedHashMap<>();
+    	body.put("timestamp", LocalDateTime.now());
+    	body.put("message", ex.getMessage());
+    	body.put("cause", ex.getCause());
+    
+    	return new ResponseEntity<>(body, HttpStatus.FORBIDDEN);
     }
 
 }

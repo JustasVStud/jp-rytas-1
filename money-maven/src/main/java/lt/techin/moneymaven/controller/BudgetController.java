@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -35,11 +34,10 @@ public class BudgetController {
 	public ResponseEntity<Page<BudgetDto>> getBudgetsPage(
 			@RequestParam(defaultValue="0") int page,
 			@RequestParam(defaultValue = "10") int pageSize,
-			@RequestParam(defaultValue = "DESC") Sort.Direction direction,
 			@AuthenticationPrincipal UserDetailsImpl userDetails
 			){
 	    Integer userId = userDetails.getUserId();
-	    Pageable pageable = PageRequest.of(page, pageSize, Sort.by(direction, "budgetMonth"));
+	    Pageable pageable = PageRequest.of(page, pageSize);
 	    return new ResponseEntity<>(budgetService.getBudgetsPage(pageable, userId), HttpStatus.OK);
 	}
 	@GetMapping("/{id}")
@@ -50,6 +48,7 @@ public class BudgetController {
 		Integer userId = userDetails.getUserId();
 		return new ResponseEntity<>(budgetService.getBudgetById(id, userId), HttpStatus.OK);
 	}
+	
 	@PostMapping
 	public ResponseEntity<BudgetDto> createBudget(
 			@RequestBody BudgetDto budgetDto,
