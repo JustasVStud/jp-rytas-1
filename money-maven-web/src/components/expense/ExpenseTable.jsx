@@ -4,7 +4,7 @@ import NoElementsTableRow from '../NoElementsTableRow';
 
 function ExpenseTable({ expenses, onDeleteExpense}) {
     const handleDeleteExpense = (deletedExpenseId) => {
-        onDeleteExpense(expenses.filter(expense => expense.incomeId !== deletedExpenseId));
+        onDeleteExpense(expenses.filter(expense => expense.expenseId !== deletedExpenseId));
       };
     return ( 
         <Table>

@@ -20,6 +20,7 @@ function BudgetList() {
                     currentPage,
                     pageSize
                 );
+                console.log(content);
                 setBudgets(content);
                 setTotalPages(totalPages);
             } catch (error) {
@@ -43,7 +44,10 @@ function BudgetList() {
 
     return ( 
         <Container>
-            <Row className="table-filter">'
+            <Row>
+                <h2>Budgets</h2>
+            </Row>
+            <Row className="table-filter">
                 <PageSizeSelect
                     pageSize={pageSize}
                     onPageSizeChange={handlePageSizeChange}

@@ -1,0 +1,14 @@
+.budget-bar {
+    .progress {
+        padding: 0;
+    }
+    .budget-bar--expense{
+        text-align: left;
+    }
+    .budget-bar--remaining{
+        text-align: center;
+    }
+    .budget-bar--budget{
+        text-align: right;
+    }
+}
