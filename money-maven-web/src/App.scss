@@ -18,6 +18,7 @@
 }
 
 body {
+    // background-image: linear-gradient(to bottom, #aedaf9, #a0c9e7, #92b9d5, #84a9c4, #7699b3);
     background-color: var(--main-background);
     color: var(--font-color);
     font-weight: 700;
@@ -25,7 +26,8 @@ body {
 }
 
 h3 {
-    font-size: 1.1875rem;
+    text-align: center;
+    font-size: 1.583rem;
     font-weight: 700 ;
 }
 .container {

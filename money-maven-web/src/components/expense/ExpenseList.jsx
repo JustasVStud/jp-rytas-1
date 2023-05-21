@@ -104,6 +104,9 @@ function ExpenseList() {
 
   return (
       <Container>
+        <Row>
+          <h3>Expenses</h3>
+        </Row>
         <Row className="table-filter">
           <Col>
           <ExpenseTypeSelect

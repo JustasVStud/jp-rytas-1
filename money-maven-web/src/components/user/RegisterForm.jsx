@@ -38,7 +38,7 @@ function RegisterForm() {
       });
   };
   return (
-    <Container>
+    <Container className='form-style'>
       <Row>
         <h3>Welcome Onboard</h3>
       </Row>
@@ -119,19 +119,18 @@ function RegisterForm() {
             </Form.Group>
             <Row className="form-buttons-container">
               <Col>
-                <Button variant="primary" type="submit" disabled={!dirty}>Register</Button>
+                <Button variant="primary" type="submit" disabled={!dirty} className='row-width-button'>Register</Button>
               </Col>
             </Row>
           </Form>
         )}
       </Formik>
       </Row>
-      <Row>
+      <Row className='login-register-prompt'>
         <Col>
             <span>
-                Already registered?
+                Already registered? <Link to={'/login'}>Login</Link>
             </span>
-            <Link to={'/login'}>Login</Link>
         </Col>
       </Row>
     </Container>

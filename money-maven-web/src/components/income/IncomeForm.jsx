@@ -34,7 +34,7 @@ function IncomeForm() {
   return (
     <Container className="form-style">
       <Row>
-        <h3 className="">Income</h3>
+        <h3 className="">Add new Income</h3>
       </Row>
       <Row>
         <Formik

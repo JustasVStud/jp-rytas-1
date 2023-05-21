@@ -45,7 +45,7 @@ function BudgetList() {
     return ( 
         <Container>
             <Row>
-                <h2>Budgets</h2>
+                <h3>Budgets</h3>
             </Row>
             <Row className="table-filter">
                 <PageSizeSelect

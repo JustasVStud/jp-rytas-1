@@ -116,8 +116,6 @@ function DoughnutChart() {
   return (
     <Container>
       <Row className="table-filter">
-        <Form.Label>Doughnut Chart</Form.Label>
-
         <Row className="row justify-center">
           <Col className="table-filter--size">
             <Form.Group>

@@ -15,8 +15,11 @@
     }
 }
 
-.form-style h3 {
+.login-register-prompt {
     text-align: center;
+    a {
+        text-decoration: none;
+    }
 }
 
 
@@ -37,6 +40,9 @@
         background-color: var(--button-color);
         opacity: 75%;
         color: var(--font-color);
+    }
+    &.row-width-button {
+        width: 100%;
     }
 }
 
