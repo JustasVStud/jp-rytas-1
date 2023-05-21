@@ -1,0 +1,45 @@
+.navigation {
+    padding-top: 0;
+    align-items: flex-start;
+    &.bg-light{
+        background-color: var(--main-background)!important;
+    }
+    .navigation-logo {
+        padding:0;
+        
+        .navigation-logo--text {
+            position: absolute;
+            left: 58px;
+            top: 105px;
+            &.small{
+                top: 33px;
+                left: 23px;
+                display: inline-block;
+                width: 60px;
+                
+            }
+        }
+    }
+    .navigation-profile{
+        margin-left: auto;
+        font-size: 25px;
+        line-height: 25px;
+        margin-right: 1.3rem;
+        margin-top: 3rem;
+        .dropdown-toggle::after{
+            display: none;
+        }
+    }
+    .navigation-toggle {
+        padding: 0;
+        border: none;
+        color: var(--font-color);
+        font-size: 25px;
+        line-height: 25px;
+        margin-top: 3rem;
+        margin-right: 1.3rem;
+    }
+}
+.offcanvas{
+    background-color: var(--header-footer-background);
+}

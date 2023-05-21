@@ -64,7 +64,7 @@
 }
 .table-filter {
     width: fit-content;
-    margin-top: 1rem;
+    margin: 1rem 1.5rem 0;
     .form-style {
         padding: 0;
     }
@@ -81,6 +81,11 @@
     }
     .table-filter--sort {
         padding-right: 0;
+        .btn {
+            width: auto;
+            height: auto;
+            font-size: 1rem;
+        }
     }
     .size--select,
     .expense-type--select{
@@ -102,6 +107,8 @@
     }
 }
 .pagination {
+    margin-bottom: 2rem;
+    margin-left: 1rem;
     & > .page-item {
         background-color: var(--form-input);
         & >.page-link {
