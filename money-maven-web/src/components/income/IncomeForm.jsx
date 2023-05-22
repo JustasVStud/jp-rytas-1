@@ -29,7 +29,7 @@ const IncomeValidationSchema = Yup.object().shape({
       .required('Date is required')
 });
 
-function IncomeForm() {
+function IncomeForm({ onIncomeCreate = () => {} }) {
   const navigate = useNavigate();
   return (
     <Container className="form-style">
@@ -50,6 +50,9 @@ function IncomeForm() {
               await createIncome(values);
               resetForm();
               navigate('/income');
+              if (typeof onIncomeCreate === 'function') {
+                onIncomeCreate(values);
+              }
             } catch (error) {
               console.log(error);
             }

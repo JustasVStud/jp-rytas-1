@@ -1,7 +1,7 @@
 import { Button, Container, Row, Col, Form, Spinner, Pagination, Image } from 'react-bootstrap';
 import IncomeForm from './IncomeForm';
 import IncomeTable from './IncomeTable';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { getIncomes } from '../../services/Income.service';
 import LineChart from '../LineChart';
 import PageSizeSelect from '../PageSizeSelect';
@@ -16,7 +16,7 @@ function IncomeDesktop() {
     const [isLoading, setIsLoading] = useState(true);
     const [sortDirection, setSortDirection] = useState('DESC');
 
-    useEffect(() => {
+    const fetchIncomes = useCallback(() => {
         setIsLoading(true);
         getIncomes(currentPage, pageSize, sortDirection)
           .then((data) => {
@@ -28,6 +28,15 @@ function IncomeDesktop() {
             setIsLoading(false);
           });
       }, [currentPage, pageSize, sortDirection]);
+
+
+      useEffect(() => {
+        fetchIncomes();
+      }, [fetchIncomes]); 
+
+      const handleIncomeCreate = () => {
+        fetchIncomes();
+      };
 
       const handlePageSizeChange = (selectedPageSize) => {
         setPageSize(selectedPageSize);
@@ -49,7 +58,7 @@ function IncomeDesktop() {
             <Row>
                 <Col>
                     <Row>
-                        <IncomeForm/>
+                        <IncomeForm onIncomeCreate={handleIncomeCreate}/>
                     </Row>
                     <Row className="fixed-bottom profile-student">
                         <Image src={profileStudent} alt='a sitting student holding some pages' fluid className="profile-student__img"/>
