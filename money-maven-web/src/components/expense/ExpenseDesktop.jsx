@@ -1,4 +1,4 @@
-import { Button, Container, Row, Col, Form, Spinner, Pagination } from 'react-bootstrap';
+import { Button, Container, Row, Col, Form, Spinner, Pagination, Image } from 'react-bootstrap';
 import { useEffect, useState, useCallback } from 'react';
 import LineChart from '../LineChart';
 import PageSizeSelect from '../PageSizeSelect';
@@ -9,8 +9,8 @@ import { getExpenseTypes } from '../../services/Expense_type.service';
 import moment from 'moment';
 import ExpenseForm from './ExpenseForm';
 import ExpenseTypeSelect from '../expense_type/ExpenseTypeSelect';
-import DateTimePicker from 'react-datetime-picker';
-import { FaCalendarAlt } from 'react-icons/fa';
+import profileStudent from '../../assets/profile-student.svg';
+import DateFilterSelect from '../DateFilterSelect';
 
 function ExpenseDesktop() {
   const [expenses, setExpenses] = useState([]);
@@ -101,72 +101,51 @@ function ExpenseDesktop() {
   };
 
     return ( 
-        <Container>
-            <Row>
-                <Col>
-                    <ExpenseForm onExpenseCreate={handleExpenseCreate}/>
-                </Col>
-                <Col>
-                <Row>
-          <h3>Expenses</h3>
-        </Row>
-        <Row className="table-filter">
+      <Container>
+        <Row>
           <Col>
-            <ExpenseTypeSelect
+            <Row>
+              <ExpenseForm onExpenseCreate={handleExpenseCreate}/>
+            </Row>
+            <Row className="profile-student">
+              <Image src={profileStudent} alt='a sitting student holding some pages' className="profile-student__img"/>
+            </Row>
+            </Col>
+          <Col>
+            <Row>
+              <h3>Expenses</h3>
+            </Row>
+            <Row className="table-filter">
+              <Col>
+                  <PageSizeSelect
+                  pageSize={pageSize}
+                  onPageSizeChange={handlePageSizeChange}
+                  />
+              </Col>
+              <Col className="table-filter--sort">
+                  <Form.Group className="form-style">
+                  <Button
+                      className="mx-2"
+                      variant="primary"
+                      onClick={handleSortDirectionChange}
+                  >
+                      {sortDirection === 'ASC' ? 'Oldest to Newest' : 'Newest to Oldest'}
+                  </Button>
+                  </Form.Group>
+              </Col>
+            </Row>
+            <DateFilterSelect
+              startDate={startDate}
+              endDate={endDate}
+              onStartDateChange={handleStartDateChange}
+              onEndDateChange={handleEndDateChange}
+            />
+            <Row className="table-filter">
+              <ExpenseTypeSelect
                 expenseTypes={expenseTypes}
                 selectedExpenseType={selectedExpenseType}
                 onSelectedExpenseTypeChange={handleSelectedExpenseTypeChange}
-                />
-            </Col>
-            <Col>
-                <PageSizeSelect
-                pageSize={pageSize}
-                onPageSizeChange={handlePageSizeChange}
-                />
-            </Col>
-            <Col className="table-filter--sort">
-                <Form.Group className="form-style">
-                <Button
-                    className="mx-2"
-                    variant="primary"
-                    onClick={handleSortDirectionChange}
-                >
-                    {sortDirection === 'ASC' ? 'Oldest to Newest' : 'Newest to Oldest'}
-                </Button>
-                </Form.Group>
-            </Col>
-            </Row>
-            <Row className="table-filter">
-            <Col>
-                <Form.Label>Date from:</Form.Label>
-                <DateTimePicker
-                value={startDate}
-                name="startDate"
-                format="yyyy-MM-dd"
-                calendarIcon={<FaCalendarAlt />}
-                className="table-filter--date"
-                disableClock={true}
-                yearPlaceholder="YYYY"
-                monthPlaceholder="MM"
-                dayPlaceholder="DD"
-                onChange={handleStartDateChange}
-                />
-            </Col>
-            <Col>
-                <Form.Label>Date until:</Form.Label>
-                <DateTimePicker
-                value={endDate}
-                name="dateFilterUntil"
-                format="yyyy-MM-dd"
-                calendarIcon={<FaCalendarAlt />}
-                className="table-filter--date"
-                disableClock={true}
-                yearPlaceholder="YYYY"
-                monthPlaceholder="MM"
-                dayPlaceholder="DD"
-                onChange={handleEndDateChange}
-                />
-            </Col>
+              />
             </Row>
             {isLoading ? (
             <Spinner animation='border' role='status'>
@@ -176,37 +155,40 @@ function ExpenseDesktop() {
             <ExpenseTable expenses={expenses} onDeleteExpense={setExpenses} />
             )}
 
-        <Pagination>
-            <Pagination.First onClick={() => handlePageChange(0)} />
-            <Pagination.Prev
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 0}
-            />
-            {[...Array(totalPages)].map((_, index) => (
-            <Pagination.Item
-                key={index}
-                active={index === currentPage}
-                onClick={() => handlePageChange(index)}
-            >
-                {index + 1}
-            </Pagination.Item>
-            ))}
-            <Pagination.Next
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages - 1}
-            />
-            <Pagination.Last onClick={() => handlePageChange(totalPages - 1)} />
-        </Pagination>
-                </Col>
-                <Col>
-                <Row>
-                    <LineChart/>
-                </Row>
-                <Row>
-                    <DoughnutChart/>
-                </Row>
-                </Col>
-            </Row>
+            <Pagination>
+                <Pagination.First onClick={() => handlePageChange(0)} />
+                <Pagination.Prev
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 0}
+                />
+                {[...Array(totalPages)].map((_, index) => (
+                <Pagination.Item
+                    key={index}
+                    active={index === currentPage}
+                    onClick={() => handlePageChange(index)}
+                >
+                    {index + 1}
+                </Pagination.Item>
+                ))}
+                <Pagination.Next
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages - 1}
+                />
+                <Pagination.Last onClick={() => handlePageChange(totalPages - 1)} />
+            </Pagination>
+            </Col>
+            <Col>
+              <Row className='balance-desktop__header'>
+                <h3>Balance</h3>
+              </Row>
+              <Row className='balance-desktop__header'>
+                  <LineChart/>
+              </Row>
+              <Row>
+                  <DoughnutChart/>
+              </Row>
+            </Col>
+          </Row>
         </Container>
      );
 }

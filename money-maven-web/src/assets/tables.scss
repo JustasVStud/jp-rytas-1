@@ -63,32 +63,26 @@
     }
 }
 .table-filter {
-    width: fit-content;
-    margin: 1rem 1.5rem 0;
+    margin-bottom: 1rem;
     .form-style {
         padding: 0;
     }
-    .table-filter--size {
-        width: fit-content;
-        padding-right: 0;
-        .col {
-            padding-right: 0;
-            padding-left: 0;
-            &.form-label {
-                padding: 0;
-            }
-        }
-    }
     .table-filter--sort {
-        padding-right: 0;
+        margin-bottom: 0;
         .btn {
             width: auto;
             height: auto;
             font-size: 1rem;
         }
     }
+    .table-filter--size {
+        .form-label{
+            margin-right: 1rem;
+        }
+    }
     .size--select,
     .expense-type--select{
+        display: inline-block;
         width: min-content;
         background-color: var(--form-input);
         border-radius: 20px;
@@ -101,6 +95,7 @@
         padding: .357rem 1rem;
         border-radius: 20px;
         line-height: 1.5rem;
+        margin-bottom: 1rem;
         &  .react-datetime-picker__button {
             padding: 0 0.5rem;
         }
@@ -123,15 +118,13 @@
         }
     }
 }
-@media screen and (min-width: 1024px) {
+@media screen and (min-width: 768px) {
     .table {
-        max-width: 33%;
         .table-button {
             font-size: 1rem;
         }
     }
     .table-filter {
-        max-width: 33%;
         .table-filter--size {
             .form-label {
                 white-space: nowrap;

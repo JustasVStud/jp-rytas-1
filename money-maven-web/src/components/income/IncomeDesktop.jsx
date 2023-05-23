@@ -6,6 +6,8 @@ import { getIncomes } from '../../services/Income.service';
 import LineChart from '../LineChart';
 import PageSizeSelect from '../PageSizeSelect';
 import profileStudent from '../../assets/profile-student.svg';
+import DateFilterSelect from '../DateFilterSelect';
+import moment from 'moment';
 
 
 function IncomeDesktop() {
@@ -14,6 +16,8 @@ function IncomeDesktop() {
     const [totalPages, setTotalPages] = useState(0);
     const [pageSize, setPageSize] = useState(10);
     const [isLoading, setIsLoading] = useState(true);
+    const [startDate, setStartDate] = useState(null);
+    const [endDate, setEndDate] = useState(null);
     const [sortDirection, setSortDirection] = useState('DESC');
 
     const fetchIncomes = useCallback(async () => {
@@ -57,6 +61,21 @@ function IncomeDesktop() {
         setCurrentPage(selectedPage);
       };
 
+      const handleStartDateChange = (e) => {
+        if (e != null) {
+          setStartDate(moment(e).format("YYYY-MM-DDTHH:mm:ss"));
+        } else {
+          setStartDate(e);
+        }
+      };
+    
+      const handleEndDateChange = (e) => {
+        if (e != null) {
+          setEndDate(moment(e).format("YYYY-MM-DDTHH:mm:ss"));
+        } else {
+          setEndDate(e);
+        }
+      };
     return ( 
         <Container>
             <Row>
@@ -64,8 +83,8 @@ function IncomeDesktop() {
                     <Row>
                         <IncomeForm onIncomeCreate={handleIncomeCreate}/>
                     </Row>
-                    <Row className="fixed-bottom profile-student">
-                        <Image src={profileStudent} alt='a sitting student holding some pages' fluid className="profile-student__img"/>
+                    <Row className="profile-student">
+                        <Image src={profileStudent} alt='a sitting student holding some pages' className="profile-student__img"/>
                     </Row>
                 </Col>
                 <Col>
@@ -89,7 +108,12 @@ function IncomeDesktop() {
                     </Form.Group>
                     </Col>
                 </Row>
-
+                <DateFilterSelect
+                  startDate={startDate}
+                  endDate={endDate}
+                  onStartDateChange={handleStartDateChange}
+                  onEndDateChange={handleEndDateChange}
+                />
                 {isLoading ? (
                     <Spinner animation="border" role="status">
                     <span className="visually-hidden">Loading...</span>
@@ -121,7 +145,12 @@ function IncomeDesktop() {
                 </Pagination>
                 </Col>
                 <Col>
-                    <LineChart/>
+                    <Row className='balance-desktop__header'>
+                      <h3>Balance</h3>
+                    </Row>
+                    <Row>
+                      <LineChart/>
+                    </Row>
                 </Col>
             </Row>
         </Container>

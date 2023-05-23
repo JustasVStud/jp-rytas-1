@@ -1,14 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Button, Container, Pagination, Form, Row, Col, Spinner } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { FaCalendarAlt } from 'react-icons/fa';
-import DateTimePicker from 'react-datetime-picker';
 import moment from 'moment';
 import { getExpenses } from '../../services/Expense.service';
 import { getExpenseTypes } from '../../services/Expense_type.service';
 import PageSizeSelect from '../PageSizeSelect';
 import ExpenseTable from './ExpenseTable';
 import ExpenseTypeSelect from '../expense_type/ExpenseTypeSelect';
+import DateFilterSelect from '../DateFilterSelect';
 
 function ExpenseList() {
   const [expenses, setExpenses] = useState([]);
@@ -109,13 +108,6 @@ function ExpenseList() {
         </Row>
         <Row className="table-filter">
           <Col>
-          <ExpenseTypeSelect
-              expenseTypes={expenseTypes}
-              selectedExpenseType={selectedExpenseType}
-              onSelectedExpenseTypeChange={handleSelectedExpenseTypeChange}
-            />
-          </Col>
-          <Col>
             <PageSizeSelect
               pageSize={pageSize}
               onPageSizeChange={handlePageSizeChange}
@@ -133,37 +125,18 @@ function ExpenseList() {
             </Form.Group>
           </Col>
         </Row>
+        <DateFilterSelect
+          startDate={startDate}
+          endDate={endDate}
+          onStartDateChange={handleStartDateChange}
+          onEndDateChange={handleEndDateChange}
+        />
         <Row className="table-filter">
-          <Col>
-            <Form.Label>Date from:</Form.Label>
-            <DateTimePicker
-              value={startDate}
-              name="startDate"
-              format="yyyy-MM-dd"
-              calendarIcon={<FaCalendarAlt />}
-              className="table-filter--date"
-              disableClock={true}
-              yearPlaceholder="YYYY"
-              monthPlaceholder="MM"
-              dayPlaceholder="DD"
-              onChange={handleStartDateChange}
+          <ExpenseTypeSelect
+              expenseTypes={expenseTypes}
+              selectedExpenseType={selectedExpenseType}
+              onSelectedExpenseTypeChange={handleSelectedExpenseTypeChange}
             />
-          </Col>
-          <Col>
-            <Form.Label>Date until:</Form.Label>
-            <DateTimePicker
-              value={endDate}
-              name="dateFilterUntil"
-              format="yyyy-MM-dd"
-              calendarIcon={<FaCalendarAlt />}
-              className="table-filter--date"
-              disableClock={true}
-              yearPlaceholder="YYYY"
-              monthPlaceholder="MM"
-              dayPlaceholder="DD"
-              onChange={handleEndDateChange}
-            />
-          </Col>
         </Row>
         {isLoading ? (
           <Spinner animation='border' role='status'>
@@ -194,10 +167,27 @@ function ExpenseList() {
         />
         <Pagination.Last onClick={() => handlePageChange(totalPages - 1)} />
       </Pagination>
+      
+      <Row className="form-buttons-container">
+        <Col>
+          <Link to="/expense/create" className="form-style">
+            <Button variant="primary" className='row-width-button'>Create new</Button>
+          </Link>
+        </Col>
+      </Row>
 
-        <Link to={"/expense/create"} className="form-style">
-          <Button variant="primary">Create new</Button>
+      <Row className="form-buttons-container">
+        <Col>
+        <Link to="/line" className="form-style">
+            <Button variant="primary">Line balance</Button>
         </Link>
+        </Col>
+        <Col>
+        <Link to="/doughnut" className="form-style">
+            <Button variant="primary">Donut balance</Button>
+        </Link>
+        </Col>
+      </Row>
       </Container>
   );
 }

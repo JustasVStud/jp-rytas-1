@@ -49,6 +49,9 @@ function ExpenseForm({onExpenseCreate = () => {} }) {
   return (
     <Container className="form-style">
       <Row>
+        <h3 className="">Add new Expense</h3>
+      </Row>
+      <Row>
         <Formik
           initialValues={{
             expenseTypeName: "",

@@ -10,12 +10,11 @@ import {
   Legend,
   ArcElement,
 } from "chart.js";
-import DateTimePicker from "react-datetime-picker";
-import { FaCalendarAlt } from "react-icons/fa";
-import { Container, Row, Form, Col } from "react-bootstrap";
+import { Container } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import moment from "moment";
+import DateFilterSelect from './DateFilterSelect';
 
 ChartJs.register(
   CategoryScale,
@@ -115,44 +114,12 @@ function DoughnutChart() {
 
   return (
     <Container>
-      <Row className="table-filter">
-        <Row className="row justify-center">
-          <Col className="table-filter--size">
-            <Form.Group>
-              <Col>
-                <Form.Label>Date from:</Form.Label>
-                <DateTimePicker
-                  value={startDate}
-                  name="startDate"
-                  format="yyyy-MM-dd"
-                  className="table-filter--date"
-                  onChange={handleStartDateChange}
-                  disableClock={true}
-                  calendarIcon={<FaCalendarAlt />}
-                />
-              </Col>
-            </Form.Group>
-          </Col>
-        </Row>
-        <Row className="table-filter">
-          <Col className="table-filter--size">
-            <Form.Group>
-              <Col>
-                <Form.Label>Date until:</Form.Label>
-                <DateTimePicker
-                  value={endDate}
-                  name="endDate"
-                  format="yyyy-MM-dd"
-                  className="table-filter--date"
-                  onChange={handleEndDateChange}
-                  disableClock={true}
-                  calendarIcon={<FaCalendarAlt />}
-                />
-              </Col>
-            </Form.Group>
-          </Col>
-        </Row>
-      </Row>
+        <DateFilterSelect
+          startDate={startDate}
+          endDate={endDate}
+          onStartDateChange={handleStartDateChange}
+          onEndDateChange={handleEndDateChange}
+        />
       {!expenses && <h4>Data not exist, wrong date format</h4>}
       <Doughnut data={dataDoughnut} />
     </Container>
