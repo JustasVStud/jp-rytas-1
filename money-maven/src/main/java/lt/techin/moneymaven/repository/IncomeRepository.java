@@ -13,14 +13,14 @@ import org.springframework.data.repository.query.Param;
 import lt.techin.moneymaven.model.Income;
 
 public interface IncomeRepository extends JpaRepository<Income, Integer> {
-	
-//	Page<Income> findAllByUser_userId(Pageable pageable, Integer userId);
+
 
 	
 	@Query("SELECT i FROM Income i " +
 	           "WHERE (:startDate IS NULL OR i.incomeDatetime >= :startDate) " +
 	           "AND (:endDate IS NULL OR i.incomeDatetime <= :endDate) " +
 	           "AND i.user.userId = :userId")
+
 	    Page<Income> findIncomes(Pageable pageable,
 	                               @Param("startDate") LocalDateTime startDate,
 	                               @Param("endDate") LocalDateTime endDate,

@@ -22,12 +22,25 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import lt.techin.moneymaven.dto.IncomeDto;
+import lt.techin.moneymaven.model.Income;
 import lt.techin.moneymaven.security.services.UserDetailsImpl;
 import lt.techin.moneymaven.service.IncomeService;
+
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.core.io.Resource;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.stream.Collectors;
+
+
 
 @CrossOrigin("*")
 @RestController
 @RequestMapping("api/incomes")
+
 public class IncomeController {
 	
 	@Autowired	
@@ -87,5 +100,28 @@ public class IncomeController {
 		incomeService.deleteIncome(id, userId);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
+	
+	//export csv------
+//	@GetMapping("/export/csv")
+//	public ResponseEntity<Resource> exportIncomesToCsv(
+//	        @RequestParam(required = false) LocalDateTime startDate,
+//	        @RequestParam(required = false) LocalDateTime endDate,
+//	        @AuthenticationPrincipal UserDetailsImpl userDetails
+//	) {
+//	    Integer userId = userDetails.getUserId();
+//	    Page<Income> incomes = incomeService.getIncomes(userId, startDate, endDate);
+//	    
+//	    String filename = "incomes.csv";
+//	    ByteArrayResource resource = incomeService.exportToCsv(incomes);
+//	    
+//	    return ResponseEntity.ok()
+//	            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + filename)
+//	            .contentType(MediaType.APPLICATION_OCTET_STREAM)
+//	            .contentLength(resource.contentLength())
+//	            .body(resource);
+//	}
+
+
+	
 	
 }
