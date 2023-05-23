@@ -3,7 +3,7 @@ import authHeader from './auth-header';
 
 const BASE_URL = 'http://localhost:8080/api/incomes';
 
-export const getIncomes = async (page, pageSize, sortDirection) => {
+export const getIncomes = async (page, pageSize, sortDirection, startDate, endDate) => {
   try {
     const response = await axios.get(BASE_URL, {
       headers: authHeader(),
@@ -11,6 +11,8 @@ export const getIncomes = async (page, pageSize, sortDirection) => {
         page: page,
         pageSize: pageSize,
         direction: sortDirection,
+        startDate: startDate || null,
+        endDate: endDate || null,
       },
     });
     return response.data;

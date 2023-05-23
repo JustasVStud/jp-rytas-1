@@ -12,10 +12,11 @@ import {
 } from "chart.js";
 import DateTimePicker from "react-datetime-picker";
 import { FaCalendarAlt } from "react-icons/fa";
-import { Container, Row, Form, Col } from "react-bootstrap";
+import { Container, Row, Form, Col, Spinner } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import moment from "moment";
+import { getExpenses } from '../services/Expense.service';
+import { getIncomes } from '../services/Income.service';
 
 ChartJs.register(
   CategoryScale,
@@ -32,55 +33,51 @@ function LineChart() {
   const [expenses, setExpenses] = useState([]);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
-  const [deleteExpense] = useState(false);
-  const [deleteIncome] = useState([]);
   const [incomes, setIncomes] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const token = JSON.parse(localStorage.getItem("user"));
-
-    const fetchExpensesAndIncomes = async () => {
+    const fetchExpenses = async () => {
       try {
-        const [expensesResponse, incomesResponse] = await Promise.all([
-          axios.get("http://localhost:8080/api/expenses", {
-            headers: {
-              Authorization: `Bearer ${token.accessToken}`,
-            },
-            params: {
-              page: 0,
-              pageSize: 10000,
-              startDate: startDate || null,
-              endDate: endDate || null,
-            },
-          }),
-          axios.get("http://localhost:8080/api/incomes", {
-            headers: {
-              Authorization: `Bearer ${token.accessToken}`,
-            },
-            params: {
-              page: 0,
-              pageSize: 10000,
-              startDate: startDate || null,
-              endDate: endDate || null,
-            },
-          }),
-        ]);
-
-        console.log("Expense data received:", expensesResponse.data.content);
-        console.log("Income data received:", incomesResponse.data.content);
-
-        setExpenses(expensesResponse.data.content);
-        setIncomes(incomesResponse.data.content);
-        setLoading(false);
+        setIsLoading(true);
+        const { content } = await getExpenses(
+          0,
+          10000,
+          startDate,
+          endDate
+        );
+        setExpenses(content);
       } catch (error) {
         console.log(error);
-        setLoading(false);
+      } finally {
+        setIsLoading(false);
       }
     };
+  
+    fetchExpenses();
+  }, [startDate,endDate]);
 
-    fetchExpensesAndIncomes();
-  }, [startDate, endDate, deleteExpense, deleteIncome]);
+  useEffect(() => {
+    const fetchIncomes = async () => {
+      try {
+        setIsLoading(true);
+        const { content } = await getIncomes(
+          0,
+          10000,
+          startDate,
+          endDate
+        );
+        setIncomes(content);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+  
+    fetchIncomes();
+  }, [startDate,endDate]);
+
 
   const selectedIncomes =
     incomes && incomes.length > 0
@@ -120,7 +117,7 @@ function LineChart() {
   };
 
   const dataLine = {
-    labels: startDate && endDate ? getLabels(startDate, endDate) : [0],
+    labels: getLabels(startDate, endDate),
     datasets: [
       {
         type: "line",
@@ -164,8 +161,7 @@ function LineChart() {
                   <Form.Label>Date from:</Form.Label>
                   <DateTimePicker
                     value={startDate}
-                    minDate={moment(startDate).toDate()}
-                    maxDate={moment().toDate(endDate)}
+                    
                     name="startDate"
                     format="yyyy-MM-dd"
                     onChange={handleStartDateChange}
@@ -186,8 +182,7 @@ function LineChart() {
                   <Form.Label>Date until:</Form.Label>
                   <DateTimePicker
                     value={endDate}
-                    minDate={moment(startDate).toDate()}
-                    maxDate={moment().toDate()}
+                    
                     calendarIcon={<FaCalendarAlt />}
                     name="endDate"
                     format="yyyy-MM-dd"
@@ -202,28 +197,37 @@ function LineChart() {
           </Row>
         </Row>
       </Row>
-      <Line data={dataLine} />
-      <table className="table">
-        <thead>
-          <tr className="table-row"></tr>
-        </thead>
-        <tbody>
-          <tr className="table-row">
-            <td className="table-cell table-button">
-              Selected period expenses:
-            </td>
-            <td className="table-cell table-button">€ {selectedExpenses}</td>
-          </tr>
-        </tbody>
-        <tbody>
-          <tr className="table-row">
-            <td className="table-cell table-button">
-              Selected incomes period :
-            </td>
-            <td className="table-cell table-button">€ {selectedIncomes} </td>
-          </tr>
-        </tbody>
-      </table>
+
+      {isLoading ? (
+          <Spinner animation='border' role='status'>
+            <span className='visually-hidden'>Loading...</span>
+          </Spinner>
+        ) : (
+          <>
+            <Line data={dataLine} />
+            <table className="table">
+              <thead>
+                <tr className="table-row"></tr>
+              </thead>
+              <tbody>
+                <tr className="table-row">
+                  <td className="table-cell table-button">
+                    Selected period expenses:
+                  </td>
+                  <td className="table-cell table-button">€ {selectedExpenses}</td>
+                </tr>
+              </tbody>
+              <tbody>
+                <tr className="table-row">
+                  <td className="table-cell table-button">
+                    Selected incomes period :
+                  </td>
+                  <td className="table-cell table-button">€ {selectedIncomes} </td>
+                </tr>
+              </tbody>
+            </table>
+          </>
+        )}
     </Container>
   );
 }
