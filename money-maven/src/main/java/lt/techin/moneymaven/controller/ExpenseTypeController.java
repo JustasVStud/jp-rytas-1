@@ -5,8 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import lt.techin.moneymaven.dto.ExpenseTypeDto;
+import lt.techin.moneymaven.security.services.UserDetailsImpl;
 import lt.techin.moneymaven.service.ExpenseTypeService;
 
 @CrossOrigin("*")
@@ -29,43 +29,23 @@ public class ExpenseTypeController {
 	private ExpenseTypeService expenseTypeService;
 	
 	@GetMapping
-	public ResponseEntity<List<ExpenseTypeDto>> getAllExpenseTypes(){
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-	    if (authentication == null) {
-	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-	    }
+	public ResponseEntity<List<ExpenseTypeDto>> getAllExpenseTypes(@AuthenticationPrincipal UserDetailsImpl userDetails){
 		return new ResponseEntity<>(expenseTypeService.getAllExpenseTypes(), HttpStatus.OK);
 	}
 	@GetMapping("/{id}")
-	public ResponseEntity<ExpenseTypeDto> getExpenseTypeById(@PathVariable Integer id){
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-	    if (authentication == null) {
-	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-	    }
+	public ResponseEntity<ExpenseTypeDto> getExpenseTypeById(@PathVariable Integer id, @AuthenticationPrincipal UserDetailsImpl userDetails){
 		return new ResponseEntity<>(expenseTypeService.getExpenseTypeById(id), HttpStatus.OK);
 	}
 	@PostMapping
-	public ResponseEntity<ExpenseTypeDto> createExpenseType(@RequestBody ExpenseTypeDto expenseTypeDto){
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-	    if (authentication == null) {
-	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-	    }
+	public ResponseEntity<ExpenseTypeDto> createExpenseType(@RequestBody ExpenseTypeDto expenseTypeDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
 		return new ResponseEntity<>(expenseTypeService.createExpenseType(expenseTypeDto), HttpStatus.OK);
 	}
 	@PatchMapping("/{id}")
-	public ResponseEntity<ExpenseTypeDto> updateExpenseType(@PathVariable Integer id, @RequestBody ExpenseTypeDto expenseTypeDto){
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-	    if (authentication == null) {
-	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-	    }
+	public ResponseEntity<ExpenseTypeDto> updateExpenseType(@PathVariable Integer id, @RequestBody ExpenseTypeDto expenseTypeDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
 		return new ResponseEntity<>(expenseTypeService.updateExpenseType(id, expenseTypeDto), HttpStatus.OK);
 	}
 	@DeleteMapping("/{id}")
-	public ResponseEntity<HttpStatus> deleteExpenseType(@PathVariable Integer id){
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-	    if (authentication == null) {
-	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-	    }
+	public ResponseEntity<HttpStatus> deleteExpenseType(@PathVariable Integer id, @AuthenticationPrincipal UserDetailsImpl userDetails){
 		expenseTypeService.deleteExpenseType(id);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}

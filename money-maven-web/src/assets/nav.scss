@@ -1,0 +1,94 @@
+.navigation {
+    padding-top: 0;
+    align-items: flex-start;
+    &.bg-light{
+        background-color: var(--main-background)!important;
+    }
+    .navigation-logo {
+        padding:0;
+        
+        .navigation-logo--text {
+            position: absolute;
+            left: 58px;
+            top: 105px;
+            &.small{
+                top: 33px;
+                left: 23px;
+                display: inline-block;
+                width: 60px;
+                
+            }
+        }
+    }
+    .navigation-profile{
+        margin-left: auto;
+        font-size: 25px;
+        line-height: 25px;
+        margin-right: 1.3rem;
+        margin-top: 3rem;
+        .dropdown-toggle::after{
+            display: none;
+        }
+    }
+    .navigation-toggle {
+        padding: 0;
+        border: none;
+        color: var(--font-color);
+        font-size: 25px;
+        line-height: 25px;
+        margin-top: 3rem;
+        margin-right: 1.3rem;
+    }
+}
+.offcanvas{
+    background-color: var(--header-footer-background);
+}
+
+@media screen and (min-width: 768px) {
+    .navigation{
+        height: 4.4rem;
+        padding: 0.5rem 1rem;
+        align-items: center;
+        flex-direction: row;
+        gap: 1rem;
+        justify-content: flex-end;
+        &.bg-light{
+            background-color: var(--header-footer-background)!important;
+        }
+
+        .navigation-logo {
+            box-sizing: border-box;
+            margin: 0 auto 0 0;
+            .navigation-logo--img {
+                max-height: 4rem;
+                margin-right: 1rem;
+            }
+        }
+        .nav-link {
+            background-color: var(--button-color);
+        }
+
+        .navigation-profile{
+            margin: 0;
+            width: 21px; 
+            height: 21px; 
+            padding: 0.5rem;
+            box-sizing: content-box;
+            background-color: var(--button-color);
+            font-size: 1.5rem;
+            line-height: 21px;
+        }
+        .offcanvas {
+            flex-grow: 0;
+        }
+        .offcanvas-nav {
+            gap: 1rem;
+            justify-content: space-between;
+            .nav-link, .nav-item {
+                width: 8.5rem;
+                text-align: center;
+                color: var(--font-color);
+            }
+        }
+    }
+}

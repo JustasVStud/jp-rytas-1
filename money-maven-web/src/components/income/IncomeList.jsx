@@ -43,6 +43,9 @@ function IncomeList() {
 
   return (
     <Container>
+      <Row>
+        <h3>Incomes</h3>
+      </Row>
       <Row className="table-filter">
         <PageSizeSelect
           pageSize={pageSize}

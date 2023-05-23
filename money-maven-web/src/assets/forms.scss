@@ -3,7 +3,7 @@
 }
 
 .form-style{
-    &  .form-control {
+    .form-control, .form-select {
         background-color: var(--form-input);
         border-radius: 20px;
         margin: 0.75em 0;
@@ -15,8 +15,11 @@
     }
 }
 
-.form-style h3 {
+.login-register-prompt {
     text-align: center;
+    a {
+        text-decoration: none;
+    }
 }
 
 
@@ -25,29 +28,31 @@
     background-color: var(--button-color);
     font-weight: 700;
     cursor: pointer;
-    border-radius: 5px;
+    border-radius: 0;
     padding: 0.725em;
     font-family: inherit;
     color: var(--font-color);
     white-space: nowrap;
+    width: 118px;
+    height: 45px;
+    font-size: 14px;
     &:active{
         background-color: var(--button-color);
         opacity: 75%;
         color: var(--font-color);
     }
+    &.row-width-button {
+        width: 100%;
+    }
 }
 
 
-.form-style .form-label, 
-::placeholder,
-.form-style .btn {
-    font-size: 0.875rem;
-}
 
-.form-buttons-container .col {
-    display: flex;
-    justify-content: space-between;
+.form-buttons-container{
     margin: 2em 0;
+    .col {
+        text-align: center;
+    }
 }
 
 .react-datetime-picker__wrapper {

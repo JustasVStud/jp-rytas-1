@@ -1,13 +1,5 @@
 import { useState, useEffect } from 'react';
-import {
-  Button,
-  Container,
-  Pagination,
-  Form,
-  Row,
-  Col,
-  Spinner,
-} from 'react-bootstrap';
+import { Button, Container, Pagination, Form, Row, Col, Spinner } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { FaCalendarAlt } from 'react-icons/fa';
 import DateTimePicker from 'react-datetime-picker';
@@ -112,6 +104,9 @@ function ExpenseList() {
 
   return (
       <Container>
+        <Row>
+          <h3>Expenses</h3>
+        </Row>
         <Row className="table-filter">
           <Col>
           <ExpenseTypeSelect
@@ -120,10 +115,12 @@ function ExpenseList() {
               onSelectedExpenseTypeChange={handleSelectedExpenseTypeChange}
             />
           </Col>
-          <PageSizeSelect
-          pageSize={pageSize}
-          onPageSizeChange={handlePageSizeChange}
-        />
+          <Col>
+            <PageSizeSelect
+              pageSize={pageSize}
+              onPageSizeChange={handlePageSizeChange}
+            />
+          </Col>
           <Col className="table-filter--sort">
             <Form.Group className="form-style">
               <Button

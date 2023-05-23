@@ -155,7 +155,6 @@ function LineChart() {
 
   return (
     <Container>
-      <Form.Label>Expenses Chart</Form.Label>
       <Row className="row justify-center">
         <Row className="table-cell">
           <Row className="table-filter">

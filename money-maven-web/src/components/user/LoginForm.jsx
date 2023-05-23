@@ -36,7 +36,7 @@ function LoginForm() {
   };
 
   return (
-    <Container>
+    <Container className='form-style'>
       <Row>
         <h3>Login to Your Account</h3>
       </Row>
@@ -68,7 +68,7 @@ function LoginForm() {
           handleSubmit, 
           dirty
         }) => (
-          <Form onSubmit={handleSubmit}>
+          <Form onSubmit={handleSubmit} className='form'>
             <Form.Group className='mb-3'>
               <Form.Label>Username</Form.Label>
               <Form.Control
@@ -101,19 +101,16 @@ function LoginForm() {
             </Form.Group>
             <Row className="form-buttons-container">
               <Col>
-                <Button variant="primary" type="submit" disabled={!dirty}>Login</Button>
+                <Button variant="primary" type="submit" disabled={!dirty} className='row-width-button'>Login</Button>
               </Col>
             </Row>
           </Form>
         )}
       </Formik>
       </Row>
-      <Row>
+      <Row className='login-register-prompt'>
         <Col>
-          <span>
-              Not registered yet?
-          </span>
-          <Link to={'/register'}>Create an Account</Link>
+          <span>Not registered yet? <Link to={'/register'}>Create an Account</Link></span>
         </Col>
       </Row>
     </Container>
