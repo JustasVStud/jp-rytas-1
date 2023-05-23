@@ -1,5 +1,5 @@
 import { Button, Container, Row, Col, Form, Spinner, Pagination } from 'react-bootstrap';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import LineChart from '../LineChart';
 import PageSizeSelect from '../PageSizeSelect';
 import DoughnutChart from '../DoughnutChart';
@@ -24,36 +24,29 @@ function ExpenseDesktop() {
   const [endDate, setEndDate] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   
+  const fetchExpenses =  useCallback ( async () => {
+    try {
+      setIsLoading(true);
+      const { content, totalPages } = await getExpenses(
+        currentPage,
+        pageSize,
+        sortDirection,
+        selectedExpenseType,
+        startDate,
+        endDate
+      );
+      setExpenses(content);
+      setTotalPages(totalPages);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [currentPage, pageSize, sortDirection, selectedExpenseType, startDate, endDate] );
+
   useEffect(() => {
-    const fetchExpenses = async () => {
-      try {
-        setIsLoading(true);
-        const { content, totalPages } = await getExpenses(
-          currentPage,
-          pageSize,
-          sortDirection,
-          selectedExpenseType,
-          startDate,
-          endDate
-        );
-        setExpenses(content);
-        setTotalPages(totalPages);
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-  
     fetchExpenses();
-  }, [
-    currentPage,
-    pageSize,
-    sortDirection,
-    selectedExpenseType,
-    startDate,
-    endDate,
-  ]);
+  }, [fetchExpenses]);
   
   useEffect(() => {
     const fetchExpenseTypes = async () => {
@@ -67,6 +60,10 @@ function ExpenseDesktop() {
   
     fetchExpenseTypes();
   }, []);
+
+  const handleExpenseCreate = () => {
+    fetchExpenses();
+  }
 
   const handlePageSizeChange = (selectedPageSize) => {
     setPageSize(selectedPageSize);
@@ -107,7 +104,7 @@ function ExpenseDesktop() {
         <Container>
             <Row>
                 <Col>
-                    <ExpenseForm/>
+                    <ExpenseForm onExpenseCreate={handleExpenseCreate}/>
                 </Col>
                 <Col>
                 <Row>

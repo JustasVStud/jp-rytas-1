@@ -29,7 +29,7 @@ const ExpenseValidationSchema = Yup.object().shape({
     .required("Date is required"),
 });
 
-function ExpenseForm() {
+function ExpenseForm({onExpenseCreate = () => {} }) {
   const navigate = useNavigate();
   const [expenseTypes, setExpenseTypes] = useState([]);
   
@@ -63,6 +63,9 @@ function ExpenseForm() {
               await createExpense(values);
               resetForm();
               navigate('/expense');
+              if(typeof onExpenseCreate === 'function') {
+                onExpenseCreate(values);
+              }
             } catch (error) {
               console.log(error);
             }
