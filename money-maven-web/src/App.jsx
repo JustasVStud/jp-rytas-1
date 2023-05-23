@@ -25,7 +25,7 @@ import IncomeDesktop from './components/income/IncomeDesktop';
 import ExpenseDesktop from './components/expense/ExpenseDesktop';
 
 function App() {
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [windowWidth] = useState(window.innerWidth);
   return (
     <AuthProvider>
       <div className="App">
