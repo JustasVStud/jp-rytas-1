@@ -10,6 +10,7 @@ import { useContext } from 'react';
 import { AuthContext } from '../services/AuthContext';
 import bigEllipse from '../assets/Elipsai Logotipui.svg';
 import smallEllipse from '../assets/Ellipse 3.svg';
+import desktopLogo from '../assets/Favicon.svg';
 
 function NavbarHeader() {
   const navigate = useNavigate();
@@ -23,28 +24,41 @@ function NavbarHeader() {
     logoutHandler(logout, navigate);
   };
 
+  
+
   return (
     <>
       {['md'].map((expand) => (
         <Navbar key={expand} bg="light" expand={expand} className="navigation">
-            <Image 
-              src={location.pathname === '/income' || location.pathname === '/expense' ? smallEllipse : bigEllipse} 
-              className='navigation-logo--img'
-            />
-            <Navbar.Brand href='/profile' className='navigation-logo'>
-            {location.pathname === '/income' || location.pathname === '/expense' ? (
-              <span className='navigation-logo--text small'>
-                MONEY <br/> MAVEN
-              </span>
+          {window.innerWidth < 768 ? (
+            <>
+              <Image 
+                src={location.pathname === '/income' || location.pathname === '/expense' ? smallEllipse : bigEllipse} 
+                className='navigation-logo--img'
+              />
+              <Navbar.Brand href='/profile' className='navigation-logo'>
+              {location.pathname === '/income' || location.pathname === '/expense' ? (
+                <span className='navigation-logo--text small'>
+                  MONEY <br/> MAVEN
+                </span>
 
-            ) : (
-              <span className='navigation-logo--text'>
-              MONEY MAVEN
-              </span>
-            )}
+              ) : (
+                <span className='navigation-logo--text'>
+                MONEY MAVEN
+                </span>
+              )}
+              </Navbar.Brand>
+            </>
+
+          ) : (
+            <Navbar.Brand  href='/profile' className='navigation-logo'>
+              <Image src={desktopLogo} className='navigation-logo--img'/>
+              <span className='navigation-logo-text'>MONEY MAVEN</span>
             </Navbar.Brand>
+          )
+        }
             {isLoggedIn && !isProfilePage && (
-              <NavDropdown title={<FaUserAlt/>} className='justify-content-end navigation-profile'>
+              <NavDropdown title={<FaUserAlt/>} className='navigation-profile'>
                 <NavDropdown.Item href='/profile'>
                   Profile
                 </NavDropdown.Item>
@@ -67,7 +81,7 @@ function NavbarHeader() {
                 </Offcanvas.Title>
               </Offcanvas.Header>
               <Offcanvas.Body>
-                <Nav className="justify-content-end flex-grow-1 pe-3">
+                <Nav className="offcanvas-nav">
                 {!isLoggedIn && (
                   <>
                     <Nav.Link href="/login">Login</Nav.Link>
