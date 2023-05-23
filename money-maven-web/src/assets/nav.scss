@@ -52,6 +52,7 @@
         flex-direction: row;
         gap: 1rem;
         justify-content: flex-end;
+        margin-bottom: 3rem;
         &.bg-light{
             background-color: var(--header-footer-background)!important;
         }

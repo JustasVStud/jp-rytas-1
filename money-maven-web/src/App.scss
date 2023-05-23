@@ -29,6 +29,7 @@ h3 {
     text-align: center;
     font-size: 1.583rem;
     font-weight: 700 ;
+    margin-bottom: 2rem;
 }
 .container {
     padding: 0 1.5rem 0 1.5rem;
@@ -37,6 +38,21 @@ h3 {
     color: var(--font-income);
 }
 
+.balance-totals {
+    background-color: var(--form-input);
+    margin: 1rem 0;
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 2rem;
+}
+.profile-student{
+    margin-bottom: 4.75rem;
+    & > .profile-student__img {
+        width: 166px;
+        height: auto;
+    }
+}
 @media screen and (min-width: 768px) {
     :root {
         font-size: 14px;
@@ -44,5 +60,16 @@ h3 {
     }
     .container {
         padding: 0 2rem 0 3rem;
+    }
+    .balance-desktop__header {
+        margin-bottom: 3.95rem;
+    }
+    .profile-student{
+        margin-bottom: 0;
+        & > .profile-student__img {
+            margin: 0 auto;
+            width: 239px;
+            height: auto;
+        }
     }
 }

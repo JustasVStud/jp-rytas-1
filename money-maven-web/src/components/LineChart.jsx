@@ -10,13 +10,12 @@ import {
   Legend,
   ArcElement,
 } from "chart.js";
-import DateTimePicker from "react-datetime-picker";
-import { FaCalendarAlt } from "react-icons/fa";
-import { Container, Row, Form, Col, Spinner } from "react-bootstrap";
+import { Container, Spinner } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
 import moment from "moment";
 import { getExpenses } from '../services/Expense.service';
 import { getIncomes } from '../services/Income.service';
+import DateFilterSelect from './DateFilterSelect';
 
 ChartJs.register(
   CategoryScale,
@@ -37,46 +36,36 @@ function LineChart() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchExpenses = async () => {
+    const fetchData = async () => {
       try {
         setIsLoading(true);
-        const { content } = await getExpenses(
+        const { content: incomeContent } = await getIncomes(
           0,
           10000,
+          null,
           startDate,
-          endDate
+          endDate,
         );
-        setExpenses(content);
+        setIncomes(incomeContent);
+        
+        const { content: expenseContent } = await getExpenses(
+          0,
+          10000,
+          null,
+          null,
+          startDate,
+          endDate,
+        );
+        setExpenses(expenseContent);
       } catch (error) {
         console.log(error);
       } finally {
         setIsLoading(false);
       }
     };
-  
-    fetchExpenses();
-  }, [startDate,endDate]);
-
-  useEffect(() => {
-    const fetchIncomes = async () => {
-      try {
-        setIsLoading(true);
-        const { content } = await getIncomes(
-          0,
-          10000,
-          startDate,
-          endDate
-        );
-        setIncomes(content);
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-  
-    fetchIncomes();
-  }, [startDate,endDate]);
+    
+    fetchData();
+  }, [startDate, endDate]);
 
 
   const selectedIncomes =
@@ -89,28 +78,28 @@ function LineChart() {
       ? expenses.reduce((total, expense) => total + expense.expenseAmount, 0)
       : 0;
 
-  const handleStartDateChange = (e) => {
-    if (e != null) {
-      setStartDate(moment(e).format("YYYY-MM-DDTHH:mm:ss"));
-    } else {
-      setStartDate(null);
-    }
-  };
-
-  const handleEndDateChange = (e) => {
-    if (e != null) {
-      setEndDate(moment(e).format("YYYY-MM-DDTHH:mm:ss"));
-    } else {
-      setEndDate(null);
-    }
-  };
+    const handleStartDateChange = (e) => {
+      if (e != null) {
+        setStartDate(moment(e).format("YYYY-MM-DDTHH:mm:ss"));
+      } else {
+        setStartDate(e);
+      }
+    };
+  
+    const handleEndDateChange = (e) => {
+      if (e != null) {
+        setEndDate(moment(e).format("YYYY-MM-DDTHH:mm:ss"));
+      } else {
+        setEndDate(e);
+      }
+    };
 
   const getLabels = (startDate, endDate) => {
     const start = startDate ? moment(startDate) : moment().startOf("year");
     const end = endDate
       ? moment(endDate).endOf("month")
       : moment().endOf("month");
-    const numMonths = end.diff(start, "months") + 1;
+    const numMonths = end.diff(start, "months");
     return Array(numMonths)
       .fill()
       .map((_, i) => start.clone().add(i, "months").format("MMM"));
@@ -152,51 +141,12 @@ function LineChart() {
 
   return (
     <Container>
-      <Row className="row justify-center">
-        <Row className="table-cell">
-          <Row className="table-filter">
-            <Col className="table-filter--size">
-              <Form.Group>
-                <Col>
-                  <Form.Label>Date from:</Form.Label>
-                  <DateTimePicker
-                    value={startDate}
-                    
-                    name="startDate"
-                    format="yyyy-MM-dd"
-                    onChange={handleStartDateChange}
-                    disableClock={true}
-                    calendarIcon={<FaCalendarAlt />}
-                    disableDaysBeforeToday={true}
-                    className="table-filter--date"
-                    useCurrent={false}
-                  />
-                </Col>
-              </Form.Group>
-            </Col>
-          </Row>
-          <Row className="table-filter">
-            <Col className="table-filter--size">
-              <Form.Group>
-                <Col>
-                  <Form.Label>Date until:</Form.Label>
-                  <DateTimePicker
-                    value={endDate}
-                    
-                    calendarIcon={<FaCalendarAlt />}
-                    name="endDate"
-                    format="yyyy-MM-dd"
-                    onChange={handleEndDateChange}
-                    disableClock={true}
-                    disableDaysBeforeToday={true}
-                    className="table-filter--date"
-                  />
-                </Col>
-              </Form.Group>
-            </Col>
-          </Row>
-        </Row>
-      </Row>
+        <DateFilterSelect
+          startDate={startDate}
+          endDate={endDate}
+          onStartDateChange={handleStartDateChange}
+          onEndDateChange={handleEndDateChange}
+        />
 
       {isLoading ? (
           <Spinner animation='border' role='status'>
@@ -205,27 +155,14 @@ function LineChart() {
         ) : (
           <>
             <Line data={dataLine} />
-            <table className="table">
-              <thead>
-                <tr className="table-row"></tr>
-              </thead>
-              <tbody>
-                <tr className="table-row">
-                  <td className="table-cell table-button">
-                    Selected period expenses:
-                  </td>
-                  <td className="table-cell table-button">€ {selectedExpenses}</td>
-                </tr>
-              </tbody>
-              <tbody>
-                <tr className="table-row">
-                  <td className="table-cell table-button">
-                    Selected incomes period :
-                  </td>
-                  <td className="table-cell table-button">€ {selectedIncomes} </td>
-                </tr>
-              </tbody>
-            </table>
+            <div className='balance-totals'>
+              <div>Selected period expenses:</div>
+              <div>€ {selectedExpenses}</div>
+            </div>
+            <div className='balance-totals'>
+              <div>Selected period incomes:</div>
+              <div>€ {selectedIncomes}</div>
+            </div>
           </>
         )}
     </Container>
