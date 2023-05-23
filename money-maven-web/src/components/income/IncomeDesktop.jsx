@@ -16,18 +16,22 @@ function IncomeDesktop() {
     const [isLoading, setIsLoading] = useState(true);
     const [sortDirection, setSortDirection] = useState('DESC');
 
-    const fetchIncomes = useCallback(() => {
+    const fetchIncomes = useCallback(async () => {
+      try {
         setIsLoading(true);
-        getIncomes(currentPage, pageSize, sortDirection)
-          .then((data) => {
-            setIncomes(data.content);
-            setTotalPages(data.totalPages);
-          })
-          .catch((error) => console.log(error))
-          .finally(() => {
-            setIsLoading(false);
-          });
-      }, [currentPage, pageSize, sortDirection]);
+        const { content, totalPages } = await getIncomes(
+          currentPage,
+          pageSize,
+          sortDirection
+        );
+        setIncomes(content);
+        setTotalPages(totalPages);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setIsLoading(false);
+      }
+    }, [currentPage, pageSize, sortDirection]);
 
 
       useEffect(() => {
