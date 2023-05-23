@@ -17,6 +17,15 @@ import lt.techin.moneymaven.model.Income;
 import lt.techin.moneymaven.model.User;
 import lt.techin.moneymaven.repository.IncomeRepository;
 import lt.techin.moneymaven.repository.UserRepository;
+import org.springframework.core.io.ByteArrayResource;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.stream.Collectors;
+
+
+
 
 @Service
 public class IncomeService {
@@ -38,13 +47,6 @@ public class IncomeService {
 		try {
 			Page<Income> incomes;
 			incomes = incomeRepository.findIncomes(pageable, startDate, endDate, userId );
-			
-//---------- Pirminis kodas
-//			Page<Income> incomes = incomeRepository.findAllByUser_userId(pageable, userId);
-//			if (incomes.isEmpty()) {
-//				throw new NoEntriesFoundException("incomes");
-			
-			
 			if (incomes.isEmpty()) {
 			throw new NoEntriesFoundException("incomes");
 			}
@@ -130,4 +132,37 @@ public class IncomeService {
 			throw new RuntimeException("Error while deleting income", e);
 		}
 	}
+	
+	// csv export------
+	
+//	    
+//	 public Page <IncomeDto> getIncomes(Integer userId, LocalDateTime startDate, LocalDateTime endDate) {
+//	       
+//		 Page<Income> incomeEntities = incomeRepository.findIncomes(startDate, endDate, userId);
+//	        
+//	        
+//	        return incomeEntities.stream()
+//	        		incomes.map(income -> modelMapper.map(income, IncomeDto.class));
+//	                .collect(Collectors.toList());
+//	    }
+//	    
+//	    public ByteArrayResource exportToCsv(Page<IncomeDto> incomes) {
+//	        try {
+//	            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+//	            CSVPrinter csvPrinter = new CSVPrinter(new PrintWriter(outputStream), CSVFormat.DEFAULT.withHeader("Income ID", "Amount", "Description", "Date"));
+//	            
+//	            for (IncomeDto income : incomes) {
+//	                csvPrinter.printRecord(income.getIncomeId(), income.getIncomeAmount(), income.getIncomeDescription(), income.getIncomeDatetime());
+//	            }
+//	            
+//	            csvPrinter.flush();
+//	            csvPrinter.close();
+//	            
+//	            return new ByteArrayResource(outputStream.toByteArray());
+//	        } catch (IOException e) {
+//	            throw new RuntimeException("Error while exporting incomes to CSV", e);
+//	        }
+//	    }
+	
+	
 }
