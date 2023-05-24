@@ -70,12 +70,12 @@ function LineChart() {
 
   const selectedIncomes =
     incomes && incomes.length > 0
-      ? incomes.reduce((total, income) => total + income.incomeAmount, 0)
+      ? incomes.reduce((total, income) => total + income.incomeAmount, 0).toFixed(2)
       : 0;
 
   const selectedExpenses =
     expenses && expenses.length > 0
-      ? expenses.reduce((total, expense) => total + expense.expenseAmount, 0)
+      ? expenses.reduce((total, expense) => total + expense.expenseAmount, 0).toFixed(2)
       : 0;
 
     const handleStartDateChange = (e) => {
